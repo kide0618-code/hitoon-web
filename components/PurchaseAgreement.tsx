@@ -1,21 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Wallet, X, CheckCircle } from "lucide-react"; 
+import Link from "next/link"; // 👈 これを追加
+import { Wallet, X, CheckCircle, ExternalLink } from "lucide-react"; 
 
 export default function PurchaseAgreement() {
-  // モーダルを開いているかどうかの状態
   const [isOpen, setIsOpen] = useState(false);
-  // 同意チェックの状態
   const [isAgreed, setIsAgreed] = useState(false);
 
   const handlePurchase = async () => {
-    // 決済処理（デモ）
     alert("Stripe決済画面へ遷移します（機能実装待ち）");
-    setIsOpen(false); // 処理後に閉じる
+    setIsOpen(false);
   };
 
-  // ▼ 初期状態：ただの購入ボタンを表示
   if (!isOpen) {
     return (
       <button 
@@ -27,19 +24,15 @@ export default function PurchaseAgreement() {
     );
   }
 
-  // ▼ ボタンが押されたら：画面全体を覆うモーダルを表示
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* 背景の黒いフィルター（クリックで閉じる） */}
       <div 
         className="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
         onClick={() => setIsOpen(false)}
       ></div>
 
-      {/* モーダル本体 */}
       <div className="relative w-full max-w-md bg-slate-900 rounded-2xl shadow-2xl border border-slate-700 overflow-hidden animate-in fade-in zoom-in duration-200">
         
-        {/* ヘッダー */}
         <div className="flex items-center justify-between p-4 border-b border-slate-700 bg-slate-800/50">
           <h3 className="text-lg font-bold text-white flex items-center gap-2">
             <CheckCircle size={20} className="text-blue-400"/> 購入前の最終確認
@@ -53,7 +46,6 @@ export default function PurchaseAgreement() {
         </div>
 
         <div className="p-6">
-          {/* 規約スクロールエリア */}
           <div className="h-48 overflow-y-scroll bg-black/30 p-4 rounded-lg border border-slate-700 text-sm text-slate-300 mb-6 leading-relaxed shadow-inner">
             <h4 className="font-bold text-white mb-3 sticky top-0 bg-slate-900/0 backdrop-blur-md">
               重要事項説明書
@@ -79,25 +71,32 @@ export default function PurchaseAgreement() {
             </div>
           </div>
 
-          {/* チェックボックス */}
-          <div 
-            className="flex items-start mb-6 group cursor-pointer p-2 rounded hover:bg-white/5 transition"
-            onClick={() => setIsAgreed(!isAgreed)}
-          >
+          {/* ▼ 修正箇所: ここにリンクを追加しました */}
+          <div className="flex items-start mb-6">
             <div className="flex items-center h-5 mt-1">
               <input
+                id="agreement-checkbox" // ラベルと紐づけるID
                 type="checkbox"
                 checked={isAgreed}
-                readOnly
+                onChange={() => setIsAgreed(!isAgreed)}
                 className="w-5 h-5 border-slate-600 rounded bg-slate-800 text-blue-600 focus:ring-offset-0 cursor-pointer"
               />
             </div>
-            <label className="ml-3 text-sm font-medium text-slate-300 group-hover:text-white cursor-pointer select-none">
-              上記重要事項に同意し、本取引が投資ではないことを理解した上で申し込みます。
+            <label htmlFor="agreement-checkbox" className="ml-3 text-sm font-medium text-slate-300 cursor-pointer select-none">
+              上記重要事項および
+              {/* ▼ リンクをクリックしてもチェックボックスが反応しないように stopPropagation を設定 */}
+              <Link 
+                href="/terms" 
+                target="_blank" 
+                className="text-blue-400 hover:text-blue-300 hover:underline mx-1 inline-flex items-center gap-0.5"
+                onClick={(e) => e.stopPropagation()} 
+              >
+                利用規約<ExternalLink size={12} />
+              </Link>
+              に同意し、本取引が投資ではないことを理解した上で申し込みます。
             </label>
           </div>
 
-          {/* 決済ボタン */}
           <button
             onClick={handlePurchase}
             disabled={!isAgreed}
