@@ -1,29 +1,61 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link"; // 👈 これを追加
-import { Wallet, X, CheckCircle, ExternalLink } from "lucide-react"; 
+import Link from "next/link";
+import { Wallet, X, CheckCircle, ExternalLink, Minus, Plus } from "lucide-react"; 
 
 export default function PurchaseAgreement() {
   const [isOpen, setIsOpen] = useState(false);
   const [isAgreed, setIsAgreed] = useState(false);
+  const [quantity, setQuantity] = useState(1); // 👈 数量管理
+
+  // 数量の増減
+  const increment = () => setQuantity(prev => Math.min(prev + 1, 10)); // 最大10枚まで
+  const decrement = () => setQuantity(prev => Math.max(prev - 1, 1));
 
   const handlePurchase = async () => {
-    alert("Stripe決済画面へ遷移します（機能実装待ち）");
+    alert(`${quantity}枚分の決済（¥${quantity * 1000}）へ進みます`);
     setIsOpen(false);
   };
 
+  // ▼ 初期表示（ボタンエリア）
   if (!isOpen) {
     return (
-      <button 
-        onClick={() => setIsOpen(true)}
-        className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-full flex items-center justify-center gap-2 shadow-lg transition-transform hover:scale-[1.02]"
-      >
-        <Wallet size={20} /> 公式パートナーパスを購入 (¥1,000)
-      </button>
+      <div className="space-y-4">
+        {/* 数量セレクター */}
+        <div className="flex items-center justify-between bg-slate-700/50 p-3 rounded-xl border border-slate-600">
+          <span className="text-sm font-bold text-slate-300 pl-2">購入枚数</span>
+          <div className="flex items-center gap-4 bg-slate-800 rounded-lg p-1">
+            <button 
+              onClick={decrement}
+              className="w-8 h-8 flex items-center justify-center rounded bg-slate-700 text-white hover:bg-slate-600 transition disabled:opacity-50"
+              disabled={quantity <= 1}
+            >
+              <Minus size={14} />
+            </button>
+            <span className="text-lg font-bold w-6 text-center text-white">{quantity}</span>
+            <button 
+              onClick={increment}
+              className="w-8 h-8 flex items-center justify-center rounded bg-blue-600 text-white hover:bg-blue-500 transition disabled:opacity-50"
+              disabled={quantity >= 10}
+            >
+              <Plus size={14} />
+            </button>
+          </div>
+        </div>
+
+        {/* 購入ボタン */}
+        <button 
+          onClick={() => setIsOpen(true)}
+          className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-full flex items-center justify-center gap-2 shadow-lg transition-transform hover:scale-[1.02]"
+        >
+          <Wallet size={20} /> 購入へ進む (¥{(quantity * 1000).toLocaleString()})
+        </button>
+      </div>
     );
   }
 
+  // ▼ モーダル表示
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div 
@@ -46,36 +78,29 @@ export default function PurchaseAgreement() {
         </div>
 
         <div className="p-6">
-          <div className="h-48 overflow-y-scroll bg-black/30 p-4 rounded-lg border border-slate-700 text-sm text-slate-300 mb-6 leading-relaxed shadow-inner">
+          {/* 注文内容のサマリーを表示 */}
+          <div className="mb-4 bg-blue-900/20 border border-blue-500/30 p-3 rounded-lg flex justify-between items-center">
+            <span className="text-sm text-blue-200">選択中のプラン</span>
+            <span className="text-lg font-bold text-white">
+              {quantity}枚 <span className="text-sm text-slate-400 mx-1">×</span> ¥1,000
+            </span>
+          </div>
+
+          <div className="h-40 overflow-y-scroll bg-black/30 p-4 rounded-lg border border-slate-700 text-sm text-slate-300 mb-6 leading-relaxed shadow-inner">
             <h4 className="font-bold text-white mb-3 sticky top-0 bg-slate-900/0 backdrop-blur-md">
               重要事項説明書
             </h4>
-            
             <div className="space-y-4">
-              <p>
-                <strong className="text-blue-400 block mb-1">1. 金融商品ではありません</strong>
-                本パスは、金融商品取引法上の有価証券（投資信託等）ではありません。アーティストから特定の楽曲に関する将来の収益受領権を譲り受ける「債権譲渡契約」です。
-              </p>
-              <p>
-                <strong className="text-blue-400 block mb-1">2. 元本保証はありません</strong>
-                楽曲の再生実績により、収益分配額が購入金額を下回る、または0円となる可能性があります。いかなる場合も元本の返還・保証は行いません。
-              </p>
-              <p>
-                <strong className="text-blue-400 block mb-1">3. 「労働」ではありません</strong>
-                本サービスにおけるユーザーの活動は、自己資産の管理行為であり、雇用契約に基づく労働ではありません。
-              </p>
-              <p>
-                <strong className="text-blue-400 block mb-1">4. 返金不可</strong>
-                デジタルコンテンツの性質上、決済完了後のキャンセル・返金は一切できません。
-              </p>
+              <p><strong className="text-blue-400 block mb-1">1. 金融商品ではありません</strong>本パスは投資商品ではありません。</p>
+              <p><strong className="text-blue-400 block mb-1">2. 元本保証はありません</strong>収益が購入額を下回る可能性があります。</p>
+              <p><strong className="text-blue-400 block mb-1">3. 返金不可</strong>決済完了後のキャンセルはできません。</p>
             </div>
           </div>
 
-          {/* ▼ 修正箇所: ここにリンクを追加しました */}
           <div className="flex items-start mb-6">
             <div className="flex items-center h-5 mt-1">
               <input
-                id="agreement-checkbox" // ラベルと紐づけるID
+                id="agreement-checkbox"
                 type="checkbox"
                 checked={isAgreed}
                 onChange={() => setIsAgreed(!isAgreed)}
@@ -84,7 +109,6 @@ export default function PurchaseAgreement() {
             </div>
             <label htmlFor="agreement-checkbox" className="ml-3 text-sm font-medium text-slate-300 cursor-pointer select-none">
               上記重要事項および
-              {/* ▼ リンクをクリックしてもチェックボックスが反応しないように stopPropagation を設定 */}
               <Link 
                 href="/terms" 
                 target="_blank" 
@@ -93,7 +117,7 @@ export default function PurchaseAgreement() {
               >
                 利用規約<ExternalLink size={12} />
               </Link>
-              に同意し、本取引が投資ではないことを理解した上で申し込みます。
+              に同意し、申し込みます。
             </label>
           </div>
 
@@ -107,7 +131,7 @@ export default function PurchaseAgreement() {
                   : "bg-slate-700 text-slate-500 cursor-not-allowed"
               }`}
           >
-            {isAgreed ? "¥1,000 で決済する" : "同意して決済へ進む"}
+            {isAgreed ? `¥${(quantity * 1000).toLocaleString()} で決済する` : "同意して決済へ進む"}
           </button>
         </div>
       </div>
