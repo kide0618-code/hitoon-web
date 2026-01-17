@@ -1,14 +1,16 @@
 'use client';
-import { Wallet, ShieldCheck, ArrowLeft } from "lucide-react";
+import { ShieldCheck, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation"; // 👈 これを追加しました
+import { useParams } from "next/navigation";
 import { songs } from "../../data/songs"; 
 
+// ▼ 1. 作った同意コンポーネントを読み込む
+import PurchaseAgreement from "@/components/PurchaseAgreement";
+
 export default function SongDetail() {
-  // 👈 paramsを受け取るのをやめて、フックでIDを取得します
   const params = useParams();
   
-  // URLのIDから曲を探す (配列対策をして安全に変換)
+  // URLのIDから曲を探す
   const id = Number(Array.isArray(params.id) ? params.id[0] : params.id);
   const song = songs.find(s => s.id === id) || songs[0];
 
@@ -28,15 +30,22 @@ export default function SongDetail() {
       </div>
 
       <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700 mb-8">
+        {/* ▼ 2. 文言修正：「プロモーター契約」→「公式パートナー権」へ 
+             これで「労働契約」ではなく「権利」であることを明確にします */}
         <h3 className="font-bold mb-4 flex items-center gap-2">
-          <ShieldCheck size={18} className="text-blue-500"/> プロモーター契約
+          <ShieldCheck size={18} className="text-blue-500"/> 公式パートナー権
         </h3>
-        <p className="text-sm text-slate-300 leading-relaxed mb-4">
-          このパスを購入すると、あなたはこの楽曲の「公認プロモーター」になります。
+        
+        <p className="text-sm text-slate-300 leading-relaxed mb-6">
+          このパスを購入すると、あなたはこの楽曲の収益分配権を持つ「公式パートナー」になります。
+          <span className="block mt-2 text-xs text-slate-400">
+             ※労働契約や雇用契約ではありません。
+          </span>
         </p>
-        <button onClick={() => alert("購入デモ")} className="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 w-full rounded-full flex items-center justify-center gap-2">
-          <Wallet size={18} /> パスを購入 (¥{song.price})
-        </button>
+
+        {/* ▼ 3. 以前のボタンを削除し、同意画面コンポーネントに置き換え */}
+        <PurchaseAgreement />
+        
       </div>
     </main>
   );
