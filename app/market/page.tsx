@@ -1,28 +1,29 @@
 'use client';
-import Link from "next/link";
-import { Search } from "lucide-react";
-import { songs } from "../data/songs";
 
-export default function Market() {
+import React from 'react';
+import { artists } from '../data/artists';
+import Link from 'next/link';
+import { Users } from 'lucide-react';
+
+export default function MarketPage() {
   return (
-    <main>
-      <div className="relative mb-8">
-        <Search className="absolute left-4 top-3.5 text-slate-400" size={20} />
-        <input type="text" placeholder="楽曲を検索..." className="w-full bg-slate-800 border border-slate-700 rounded-full py-3 pl-12 pr-4 text-white focus:outline-none focus:border-blue-500 transition"/>
-      </div>
-      <h2 className="text-xl font-bold mb-4">New Releases</h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {songs.map((song) => (
-          <Link href={`/songs/${song.id}`} key={song.id} className="group">
-            <div className={`aspect-square rounded-xl bg-gradient-to-br ${song.color} shadow-lg mb-3 relative overflow-hidden group-hover:scale-105 transition duration-300`}></div>
-            <div>
-              <h3 className="font-bold text-sm truncate">{song.title}</h3>
-              <p className="text-xs text-slate-400 truncate">{song.artist}</p>
-              <p className="text-xs text-blue-400 mt-1">¥{song.price}</p>
+    <div className="min-h-screen bg-black text-white pb-20 p-4">
+      <h1 className="text-2xl font-bold mb-6">Find Artists</h1>
+      <div className="grid grid-cols-1 gap-4">
+        {artists.map((artist) => (
+          <Link href={`/artists/${artist.id}`} key={artist.id} className="block bg-gray-900 rounded-xl border border-gray-800 p-3 flex items-center gap-4">
+            <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-700">
+              <img src={artist.image} className="w-full h-full object-cover" />
             </div>
+            <div className="flex-1">
+              <h3 className="font-bold text-lg">{artist.name}</h3>
+              <div className="flex items-center text-xs text-gray-500 mb-2"><Users size={12} className="mr-1" /> {artist.members} Members</div>
+              <p className="text-blue-400 font-bold">¥{artist.price.toLocaleString()}</p>
+            </div>
+            <div className="text-gray-600">→</div>
           </Link>
         ))}
       </div>
-    </main>
+    </div>
   );
 }

@@ -1,47 +1,64 @@
 'use client';
-import { Headphones, ExternalLink } from "lucide-react"; // アイコンを音楽用に変更
-import { songs } from "../data/songs";
 
-export default function Activity() {
-  // 今回は例として ID:1 (Midnight City) をターゲットにします
-  const targetSong = songs.find(s => s.id === 1) || songs[0];
+import React from 'react';
+import { artists } from '../data/artists';
+import { Layers, ShieldCheck, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
-  const handlePlay = () => {
-    // データの demoUrl を新しいタブで開く
-    window.open(targetSong.demoUrl, '_blank');
-  };
+export default function CollectionPage() {
+  // デモ用にすべてのアーティストを「保有済み」として表示
+  const myCollection = artists;
 
   return (
-    <main>
-      <h1 className="text-2xl font-bold mb-2">Activities</h1>
-      <p className="text-slate-400 text-sm mb-8">楽曲を聴いて再生回数に貢献しよう</p>
-      
-      <div className={`bg-gradient-to-br ${targetSong.color} rounded-2xl p-6 shadow-lg relative overflow-hidden`}>
-        {/* 背景の装飾 */}
-        <div className="absolute top-0 right-0 p-6 opacity-20">
-          <Headphones size={100} className="text-white" />
-        </div>
-
-        <div className="relative z-10">
-          <div className="flex justify-between items-start mb-6">
-            <div>
-              <h3 className="font-bold text-2xl mb-1">{targetSong.title}</h3>
-              <p className="text-slate-200 text-sm">{targetSong.artist}</p>
-              <p className="text-xs text-white/70 mt-2">あなたの担当: 10口</p>
-            </div>
-            <span className="bg-white/20 backdrop-blur-md text-white text-xs px-3 py-1 rounded-full border border-white/30">
-              未完了
-            </span>
-          </div>
-
-          <button 
-            onClick={handlePlay} 
-            className="bg-white text-slate-900 hover:bg-slate-100 font-bold py-4 px-6 rounded-full w-full text-sm flex items-center justify-center gap-2 transition shadow-xl"
-          >
-            <ExternalLink size={18} /> サブスクで聴く
-          </button>
-        </div>
+    <div className="min-h-screen bg-black text-white pb-24">
+      <div className="p-6 bg-gray-900 border-b border-gray-800 flex items-center gap-3 sticky top-0 z-10">
+        <Layers className="text-blue-500" />
+        <h1 className="text-2xl font-bold">Collection</h1>
       </div>
-    </main>
+
+      <div className="p-4 space-y-4">
+        {myCollection.map((artist) => (
+          <Link href={`/artists/${artist.id}`} key={artist.id} className="block group">
+            <div className="bg-gray-900 rounded-xl p-4 flex items-center gap-4 border border-gray-800 group-hover:border-blue-500/50 transition-all shadow-lg active:scale-[0.98]">
+              {/* アーティスト画像 */}
+              <div className="relative">
+                <img 
+                  src={artist.image} 
+                  className="w-16 h-16 rounded-full object-cover border-2 border-blue-500/30" 
+                  alt={artist.name}
+                />
+                <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-0.5 border border-black">
+                  <ShieldCheck size={12} className="text-white" />
+                </div>
+              </div>
+
+              {/* テキスト情報 */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <h3 className="font-bold truncate">{artist.name}</h3>
+                </div>
+                <p className="text-[10px] text-gray-500 uppercase tracking-widest font-mono">
+                  Membership ID: #000{artist.id}
+                </p>
+                <div className="mt-2 inline-block px-2 py-0.5 bg-blue-900/30 border border-blue-800/50 rounded text-[10px] text-blue-400 font-bold">
+                  CONTENT UNLOCKED
+                </div>
+              </div>
+
+              {/* 矢印アイコン */}
+              <div className="text-gray-600 group-hover:text-blue-400 transition-colors">
+                <ArrowRight size={20} />
+              </div>
+            </div>
+          </Link>
+        ))}
+
+        {myCollection.length === 0 && (
+          <div className="text-center py-20 text-gray-500">
+            <p>まだコレクションがありません。</p>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
