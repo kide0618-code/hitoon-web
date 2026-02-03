@@ -58,24 +58,24 @@
 
 ### 4-1. ご登録の確認（新規登録時）
 
-| 位置 | スクリーンショット                                                                   |
-| -- | --------------------------------------------------------------------------- |
-| 上部 | ![signup\_top](./assets/Screenshot%202026-02-03%20at%206.26.02%20PM.png)    |
-| 下部 | ![signup\_bottom](./assets/Screenshot%202026-02-03%20at%206.26.07%20PM.png) |
+| 位置 | スクリーンショット |
+|------|-------------------|
+| 上部 | ![signup_top](./assets/01_signup_top.png) |
+| 下部 | ![signup_bottom](./assets/02_signup_bottom.png) |
 
 ### 4-2. パスワード変更のお手続き（パスワードリセット時）
 
-| 位置 | スクリーンショット                                                                            |
-| -- | ------------------------------------------------------------------------------------ |
-| 上部 | ![password\_reset\_top](./assets/Screenshot%202026-02-03%20at%206.26.27%20PM.png)    |
-| 下部 | ![password\_reset\_bottom](./assets/Screenshot%202026-02-03%20at%206.26.33%20PM.png) |
+| 位置 | スクリーンショット |
+|------|-------------------|
+| 上部 | ![password_reset_top](./assets/03_password_reset_top.png) |
+| 下部 | ![password_reset_bottom](./assets/04_password_reset_bottom.png) |
 
 ### 4-3. メールアドレス変更（メアド変更時）
 
-| 位置 | スクリーンショット                                                                          |
-| -- | ---------------------------------------------------------------------------------- |
-| 上部 | ![email\_change\_top](./assets/Screenshot%202026-02-03%20at%206.25.42%20PM.png)    |
-| 下部 | ![email\_change\_bottom](./assets/Screenshot%202026-02-03%20at%206.25.47%20PM.png) |
+| 位置 | スクリーンショット |
+|------|-------------------|
+| 上部 | ![email_change_top](./assets/05_email_change_top.png) |
+| 下部 | ![email_change_bottom](./assets/06_email_change_bottom.png) |
 
 ***
 
