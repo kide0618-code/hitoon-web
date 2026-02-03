@@ -7,7 +7,7 @@ interface RouteContext {
 
 /**
  * GET /api/cards/:id
- * Get card details with template, artist, and exclusive content info
+ * Get card details with visual, artist, and exclusive content info
  */
 export async function GET(request: Request, context: RouteContext) {
   try {
@@ -19,7 +19,7 @@ export async function GET(request: Request, context: RouteContext) {
       .from('cards')
       .select(`
         *,
-        template:card_templates (
+        visual:card_visuals (
           id,
           name,
           artist_image_url,

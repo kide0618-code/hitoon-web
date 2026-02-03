@@ -42,15 +42,16 @@ CREATE TABLE public.artists (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- カードテンプレート（管理画面から作成）
--- 1アーティスト = 複数テンプレート可能（アルバム別、シングル別など）
--- 1テンプレート → 3つのレアリティカード (NORMAL, RARE, SUPER_RARE)
-CREATE TABLE public.card_templates (
+-- カードビジュアル（管理画面から作成）
+-- 1アーティスト = 複数ビジュアル可能（アルバム別、シングル別など）
+-- 1ビジュアル → 3つのレアリティカード (NORMAL, RARE, SUPER_RARE)
+-- ※フレーム（枠・エフェクト）は config/frame-templates.ts で管理
+CREATE TABLE public.card_visuals (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   artist_id UUID REFERENCES public.artists(id) ON DELETE CASCADE,
 
-  -- テンプレート識別情報
-  name TEXT NOT NULL,                    -- テンプレート名（管理用: "1st Album", "Summer Single"等）
+  -- ビジュアル識別情報
+  name TEXT NOT NULL,                    -- ビジュアル名（管理用: "1st Album", "Summer Single"等）
 
   -- 管理画面からの入力項目
   artist_image_url TEXT NOT NULL,        -- アップロードされたアーティスト画像
@@ -64,11 +65,11 @@ CREATE TABLE public.card_templates (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- カード（デジタルトレカ） - テンプレートから3パターン生成
--- 1テンプレート → NORMAL, RARE, SUPER_RARE の3カード
+-- カード（デジタルトレカ） - ビジュアルから3パターン生成
+-- 1ビジュアル → NORMAL, RARE, SUPER_RARE の3カード
 CREATE TABLE public.cards (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  template_id UUID REFERENCES public.card_templates(id) ON DELETE CASCADE,
+  visual_id UUID REFERENCES public.card_visuals(id) ON DELETE CASCADE,
   artist_id UUID REFERENCES public.artists(id) ON DELETE CASCADE,
 
   -- カード基本情報
@@ -88,7 +89,7 @@ CREATE TABLE public.cards (
   updated_at TIMESTAMPTZ DEFAULT NOW(),
 
   CONSTRAINT valid_rarity CHECK (rarity IN ('NORMAL', 'RARE', 'SUPER_RARE')),
-  CONSTRAINT unique_template_rarity UNIQUE (template_id, rarity)
+  CONSTRAINT unique_visual_rarity UNIQUE (visual_id, rarity)
 );
 
 -- 限定コンテンツ（レアリティ別のボーナスコンテンツ）
@@ -131,8 +132,8 @@ CREATE TABLE public.purchases (
 -- インデックス
 CREATE INDEX idx_operators_user ON public.operators(user_id);
 CREATE INDEX idx_artists_featured ON public.artists(is_featured) WHERE is_featured = TRUE;
-CREATE INDEX idx_card_templates_artist ON public.card_templates(artist_id);
-CREATE INDEX idx_cards_template ON public.cards(template_id);
+CREATE INDEX idx_card_visuals_artist ON public.card_visuals(artist_id);
+CREATE INDEX idx_cards_visual ON public.cards(visual_id);
 CREATE INDEX idx_cards_artist ON public.cards(artist_id);
 CREATE INDEX idx_cards_rarity ON public.cards(rarity);
 CREATE INDEX idx_exclusive_contents_card ON public.exclusive_contents(card_id);
@@ -182,7 +183,7 @@ CREATE TABLE public.transactions (
 ALTER TABLE public.operators ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.artists ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.card_templates ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.card_visuals ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.cards ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.exclusive_contents ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.purchases ENABLE ROW LEVEL SECURITY;
@@ -211,9 +212,9 @@ CREATE POLICY "Users can update own profile"
 CREATE POLICY "Artists are viewable by everyone"
   ON public.artists FOR SELECT USING (true);
 
--- Card Templates: 全員閲覧可（管理者のみ編集）
-CREATE POLICY "Card templates are viewable by everyone"
-  ON public.card_templates FOR SELECT USING (true);
+-- Card Visuals: 全員閲覧可（管理者のみ編集）
+CREATE POLICY "Card visuals are viewable by everyone"
+  ON public.card_visuals FOR SELECT USING (true);
 
 -- Cards: アクティブなカードは全員閲覧可
 CREATE POLICY "Active cards are viewable by everyone"
@@ -263,15 +264,14 @@ const { data: operator } = await supabase
   .single();
 const isAdmin = !!operator;
 
-// Marketplace: カード一覧（テンプレート・アーティスト情報付き）
+// Marketplace: カード一覧（ビジュアル・アーティスト情報付き）
 const { data: cards } = await supabase
   .from('cards')
   .select(`
     *,
-    template:card_templates(
+    visual:card_visuals(
       artist_image_url,
-      song_title,
-      bonus_content_url
+      song_title
     ),
     artist:artists(id, name)
   `)
@@ -283,7 +283,7 @@ const { data: artistCards } = await supabase
   .from('cards')
   .select(`
     *,
-    template:card_templates(*)
+    visual:card_visuals(*)
   `)
   .eq('artist_id', artistId)
   .eq('is_active', true)
@@ -296,7 +296,7 @@ const { data: collection } = await supabase
     *,
     card:cards(
       *,
-      template:card_templates(*),
+      visual:card_visuals(*),
       artist:artists(*)
     )
   `)
@@ -305,17 +305,16 @@ const { data: collection } = await supabase
   .order('purchased_at', { ascending: false });
 ```
 
-### 管理画面: テンプレート作成
+### 管理画面: ビジュアル作成
 ```typescript
-// 1. テンプレート作成（画像アップロード後）
-const { data: template } = await supabaseAdmin
-  .from('card_templates')
+// 1. ビジュアル作成（画像アップロード後）
+const { data: visual } = await supabaseAdmin
+  .from('card_visuals')
   .insert({
     artist_id: artistId,
+    name: visualName,
     artist_image_url: uploadedImageUrl,
     song_title: songTitle,
-    bonus_content_url: bonusUrl,
-    bonus_content_type: 'video',
   })
   .select()
   .single();
@@ -331,7 +330,7 @@ await supabaseAdmin
   .from('cards')
   .insert(
     cardVariants.map(v => ({
-      template_id: template.id,
+      visual_id: visual.id,
       artist_id: artistId,
       name: `${artistName} - ${v.rarity}`,
       rarity: v.rarity,

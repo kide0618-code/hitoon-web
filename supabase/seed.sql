@@ -12,47 +12,47 @@ INSERT INTO public.artists (id, name, description, image_url, member_count, is_f
   ('a1000000-0000-0000-0000-000000000005', 'Digital Horizon', 'プログレッシブハウスとテクノを融合させたDJデュオ。クラブシーンで絶大な支持を得ている。', 'https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400', 1800, true, 4);
 
 -- ============================================
--- SAMPLE CARD TEMPLATES
+-- SAMPLE CARD VISUALS
 -- ============================================
-INSERT INTO public.card_templates (id, artist_id, name, artist_image_url, song_title, subtitle, is_active) VALUES
+INSERT INTO public.card_visuals (id, artist_id, name, artist_image_url, song_title, subtitle, is_active) VALUES
   -- Aurora Nights
-  ('t1000000-0000-0000-0000-000000000001', 'a1000000-0000-0000-0000-000000000001', '1st Single', 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600', 'Midnight Glow', 'Digital Single 2026', true),
-  ('t1000000-0000-0000-0000-000000000002', 'a1000000-0000-0000-0000-000000000001', '2nd Single', 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600', 'Electric Dreams', 'Summer Edition', true),
+  ('e1000000-0000-0000-0000-000000000001', 'a1000000-0000-0000-0000-000000000001', '1st Single', 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600', 'Midnight Glow', 'Digital Single 2026', true),
+  ('e1000000-0000-0000-0000-000000000002', 'a1000000-0000-0000-0000-000000000001', '2nd Single', 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600', 'Electric Dreams', 'Summer Edition', true),
   -- Stellar Echo
-  ('t1000000-0000-0000-0000-000000000003', 'a1000000-0000-0000-0000-000000000002', 'Debut Album', 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600', 'Starlight Symphony', '1st Album Collection', true),
+  ('e1000000-0000-0000-0000-000000000003', 'a1000000-0000-0000-0000-000000000002', 'Debut Album', 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600', 'Starlight Symphony', '1st Album Collection', true),
   -- Neon Pulse
-  ('t1000000-0000-0000-0000-000000000004', 'a1000000-0000-0000-0000-000000000003', 'Live Tour 2026', 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=600', 'Cyber Rebellion', 'Tour Memorial Card', true),
+  ('e1000000-0000-0000-0000-000000000004', 'a1000000-0000-0000-0000-000000000003', 'Live Tour 2026', 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=600', 'Cyber Rebellion', 'Tour Memorial Card', true),
   -- Digital Horizon
-  ('t1000000-0000-0000-0000-000000000005', 'a1000000-0000-0000-0000-000000000005', 'Club Edition', 'https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=600', 'Future Bass', 'DJ Set Collection', true);
+  ('e1000000-0000-0000-0000-000000000005', 'a1000000-0000-0000-0000-000000000005', 'Club Edition', 'https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=600', 'Future Bass', 'DJ Set Collection', true);
 
 -- ============================================
--- SAMPLE CARDS (3 per template)
+-- SAMPLE CARDS (3 per visual)
 -- ============================================
 -- Aurora Nights - 1st Single
-INSERT INTO public.cards (id, template_id, artist_id, name, description, rarity, price, total_supply, current_supply, is_active) VALUES
-  ('c1000000-0000-0000-0000-000000000001', 't1000000-0000-0000-0000-000000000001', 'a1000000-0000-0000-0000-000000000001', 'Aurora Nights - Midnight Glow [N]', 'ファースト・シングル「Midnight Glow」のノーマルカード', 'NORMAL', 1500, NULL, 42, true),
-  ('c1000000-0000-0000-0000-000000000002', 't1000000-0000-0000-0000-000000000001', 'a1000000-0000-0000-0000-000000000001', 'Aurora Nights - Midnight Glow [R]', 'ファースト・シングル「Midnight Glow」のレアカード', 'RARE', 3000, 100, 67, true),
-  ('c1000000-0000-0000-0000-000000000003', 't1000000-0000-0000-0000-000000000001', 'a1000000-0000-0000-0000-000000000001', 'Aurora Nights - Midnight Glow [SR]', 'ファースト・シングル「Midnight Glow」のスーパーレアカード', 'SUPER_RARE', 8000, 30, 12, true),
+INSERT INTO public.cards (id, visual_id, artist_id, name, description, rarity, price, total_supply, current_supply, is_active) VALUES
+  ('c1000000-0000-0000-0000-000000000001', 'e1000000-0000-0000-0000-000000000001', 'a1000000-0000-0000-0000-000000000001', 'Aurora Nights - Midnight Glow [N]', 'ファースト・シングル「Midnight Glow」のノーマルカード', 'NORMAL', 1500, NULL, 42, true),
+  ('c1000000-0000-0000-0000-000000000002', 'e1000000-0000-0000-0000-000000000001', 'a1000000-0000-0000-0000-000000000001', 'Aurora Nights - Midnight Glow [R]', 'ファースト・シングル「Midnight Glow」のレアカード', 'RARE', 3000, 100, 67, true),
+  ('c1000000-0000-0000-0000-000000000003', 'e1000000-0000-0000-0000-000000000001', 'a1000000-0000-0000-0000-000000000001', 'Aurora Nights - Midnight Glow [SR]', 'ファースト・シングル「Midnight Glow」のスーパーレアカード', 'SUPER_RARE', 8000, 30, 12, true),
 
 -- Aurora Nights - 2nd Single
-  ('c1000000-0000-0000-0000-000000000004', 't1000000-0000-0000-0000-000000000002', 'a1000000-0000-0000-0000-000000000001', 'Aurora Nights - Electric Dreams [N]', 'セカンド・シングル「Electric Dreams」のノーマルカード', 'NORMAL', 1500, NULL, 28, true),
-  ('c1000000-0000-0000-0000-000000000005', 't1000000-0000-0000-0000-000000000002', 'a1000000-0000-0000-0000-000000000001', 'Aurora Nights - Electric Dreams [R]', 'セカンド・シングル「Electric Dreams」のレアカード', 'RARE', 3500, 80, 45, true),
-  ('c1000000-0000-0000-0000-000000000006', 't1000000-0000-0000-0000-000000000002', 'a1000000-0000-0000-0000-000000000001', 'Aurora Nights - Electric Dreams [SR]', 'セカンド・シングル「Electric Dreams」のスーパーレアカード', 'SUPER_RARE', 10000, 20, 8, true),
+  ('c1000000-0000-0000-0000-000000000004', 'e1000000-0000-0000-0000-000000000002', 'a1000000-0000-0000-0000-000000000001', 'Aurora Nights - Electric Dreams [N]', 'セカンド・シングル「Electric Dreams」のノーマルカード', 'NORMAL', 1500, NULL, 28, true),
+  ('c1000000-0000-0000-0000-000000000005', 'e1000000-0000-0000-0000-000000000002', 'a1000000-0000-0000-0000-000000000001', 'Aurora Nights - Electric Dreams [R]', 'セカンド・シングル「Electric Dreams」のレアカード', 'RARE', 3500, 80, 45, true),
+  ('c1000000-0000-0000-0000-000000000006', 'e1000000-0000-0000-0000-000000000002', 'a1000000-0000-0000-0000-000000000001', 'Aurora Nights - Electric Dreams [SR]', 'セカンド・シングル「Electric Dreams」のスーパーレアカード', 'SUPER_RARE', 10000, 20, 8, true),
 
 -- Stellar Echo - Debut Album
-  ('c1000000-0000-0000-0000-000000000007', 't1000000-0000-0000-0000-000000000003', 'a1000000-0000-0000-0000-000000000002', 'Stellar Echo - Starlight Symphony [N]', 'デビューアルバム「Starlight Symphony」のノーマルカード', 'NORMAL', 1200, NULL, 156, true),
-  ('c1000000-0000-0000-0000-000000000008', 't1000000-0000-0000-0000-000000000003', 'a1000000-0000-0000-0000-000000000002', 'Stellar Echo - Starlight Symphony [R]', 'デビューアルバム「Starlight Symphony」のレアカード', 'RARE', 2500, 200, 89, true),
-  ('c1000000-0000-0000-0000-000000000009', 't1000000-0000-0000-0000-000000000003', 'a1000000-0000-0000-0000-000000000002', 'Stellar Echo - Starlight Symphony [SR]', 'デビューアルバム「Starlight Symphony」のスーパーレアカード', 'SUPER_RARE', 6000, 50, 23, true),
+  ('c1000000-0000-0000-0000-000000000007', 'e1000000-0000-0000-0000-000000000003', 'a1000000-0000-0000-0000-000000000002', 'Stellar Echo - Starlight Symphony [N]', 'デビューアルバム「Starlight Symphony」のノーマルカード', 'NORMAL', 1200, NULL, 156, true),
+  ('c1000000-0000-0000-0000-000000000008', 'e1000000-0000-0000-0000-000000000003', 'a1000000-0000-0000-0000-000000000002', 'Stellar Echo - Starlight Symphony [R]', 'デビューアルバム「Starlight Symphony」のレアカード', 'RARE', 2500, 200, 89, true),
+  ('c1000000-0000-0000-0000-000000000009', 'e1000000-0000-0000-0000-000000000003', 'a1000000-0000-0000-0000-000000000002', 'Stellar Echo - Starlight Symphony [SR]', 'デビューアルバム「Starlight Symphony」のスーパーレアカード', 'SUPER_RARE', 6000, 50, 23, true),
 
 -- Neon Pulse - Live Tour
-  ('c1000000-0000-0000-0000-000000000010', 't1000000-0000-0000-0000-000000000004', 'a1000000-0000-0000-0000-000000000003', 'Neon Pulse - Cyber Rebellion [N]', 'ライブツアー2026記念ノーマルカード', 'NORMAL', 1800, NULL, 312, true),
-  ('c1000000-0000-0000-0000-000000000011', 't1000000-0000-0000-0000-000000000004', 'a1000000-0000-0000-0000-000000000003', 'Neon Pulse - Cyber Rebellion [R]', 'ライブツアー2026記念レアカード', 'RARE', 4000, 150, 98, true),
-  ('c1000000-0000-0000-0000-000000000012', 't1000000-0000-0000-0000-000000000004', 'a1000000-0000-0000-0000-000000000003', 'Neon Pulse - Cyber Rebellion [SR]', 'ライブツアー2026記念スーパーレアカード', 'SUPER_RARE', 12000, 30, 15, true),
+  ('c1000000-0000-0000-0000-000000000010', 'e1000000-0000-0000-0000-000000000004', 'a1000000-0000-0000-0000-000000000003', 'Neon Pulse - Cyber Rebellion [N]', 'ライブツアー2026記念ノーマルカード', 'NORMAL', 1800, NULL, 312, true),
+  ('c1000000-0000-0000-0000-000000000011', 'e1000000-0000-0000-0000-000000000004', 'a1000000-0000-0000-0000-000000000003', 'Neon Pulse - Cyber Rebellion [R]', 'ライブツアー2026記念レアカード', 'RARE', 4000, 150, 98, true),
+  ('c1000000-0000-0000-0000-000000000012', 'e1000000-0000-0000-0000-000000000004', 'a1000000-0000-0000-0000-000000000003', 'Neon Pulse - Cyber Rebellion [SR]', 'ライブツアー2026記念スーパーレアカード', 'SUPER_RARE', 12000, 30, 15, true),
 
 -- Digital Horizon - Club Edition
-  ('c1000000-0000-0000-0000-000000000013', 't1000000-0000-0000-0000-000000000005', 'a1000000-0000-0000-0000-000000000005', 'Digital Horizon - Future Bass [N]', 'クラブエディションのノーマルカード', 'NORMAL', 1000, NULL, 89, true),
-  ('c1000000-0000-0000-0000-000000000014', 't1000000-0000-0000-0000-000000000005', 'a1000000-0000-0000-0000-000000000005', 'Digital Horizon - Future Bass [R]', 'クラブエディションのレアカード', 'RARE', 2000, 300, 134, true),
-  ('c1000000-0000-0000-0000-000000000015', 't1000000-0000-0000-0000-000000000005', 'a1000000-0000-0000-0000-000000000005', 'Digital Horizon - Future Bass [SR]', 'クラブエディションのスーパーレアカード', 'SUPER_RARE', 5000, 100, 42, true);
+  ('c1000000-0000-0000-0000-000000000013', 'e1000000-0000-0000-0000-000000000005', 'a1000000-0000-0000-0000-000000000005', 'Digital Horizon - Future Bass [N]', 'クラブエディションのノーマルカード', 'NORMAL', 1000, NULL, 89, true),
+  ('c1000000-0000-0000-0000-000000000014', 'e1000000-0000-0000-0000-000000000005', 'a1000000-0000-0000-0000-000000000005', 'Digital Horizon - Future Bass [R]', 'クラブエディションのレアカード', 'RARE', 2000, 300, 134, true),
+  ('c1000000-0000-0000-0000-000000000015', 'e1000000-0000-0000-0000-000000000005', 'a1000000-0000-0000-0000-000000000005', 'Digital Horizon - Future Bass [SR]', 'クラブエディションのスーパーレアカード', 'SUPER_RARE', 5000, 100, 42, true);
 
 -- ============================================
 -- SAMPLE EXCLUSIVE CONTENTS

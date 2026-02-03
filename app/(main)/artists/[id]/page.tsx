@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { ArtistDetailClient } from './client';
 import type { Rarity } from '@/types/card';
-import type { Artist, Card, CardTemplate } from '@/types/database';
+import type { Artist, Card, CardVisual } from '@/types/database';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -15,7 +15,7 @@ interface CardData {
   price: number;
   totalSupply: number | null;
   currentSupply: number;
-  template: {
+  visual: {
     artistImageUrl: string;
     songTitle: string | null;
   };
@@ -49,7 +49,7 @@ async function getArtist(id: string): Promise<ArtistData | null> {
   // Fetch cards for this artist
   const { data: cardsData, error: cardsError } = await supabase
     .from('cards')
-    .select('id, rarity, price, total_supply, current_supply, template_id')
+    .select('id, rarity, price, total_supply, current_supply, visual_id')
     .eq('artist_id', id)
     .eq('is_active', true)
     .order('price', { ascending: true });
@@ -58,16 +58,16 @@ async function getArtist(id: string): Promise<ArtistData | null> {
     return null;
   }
 
-  const cards = cardsData as Pick<Card, 'id' | 'rarity' | 'price' | 'total_supply' | 'current_supply' | 'template_id'>[];
+  const cards = cardsData as Pick<Card, 'id' | 'rarity' | 'price' | 'total_supply' | 'current_supply' | 'visual_id'>[];
 
-  // Fetch template for the first card (all cards share the same template)
-  const { data: templateData } = await supabase
-    .from('card_templates')
+  // Fetch visual for the first card (all cards share the same visual)
+  const { data: visualData } = await supabase
+    .from('card_visuals')
     .select('artist_image_url, song_title')
-    .eq('id', cards[0].template_id)
+    .eq('id', cards[0].visual_id)
     .single();
 
-  const template = templateData as Pick<CardTemplate, 'artist_image_url' | 'song_title'> | null;
+  const visual = visualData as Pick<CardVisual, 'artist_image_url' | 'song_title'> | null;
 
   return {
     id: artist.id,
@@ -81,9 +81,9 @@ async function getArtist(id: string): Promise<ArtistData | null> {
       price: card.price,
       totalSupply: card.total_supply,
       currentSupply: card.current_supply,
-      template: {
-        artistImageUrl: template?.artist_image_url || artist.image_url || '',
-        songTitle: template?.song_title || null,
+      visual: {
+        artistImageUrl: visual?.artist_image_url || artist.image_url || '',
+        songTitle: visual?.song_title || null,
       },
     })),
   };

@@ -1,7 +1,8 @@
 'use client';
 
 import { cn } from '@/lib/utils/cn';
-import { type Rarity, RARITY_CONFIG } from '@/types/card';
+import { type Rarity } from '@/types/card';
+import { getDefaultFrameForRarity } from '@/config/frame-templates';
 import { RarityBadge } from './rarity-badge';
 import { formatSerialNumber } from '@/lib/utils/format';
 
@@ -30,73 +31,89 @@ export function ArtistCard({
   className,
   onClick,
 }: ArtistCardProps) {
-  const config = RARITY_CONFIG[rarity];
+  const frame = getDefaultFrameForRarity(rarity);
 
   return (
     <div
       className={cn(
-        'aspect-[3/4] rounded-xl overflow-hidden relative cursor-pointer',
-        'bg-gradient-to-b from-gray-800 to-gray-900',
-        'border-2 transition-transform hover:scale-105',
-        config.frameClass,
+        'trading-card',
+        frame.cssClass,
+        onClick && 'cursor-pointer',
         className
       )}
       onClick={onClick}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
     >
-      {/* Main Visual */}
-      <div className="relative h-[65%]">
-        <img
-          src={artistImageUrl}
-          alt={artistName}
-          className="w-full h-full object-cover"
-        />
-        {/* Hologram effect for SUPER_RARE */}
-        {rarity === 'SUPER_RARE' && (
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                'linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 45%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 55%, transparent 100%)',
-              backgroundSize: '200% 200%',
-              animation: 'holo-shine 3s ease-in-out infinite',
-            }}
+      {/* Inner card frame */}
+      <div className="trading-card-inner">
+        {/* Main Visual */}
+        <div className="trading-card-image">
+          <img
+            src={artistImageUrl}
+            alt={artistName}
+            className="w-full h-full object-cover"
           />
-        )}
-      </div>
 
-      {/* Info Section */}
-      <div className="p-3 space-y-1 bg-gray-900/80">
-        <p className="text-xs text-gray-400 uppercase tracking-wider truncate">
-          IDOL: {artistName}
-        </p>
-        {songTitle && (
-          <p className="text-xs text-gray-500 truncate">SONG: {songTitle}</p>
-        )}
+          {/* Top corner decoration for SR */}
+          {rarity === 'SUPER_RARE' && (
+            <div className="absolute top-1 right-1 sm:top-2 sm:right-2">
+              <div className="w-4 h-4 sm:w-6 sm:h-6 relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-yellow-300 to-amber-500 rounded-full animate-pulse" />
+                <div className="absolute inset-[2px] bg-gradient-to-br from-yellow-400 to-amber-600 rounded-full flex items-center justify-center">
+                  <span className="text-[6px] sm:text-[8px] font-black text-black">★</span>
+                </div>
+              </div>
+            </div>
+          )}
 
-        <div className="flex items-center justify-between text-xs pt-2">
-          <RarityBadge rarity={rarity} />
-          {serialNumber !== undefined && (
-            <span className="font-mono text-gray-400">
-              {formatSerialNumber(serialNumber, totalSupply)}
-            </span>
+          {/* Overlay text on image */}
+          <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3 z-10">
+            <p className="text-[8px] sm:text-[10px] text-gray-300 uppercase tracking-widest font-medium truncate">
+              IDOL
+            </p>
+            <p className="text-[10px] sm:text-sm font-bold text-white truncate leading-tight">
+              {artistName}
+            </p>
+            {songTitle && (
+              <p className="text-[8px] sm:text-[10px] text-gray-400 truncate mt-0.5">
+                SONG: {songTitle}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Info Section */}
+        <div className="trading-card-info">
+          <div className="flex items-center justify-between gap-1">
+            <RarityBadge rarity={rarity} size="sm" />
+            {serialNumber !== undefined && (
+              <span className="font-mono text-[8px] sm:text-[10px] text-gray-400 tracking-tight">
+                {formatSerialNumber(serialNumber, totalSupply)}
+              </span>
+            )}
+          </div>
+
+          {owned !== undefined && (
+            <div className="flex items-center justify-between mt-1">
+              <span className="text-[8px] sm:text-[10px] text-gray-500">Owned</span>
+              <span className="text-[8px] sm:text-[10px] text-white font-bold">{owned}</span>
+            </div>
+          )}
+
+          {/* Bonus indicator */}
+          {bonusContentUrl && (
+            <div className="mt-1 pt-1 border-t border-white/10">
+              <div className="flex items-center gap-1">
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-500 rounded-full animate-pulse" />
+                <span className="text-[7px] sm:text-[9px] text-blue-400 font-bold uppercase tracking-wider">
+                  Bonus Content
+                </span>
+              </div>
+            </div>
           )}
         </div>
-
-        {owned !== undefined && (
-          <p className="text-xs text-gray-500">Owned: {owned}</p>
-        )}
       </div>
-
-      {/* Bonus Content Indicator */}
-      {bonusContentUrl && (
-        <div className="absolute bottom-2 right-2">
-          <span className="text-[10px] text-blue-400 bg-blue-900/50 px-2 py-0.5 rounded">
-            BONUS
-          </span>
-        </div>
-      )}
     </div>
   );
 }

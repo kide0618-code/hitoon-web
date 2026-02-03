@@ -107,3 +107,75 @@ export async function createCheckoutSession({
 
   return session;
 }
+
+/**
+ * Cart item for checkout
+ */
+export interface CartCheckoutItem {
+  cardId: string;
+  cardName: string;
+  artistName: string;
+  imageUrl?: string;
+  price: number;
+  quantity: number;
+}
+
+/**
+ * Create checkout session for cart purchase (multiple items)
+ */
+export async function createCartCheckoutSession({
+  customerId,
+  items,
+  userId,
+  successUrl,
+  cancelUrl,
+}: {
+  customerId: string;
+  items: CartCheckoutItem[];
+  userId: string;
+  successUrl: string;
+  cancelUrl: string;
+}) {
+  // Build line items for each card in the cart
+  const lineItems = items.map((item) => ({
+    price_data: {
+      currency: 'jpy',
+      product_data: {
+        name: `${item.artistName} - ${item.cardName}`,
+        images: item.imageUrl ? [item.imageUrl] : [],
+        metadata: {
+          card_id: item.cardId,
+        },
+      },
+      unit_amount: item.price,
+    },
+    quantity: item.quantity,
+  }));
+
+  // Store items data as JSON in metadata (for webhook processing)
+  // Stripe has a 500 char limit per metadata value, so we store minimal info
+  const itemsMetadata = items.map((item) => ({
+    id: item.cardId,
+    qty: item.quantity,
+  }));
+
+  const session = await stripe.checkout.sessions.create({
+    customer: customerId,
+    payment_method_types: ['card'],
+    line_items: lineItems,
+    mode: 'payment',
+    success_url: successUrl,
+    cancel_url: cancelUrl,
+    metadata: {
+      user_id: userId,
+      // Store items as JSON (webhook will parse this)
+      cart_items: JSON.stringify(itemsMetadata),
+      is_cart_checkout: 'true',
+    },
+    payment_intent_data: {
+      setup_future_usage: 'on_session',
+    },
+  });
+
+  return session;
+}

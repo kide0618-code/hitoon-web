@@ -37,7 +37,7 @@ export async function GET(request: Request) {
           description,
           rarity,
           price,
-          template:card_templates (
+          visual:card_visuals (
             id,
             name,
             artist_image_url,

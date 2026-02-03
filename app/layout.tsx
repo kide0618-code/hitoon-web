@@ -2,6 +2,7 @@ import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { APP_CONFIG } from '@/constants/config';
+import { CartProvider } from '@/contexts/cart-context';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -50,7 +51,7 @@ export default function RootLayout({
   return (
     <html lang="ja" className={inter.variable}>
       <body className="font-sans antialiased bg-black text-white">
-        {children}
+        <CartProvider>{children}</CartProvider>
       </body>
     </html>
   );

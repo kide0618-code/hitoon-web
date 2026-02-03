@@ -36,7 +36,7 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/95"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -54,7 +54,7 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
       >
         {/* Header */}
         {title && (
-          <div className="flex items-center justify-between p-4 border-b border-gray-700 bg-gray-800/50">
+          <div className="flex items-center justify-between p-4 border-b border-gray-700 bg-gray-800">
             <h3 id="modal-title" className="text-lg font-bold text-white">
               {title}
             </h3>

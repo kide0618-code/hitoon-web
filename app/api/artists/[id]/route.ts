@@ -7,7 +7,7 @@ interface RouteContext {
 
 /**
  * GET /api/artists/:id
- * Get artist details with their card templates and cards
+ * Get artist details with their card visuals and cards
  */
 export async function GET(request: Request, context: RouteContext) {
   try {
@@ -35,9 +35,9 @@ export async function GET(request: Request, context: RouteContext) {
       );
     }
 
-    // Get templates with cards
-    const { data: templates, error: templatesError } = await supabase
-      .from('card_templates')
+    // Get visuals with cards
+    const { data: visuals, error: visualsError } = await supabase
+      .from('card_visuals')
       .select(`
         *,
         cards (
@@ -55,17 +55,17 @@ export async function GET(request: Request, context: RouteContext) {
       .eq('is_active', true)
       .order('created_at', { ascending: false });
 
-    if (templatesError) {
-      console.error('Error fetching templates:', templatesError);
+    if (visualsError) {
+      console.error('Error fetching visuals:', visualsError);
       return NextResponse.json(
-        { error: 'Failed to fetch templates' },
+        { error: 'Failed to fetch visuals' },
         { status: 500 }
       );
     }
 
     return NextResponse.json({
       ...(artist as Record<string, unknown>),
-      templates: templates || [],
+      visuals: visuals || [],
     });
   } catch (error) {
     console.error('Unexpected error:', error);

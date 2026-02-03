@@ -57,7 +57,7 @@ async function getCollection(): Promise<CollectionItem[]> {
           name,
           image_url
         ),
-        card_templates (
+        card_visuals (
           song_title
         )
       )
@@ -82,7 +82,7 @@ async function getCollection(): Promise<CollectionItem[]> {
       rarity: string;
       total_supply: number | null;
       artists: { id: string; name: string; image_url: string | null } | null;
-      card_templates: { song_title: string | null } | null;
+      card_visuals: { song_title: string | null } | null;
     } | null;
   };
   const purchases = purchasesData as PurchaseWithRelations[];
@@ -109,7 +109,7 @@ async function getCollection(): Promise<CollectionItem[]> {
     .map((purchase) => {
       const card = purchase.cards!;
       const artist = card.artists;
-      const template = card.card_templates;
+      const visual = card.card_visuals;
 
       return {
         purchaseId: purchase.id,
@@ -119,7 +119,7 @@ async function getCollection(): Promise<CollectionItem[]> {
         artistImageUrl:
           artist?.image_url ||
           'https://placehold.co/600x600/1e293b/60a5fa?text=Artist',
-        songTitle: template?.song_title || null,
+        songTitle: visual?.song_title || null,
         rarity: card.rarity as Rarity,
         serialNumber: purchase.serial_number,
         totalSupply: card.total_supply,
@@ -138,7 +138,7 @@ export default async function CollectionPage() {
       <div className="p-6 bg-gray-900 border-b border-gray-800 flex items-center gap-3 sticky top-0 z-10">
         <Layers className="text-blue-500" />
         <h1 className="text-2xl font-bold">Collection</h1>
-        <span className="text-gray-500 text-sm ml-auto">{collection.length} Cards</span>
+        {/* <span className="text-gray-500 text-sm ml-auto">{collection.length} Cards</span> */}
       </div>
 
       {/* Collection List */}

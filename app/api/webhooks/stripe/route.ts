@@ -64,26 +64,56 @@ export async function POST(request: Request) {
 
 /**
  * Handle successful checkout completion
- * - Uses atomic function for serial number assignment
- * - Idempotent via unique constraint on (session_id, card_id, serial_number)
+ * Supports both single card and cart checkout
  */
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
-  const { user_id, card_id, quantity } = session.metadata || {};
+  const { user_id, is_cart_checkout, cart_items, card_id, quantity } =
+    session.metadata || {};
 
-  if (!user_id || !card_id) {
-    console.error('Missing metadata in checkout session:', session.id);
+  if (!user_id) {
+    console.error('Missing user_id in checkout session:', session.id);
     return;
   }
 
-  const qty = parseInt(quantity || '1', 10);
   const supabaseAdmin = createAdminClient();
 
+  // Determine if this is a cart checkout or single card checkout
+  if (is_cart_checkout === 'true' && cart_items) {
+    // Cart checkout: process multiple items
+    await handleCartCheckoutCompleted(supabaseAdmin, session, user_id, cart_items);
+  } else if (card_id) {
+    // Single card checkout (legacy flow)
+    await handleSingleCardCheckoutCompleted(
+      supabaseAdmin,
+      session,
+      user_id,
+      card_id,
+      parseInt(quantity || '1', 10)
+    );
+  } else {
+    console.error('Invalid checkout session metadata:', session.id);
+  }
+
+  // Clear user's cart after successful purchase
+  await clearUserCart(supabaseAdmin, user_id);
+}
+
+/**
+ * Handle single card checkout completion
+ */
+async function handleSingleCardCheckoutCompleted(
+  supabaseAdmin: ReturnType<typeof createAdminClient>,
+  session: Stripe.Checkout.Session,
+  userId: string,
+  cardId: string,
+  qty: number
+) {
   // Use atomic function to increment supply and get serial numbers
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: supplyResult, error: supplyError } = await (supabaseAdmin as any).rpc(
     'increment_card_supply',
     {
-      p_card_id: card_id,
+      p_card_id: cardId,
       p_quantity: qty,
     }
   ) as { data: { new_supply: number; old_supply: number; card_price: number }[] | null; error: Error | null };
@@ -99,8 +129,8 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const purchases = [];
   for (let i = 0; i < qty; i++) {
     purchases.push({
-      user_id,
-      card_id,
+      user_id: userId,
+      card_id: cardId,
       serial_number: old_supply + i + 1,
       quantity_in_order: qty,
       price_paid: card_price,
@@ -125,11 +155,116 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   }
 
   // Update artist member count if this is user's first purchase from this artist
-  await updateArtistMemberCount(supabaseAdmin, user_id, card_id);
+  await updateArtistMemberCount(supabaseAdmin, userId, cardId);
 
   console.log(
-    `Checkout completed: ${qty} card(s) for user ${user_id}, session ${session.id}`
+    `Single card checkout completed: ${qty} card(s) for user ${userId}, session ${session.id}`
   );
+}
+
+/**
+ * Handle cart checkout completion (multiple items)
+ */
+async function handleCartCheckoutCompleted(
+  supabaseAdmin: ReturnType<typeof createAdminClient>,
+  session: Stripe.Checkout.Session,
+  userId: string,
+  cartItemsJson: string
+) {
+  let cartItems: { id: string; qty: number }[];
+  try {
+    cartItems = JSON.parse(cartItemsJson);
+  } catch {
+    console.error('Invalid cart_items JSON:', cartItemsJson);
+    return;
+  }
+
+  // Process each item in the cart
+  for (const item of cartItems) {
+    const cardId = item.id;
+    const qty = item.qty;
+
+    try {
+      // Use atomic function to increment supply and get serial numbers
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: supplyResult, error: supplyError } = await (supabaseAdmin as any).rpc(
+        'increment_card_supply',
+        {
+          p_card_id: cardId,
+          p_quantity: qty,
+        }
+      ) as { data: { new_supply: number; old_supply: number; card_price: number }[] | null; error: Error | null };
+
+      if (supplyError) {
+        console.error(`Error incrementing supply for card ${cardId}:`, supplyError);
+        continue;
+      }
+
+      const { old_supply, card_price } = supplyResult?.[0] || { old_supply: 0, card_price: 0 };
+
+      // Create purchase records for this card
+      const purchases = [];
+      for (let i = 0; i < qty; i++) {
+        purchases.push({
+          user_id: userId,
+          card_id: cardId,
+          serial_number: old_supply + i + 1,
+          quantity_in_order: qty,
+          price_paid: card_price,
+          stripe_checkout_session_id: session.id,
+          stripe_payment_intent_id: session.payment_intent as string,
+          status: 'completed',
+          purchased_at: new Date().toISOString(),
+        });
+      }
+
+      // Insert purchases (idempotent via unique constraint)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: purchaseError } = await (supabaseAdmin.from('purchases') as any)
+        .upsert(purchases, {
+          onConflict: 'stripe_checkout_session_id,card_id,serial_number',
+          ignoreDuplicates: true,
+        });
+
+      if (purchaseError) {
+        console.error(`Error creating purchases for card ${cardId}:`, purchaseError);
+        continue;
+      }
+
+      // Update artist member count if this is user's first purchase from this artist
+      await updateArtistMemberCount(supabaseAdmin, userId, cardId);
+    } catch (error) {
+      console.error(`Error processing cart item ${cardId}:`, error);
+    }
+  }
+
+  console.log(
+    `Cart checkout completed: ${cartItems.length} card type(s) for user ${userId}, session ${session.id}`
+  );
+}
+
+/**
+ * Clear user's cart after successful purchase
+ */
+async function clearUserCart(
+  supabaseAdmin: ReturnType<typeof createAdminClient>,
+  userId: string
+) {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error } = await (supabaseAdmin.from('carts') as any)
+      .delete()
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('Error clearing user cart:', error);
+    } else {
+      console.log(`Cart cleared for user ${userId}`);
+    }
+  } catch (error) {
+    // Non-critical operation, log and continue
+    console.error('Error clearing user cart:', error);
+  }
 }
 
 /**

@@ -95,7 +95,7 @@ export interface Database {
           updated_at?: string;
         };
       };
-      card_templates: {
+      card_visuals: {
         Row: {
           id: string;
           artist_id: string;
@@ -133,7 +133,7 @@ export interface Database {
       cards: {
         Row: {
           id: string;
-          template_id: string;
+          visual_id: string;
           artist_id: string;
           name: string;
           description: string | null;
@@ -147,7 +147,7 @@ export interface Database {
         };
         Insert: {
           id?: string;
-          template_id: string;
+          visual_id: string;
           artist_id: string;
           name: string;
           description?: string | null;
@@ -161,7 +161,7 @@ export interface Database {
         };
         Update: {
           id?: string;
-          template_id?: string;
+          visual_id?: string;
           artist_id?: string;
           name?: string;
           description?: string | null;
@@ -244,6 +244,29 @@ export interface Database {
           purchased_at?: string;
         };
       };
+      carts: {
+        Row: {
+          id: string;
+          user_id: string;
+          card_id: string;
+          quantity: number;
+          added_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          card_id: string;
+          quantity?: number;
+          added_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          card_id?: string;
+          quantity?: number;
+          added_at?: string;
+        };
+      };
     };
     Functions: {
       is_operator: {
@@ -261,6 +284,19 @@ export interface Database {
           card_price: number;
         }[];
       };
+      clear_user_cart: {
+        Args: {
+          p_user_id: string;
+        };
+        Returns: void;
+      };
+      merge_cart: {
+        Args: {
+          p_user_id: string;
+          p_items: Json;
+        };
+        Returns: void;
+      };
     };
   };
 }
@@ -269,22 +305,33 @@ export interface Database {
 export type Profile = Database['public']['Tables']['profiles']['Row'];
 export type Operator = Database['public']['Tables']['operators']['Row'];
 export type Artist = Database['public']['Tables']['artists']['Row'];
-export type CardTemplate = Database['public']['Tables']['card_templates']['Row'];
+export type CardVisual = Database['public']['Tables']['card_visuals']['Row'];
 export type Card = Database['public']['Tables']['cards']['Row'];
 export type ExclusiveContent = Database['public']['Tables']['exclusive_contents']['Row'];
 export type Purchase = Database['public']['Tables']['purchases']['Row'];
+export type Cart = Database['public']['Tables']['carts']['Row'];
 
 // Insert types
 export type ProfileInsert = Database['public']['Tables']['profiles']['Insert'];
 export type OperatorInsert = Database['public']['Tables']['operators']['Insert'];
 export type ArtistInsert = Database['public']['Tables']['artists']['Insert'];
-export type CardTemplateInsert = Database['public']['Tables']['card_templates']['Insert'];
+export type CardVisualInsert = Database['public']['Tables']['card_visuals']['Insert'];
 export type CardInsert = Database['public']['Tables']['cards']['Insert'];
 export type ExclusiveContentInsert = Database['public']['Tables']['exclusive_contents']['Insert'];
 export type PurchaseInsert = Database['public']['Tables']['purchases']['Insert'];
+export type CartInsert = Database['public']['Tables']['carts']['Insert'];
 
 // Update types
 export type ProfileUpdate = Database['public']['Tables']['profiles']['Update'];
 export type ArtistUpdate = Database['public']['Tables']['artists']['Update'];
-export type CardTemplateUpdate = Database['public']['Tables']['card_templates']['Update'];
+export type CardVisualUpdate = Database['public']['Tables']['card_visuals']['Update'];
 export type CardUpdate = Database['public']['Tables']['cards']['Update'];
+export type CartUpdate = Database['public']['Tables']['carts']['Update'];
+
+// Legacy aliases for backwards compatibility (deprecated)
+/** @deprecated Use CardVisual instead */
+export type CardTemplate = CardVisual;
+/** @deprecated Use CardVisualInsert instead */
+export type CardTemplateInsert = CardVisualInsert;
+/** @deprecated Use CardVisualUpdate instead */
+export type CardTemplateUpdate = CardVisualUpdate;

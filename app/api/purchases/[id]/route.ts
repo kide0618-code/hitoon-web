@@ -26,14 +26,14 @@ export async function GET(request: Request, context: RouteContext) {
       );
     }
 
-    // Get purchase with full card, template, artist info
+    // Get purchase with full card, visual, artist info
     const { data: purchase, error: purchaseError } = await supabase
       .from('purchases')
       .select(`
         *,
         card:cards (
           *,
-          template:card_templates (
+          visual:card_visuals (
             id,
             name,
             artist_image_url,

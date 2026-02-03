@@ -3,13 +3,13 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 /**
  * GET /api/cards
- * Get all active cards with template and artist info
+ * Get all active cards with visual and artist info
  */
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const artistId = searchParams.get('artistId');
-    const templateId = searchParams.get('templateId');
+    const visualId = searchParams.get('visualId');
     const rarity = searchParams.get('rarity');
 
     const supabase = await createServerSupabaseClient();
@@ -18,7 +18,7 @@ export async function GET(request: Request) {
       .from('cards')
       .select(`
         *,
-        template:card_templates (
+        visual:card_visuals (
           id,
           name,
           artist_image_url,
@@ -37,8 +37,8 @@ export async function GET(request: Request) {
       query = query.eq('artist_id', artistId);
     }
 
-    if (templateId) {
-      query = query.eq('template_id', templateId);
+    if (visualId) {
+      query = query.eq('visual_id', visualId);
     }
 
     if (rarity) {

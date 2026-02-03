@@ -36,25 +36,35 @@
 
 **デザイン例**: `/docs/card-image.png`
 
-### テンプレートシステム概要
+### ビジュアル & フレームシステム概要
 
-管理画面からアーティストの画像・ロゴを入れ込み、カードを自動生成するシステム。
+カードは「ビジュアル（コンテンツ）」と「フレーム（装飾）」の2層構造：
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    Template System                      │
-├─────────────────────────────────────────────────────────┤
-│  Input (管理画面)           │  Output (生成カード)       │
-│  ・アーティスト画像         │  ・NORMAL カード           │
-│  ・アーティスト名           │  ・RARE カード             │
-│  ・楽曲名 / タイトル        │  ・SUPER RARE カード       │
-│  ・レアリティ選択           │                            │
+│  CardVisual (DB: card_visuals)                          │
+│  - アーティスト画像                                       │
+│  - 楽曲名・サブタイトル                                   │
+│  - 管理画面から登録                                      │
+└─────────────────────────────────────────────────────────┘
+                            +
+┌─────────────────────────────────────────────────────────┐
+│  FrameTemplate (TypeScript: config/frame-templates.ts)  │
+│  - フレーム画像/CSS                                      │
+│  - エフェクト（ホログラム、スパークル等）                   │
+│  - レアリティごとに定義                                   │
+│  - エンジニアが管理                                      │
+└─────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────┐
+│  Card (表示時に合成)                                     │
+│  - CardVisual（中身） + FrameTemplate（装飾）             │
 └─────────────────────────────────────────────────────────┘
 ```
 
-### 1アーティスト = 3レアリティ構成
+### 1ビジュアル = 3レアリティ構成
 
-同じ画像データで、フレームテンプレートが異なる3パターンを提供:
+同じビジュアル（画像データ）で、フレームテンプレートが異なる3パターンを提供:
 
 | レアリティ | 価格帯 | フレーム特徴 | 発行上限 |
 |-----------|--------|-------------|---------|
@@ -87,32 +97,50 @@
 └─────────────────────────────┘
 ```
 
-### テンプレートレイヤー構造
+### カードレイヤー構造
 
 ```
-Layer 1: Background (レアリティ別グラデーション)
-Layer 2: Frame (レアリティ別デザイン)
-Layer 3: Artist Image (アップロード画像 - 管理画面から入力)
-Layer 4: Text Overlay (名前、楽曲名 - 管理画面から入力)
-Layer 5: Metadata (シリアル、レアリティバッジ - 自動生成)
-Layer 6: Effects (ホログラム、パーティクル - レアリティ依存)
+Layer 1: Background (レアリティ別グラデーション) ← FrameTemplate
+Layer 2: Frame (レアリティ別デザイン) ← FrameTemplate
+Layer 3: Artist Image (アップロード画像) ← CardVisual (DB)
+Layer 4: Text Overlay (名前、楽曲名) ← CardVisual (DB)
+Layer 5: Metadata (シリアル、レアリティバッジ) ← 自動生成
+Layer 6: Effects (ホログラム、パーティクル) ← FrameTemplate
 ```
 
-### Rarity Template Styles
+### Frame Template Styles (config/frame-templates.ts)
 
-| Rarity | Frame Color | Background | Effect |
-|--------|-------------|------------|--------|
-| NORMAL | `#4b5563` (gray-600) | Dark gradient | なし |
-| RARE | `#3b82f6` (blue-500) | Blue-purple gradient | Glow |
-| SUPER_RARE | `#fbbf24` (yellow-400) | Gold-pink gradient | Hologram + Sparkle |
-
-### 管理画面での入力項目
+| Rarity | Frame Color | Background | Effect | CSS Class |
+|--------|-------------|------------|--------|-----------|
+| NORMAL | `#4b5563` (gray-600) | Dark gradient | なし | `card-normal` |
+| RARE | `#3b82f6` (blue-500) | Blue-purple gradient | Glow | `card-rare` |
+| SUPER_RARE | `#fbbf24` (yellow-400) | Gold-pink gradient | Hologram + Sparkle | `card-super-rare` |
 
 ```typescript
-interface CardTemplateInput {
+// config/frame-templates.ts
+export type FrameTemplateId = 'classic-normal' | 'classic-rare' | 'classic-super-rare';
+
+export interface FrameTemplate {
+  id: FrameTemplateId;
+  name: string;
+  rarity: Rarity;
+  cssClass: string;
+  effects: string[];
+  borderColor: string;
+  glowColor?: string;
+}
+
+// レアリティからデフォルトフレームを取得
+export function getDefaultFrameForRarity(rarity: Rarity): FrameTemplate;
+```
+
+### 管理画面での入力項目 (CardVisual)
+
+```typescript
+interface CardVisualInput {
   // 必須
   artistId: string;
-  artistName: string;
+  name: string;               // ビジュアル名（管理用: "1st Album"等）
   artistImage: File;          // アップロード画像
 
   // 任意
@@ -210,26 +238,27 @@ interface CardTemplateInput {
 .rarity-badge-sr { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #000; }
 ```
 
-### Tailwind Component Example (テンプレート対応)
+### Tailwind Component Example (FrameTemplate使用)
 
 ```tsx
 // components/cards/ArtistCard.tsx
-type Rarity = 'NORMAL' | 'RARE' | 'SUPER_RARE';
+import { getDefaultFrameForRarity } from '@/config/frame-templates';
+import type { Rarity } from '@/types/card';
 
 interface ArtistCardProps {
   artistName: string;
-  artistImage: string;
-  songTitle?: string;
+  artistImageUrl: string;
+  songTitle?: string | null;
   rarity: Rarity;
-  serialNumber: number;
-  totalSupply: number | null;
+  serialNumber?: number;
+  totalSupply?: number | null;
   owned?: number;
-  bonusContentUrl?: string;
+  bonusContentUrl?: string | null;
 }
 
 function ArtistCard({
   artistName,
-  artistImage,
+  artistImageUrl,
   songTitle,
   rarity,
   serialNumber,
@@ -237,34 +266,24 @@ function ArtistCard({
   owned = 1,
   bonusContentUrl,
 }: ArtistCardProps) {
-  const frameStyles = {
-    NORMAL: 'border-gray-600 bg-gradient-to-b from-gray-800 to-gray-900',
-    RARE: 'border-blue-500 bg-gradient-to-b from-blue-900/50 to-purple-900/50 shadow-[0_0_20px_rgba(59,130,246,0.3)]',
-    SUPER_RARE: 'border-yellow-400 bg-gradient-to-b from-purple-900/50 via-pink-900/30 to-blue-900/50 shadow-[0_0_30px_rgba(251,191,36,0.5)]',
-  };
-
-  const badgeStyles = {
-    NORMAL: 'bg-gray-600',
-    RARE: 'bg-blue-500',
-    SUPER_RARE: 'bg-gradient-to-r from-yellow-400 to-amber-500 text-black',
-  };
-
-  const rarityLabel = { NORMAL: 'N', RARE: 'R', SUPER_RARE: 'SR' };
+  // フレームテンプレートから設定を取得
+  const frame = getDefaultFrameForRarity(rarity);
 
   return (
-    <div className={`
-      aspect-[3/4] rounded-xl overflow-hidden relative
-      border-2 ${frameStyles[rarity]}
-      transition-transform hover:scale-105
-    `}>
-      {/* Main Visual */}
+    <div className={cn(
+      'trading-card',
+      frame.cssClass,  // card-normal, card-rare, card-super-rare
+      'transition-transform hover:scale-105'
+    )}>
+      {/* Main Visual - CardVisual (DB) */}
       <div className="relative h-[70%]">
         <img
-          src={artistImage}
+          src={artistImageUrl}
           alt={artistName}
           className="w-full h-full object-cover"
         />
-        {rarity === 'SUPER_RARE' && (
+        {/* Effects - FrameTemplate */}
+        {frame.effects.includes('hologram') && (
           <div className="absolute inset-0 holo-effect pointer-events-none" />
         )}
       </div>
@@ -276,15 +295,17 @@ function ArtistCard({
           <p className="text-xs text-gray-500">SONG: {songTitle}</p>
         )}
         <div className="flex items-center justify-between text-xs pt-2">
-          <span className={`px-2 py-0.5 rounded text-white font-bold ${badgeStyles[rarity]}`}>
-            {rarityLabel[rarity]}
-          </span>
-          <span className="font-mono text-gray-400">
-            #{String(serialNumber).padStart(3, '0')}
-            {totalSupply && ` / ${totalSupply}`}
-          </span>
+          <RarityBadge rarity={rarity} />
+          {serialNumber !== undefined && (
+            <span className="font-mono text-gray-400">
+              #{String(serialNumber).padStart(3, '0')}
+              {totalSupply && ` / ${totalSupply}`}
+            </span>
+          )}
         </div>
-        <p className="text-xs text-gray-500">Owned: {owned}</p>
+        {owned !== undefined && (
+          <p className="text-xs text-gray-500">Owned: {owned}</p>
+        )}
       </div>
 
       {/* Bonus Content Link */}

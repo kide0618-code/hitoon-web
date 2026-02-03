@@ -91,6 +91,10 @@ hitoon-web/
 │   ├── purchase.ts
 │   └── index.ts                  # Re-exports
 │
+├── config/                       # Configuration
+│   ├── frame-templates.ts        # Frame template definitions (CSS classes, effects)
+│   └── index.ts                  # Re-exports
+│
 ├── constants/                    # Constants
 │   ├── routes.ts                 # Route definitions
 │   └── config.ts                 # App config
@@ -130,17 +134,37 @@ hitoon-web/
 | Entity | Description |
 |--------|-------------|
 | Artist | アーティスト情報（名前、説明、画像） |
-| CardTemplate | カードテンプレート（画像、楽曲名、ボーナスコンテンツ） |
+| CardVisual | カードビジュアル（アーティスト画像、楽曲名）- DB管理 |
+| FrameTemplate | フレームテンプレート（枠・エフェクト）- TypeScript Config管理 |
 | Card | デジタルトレカ（価格、レアリティ、限定数） |
 | ExclusiveContent | 購入者限定コンテンツ（動画、音楽、画像） |
 | User | 購入者（Email/Password, Google OAuth） |
 | Purchase | 購入履歴（Stripe連携） |
 
-### Card Template System
+### Card Visual & Frame System
 
 **Design Reference**: `/docs/card-image.png`
 
-管理画面からテンプレートを作成し、1アーティストにつき3つのレアリティカードを自動生成。
+カードは「ビジュアル（コンテンツ）」と「フレーム（装飾）」の2層構造：
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  CardVisual (DB: card_visuals)                          │
+│  - アーティスト画像                                       │
+│  - 楽曲名・サブタイトル                                   │
+│  - 管理画面から登録                                      │
+└─────────────────────────────────────────────────────────┘
+                            +
+┌─────────────────────────────────────────────────────────┐
+│  FrameTemplate (TypeScript: config/frame-templates.ts)  │
+│  - フレーム画像/CSS                                      │
+│  - エフェクト（ホログラム、スパークル等）                   │
+│  - レアリティごとに定義                                   │
+│  - エンジニアが管理                                      │
+└─────────────────────────────────────────────────────────┘
+```
+
+管理画面からビジュアルを作成し、1ビジュアルにつき3つのレアリティカードを自動生成。
 
 | レアリティ | Code | 価格帯 | 発行上限 |
 |-----------|------|-------|---------|

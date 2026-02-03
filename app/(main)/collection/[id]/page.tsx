@@ -9,7 +9,7 @@ import { ROUTES } from '@/constants/routes';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { formatDate, formatPrice, formatSerialNumber } from '@/lib/utils/format';
 import type { Rarity } from '@/types/card';
-import type { Purchase, Card, Artist, CardTemplate, ExclusiveContent as DbExclusiveContent } from '@/types/database';
+import type { Purchase, Card, Artist, CardVisual, ExclusiveContent as DbExclusiveContent } from '@/types/database';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -77,7 +77,7 @@ async function getPurchaseDetail(id: string): Promise<PurchaseDetail | null> {
   // Fetch card
   const { data: cardData } = await supabase
     .from('cards')
-    .select('id, rarity, total_supply, artist_id, template_id')
+    .select('id, rarity, total_supply, artist_id, visual_id')
     .eq('id', purchase.card_id)
     .single();
 
@@ -85,7 +85,7 @@ async function getPurchaseDetail(id: string): Promise<PurchaseDetail | null> {
     return null;
   }
 
-  const card = cardData as Pick<Card, 'id' | 'rarity' | 'total_supply' | 'artist_id' | 'template_id'>;
+  const card = cardData as Pick<Card, 'id' | 'rarity' | 'total_supply' | 'artist_id' | 'visual_id'>;
 
   // Fetch artist
   const { data: artistData } = await supabase
@@ -96,14 +96,14 @@ async function getPurchaseDetail(id: string): Promise<PurchaseDetail | null> {
 
   const artist = artistData as Pick<Artist, 'id' | 'name' | 'image_url'> | null;
 
-  // Fetch template
-  const { data: templateData } = await supabase
-    .from('card_templates')
+  // Fetch visual
+  const { data: visualData } = await supabase
+    .from('card_visuals')
     .select('artist_image_url, song_title')
-    .eq('id', card.template_id)
+    .eq('id', card.visual_id)
     .single();
 
-  const template = templateData as Pick<CardTemplate, 'artist_image_url' | 'song_title'> | null;
+  const visual = visualData as Pick<CardVisual, 'artist_image_url' | 'song_title'> | null;
 
   // Fetch exclusive contents
   const { data: contentsData } = await supabase
@@ -124,8 +124,8 @@ async function getPurchaseDetail(id: string): Promise<PurchaseDetail | null> {
       rarity: card.rarity as Rarity,
       totalSupply: card.total_supply,
       template: {
-        artistImageUrl: template?.artist_image_url || artist?.image_url || '',
-        songTitle: template?.song_title || null,
+        artistImageUrl: visual?.artist_image_url || artist?.image_url || '',
+        songTitle: visual?.song_title || null,
       },
     },
     artist: {
