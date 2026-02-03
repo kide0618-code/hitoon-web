@@ -1,0 +1,165 @@
+# クライアント側セットアップ依頼事項
+
+こちらで Supabase（データベース・認証）は設定して共有します。
+以下の項目についてクライアント様にて対応をお願いします。
+
+---
+
+## 1. Stripe アカウント設定（必須）
+
+### 1.1 アカウント作成
+1. [Stripe](https://stripe.com/jp) にアクセス
+2. 「今すぐ始める」からアカウント作成
+3. メールアドレス認証を完了
+
+### 1.2 本番利用申請
+1. Stripe ダッシュボード → 「本番環境利用の申請」
+2. 以下の情報を入力:
+   - 事業者情報（法人名/個人名）
+   - 住所
+   - 銀行口座情報（売上入金先）
+   - 本人確認書類
+
+> ⚠️ 本番申請は審査に数日かかる場合があります。早めに申請してください。
+
+### 1.3 API キーの取得
+1. Stripe ダッシュボード → 「開発者」→「APIキー」
+2. 以下の2つのキーをコピーして共有してください:
+
+| キー名 | 用途 | 形式 |
+|--------|------|------|
+| 公開可能キー | フロントエンド用 | `pk_test_xxx` / `pk_live_xxx` |
+| シークレットキー | サーバー用（秘密） | `sk_test_xxx` / `sk_live_xxx` |
+
+> テスト環境用（`_test_`）と本番環境用（`_live_`）の両方をお願いします。
+
+### 1.4 Webhook 設定
+1. Stripe ダッシュボード → 「開発者」→「Webhook」
+2. 「エンドポイントを追加」をクリック
+3. 以下を設定:
+
+| 項目 | 値 |
+|------|-----|
+| エンドポイント URL | `https://your-domain.com/api/webhooks/stripe` |
+| リッスンするイベント | `checkout.session.completed`, `payment_intent.payment_failed` |
+
+4. 作成後、「署名シークレット」をコピーして共有してください:
+   - 形式: `whsec_xxx`
+
+### 1.5 決済手段の有効化（任意）
+Stripe ダッシュボード → 「設定」→「決済手段」で以下を有効化:
+- [x] クレジットカード（デフォルトで有効）
+- [ ] Apple Pay（推奨）
+- [ ] Google Pay（推奨）
+- [ ] Link（Stripe の高速決済）
+
+---
+
+## 2. Google OAuth 設定（任意・Googleログイン使用時）
+
+### 2.1 Google Cloud Console 設定
+1. [Google Cloud Console](https://console.cloud.google.com/) にアクセス
+2. 新しいプロジェクトを作成
+3. 「APIとサービス」→「OAuth同意画面」を設定:
+   - ユーザータイプ: 外部
+   - アプリ名: HITOON
+   - サポートメール: 運営メールアドレス
+
+### 2.2 OAuth クライアント ID 作成
+1. 「認証情報」→「認証情報を作成」→「OAuthクライアントID」
+2. アプリケーションの種類: ウェブアプリケーション
+3. 承認済みリダイレクト URI:
+   ```
+   https://your-supabase-project.supabase.co/auth/v1/callback
+   ```
+4. 以下を共有してください:
+   - クライアント ID
+   - クライアントシークレット
+
+---
+
+## 3. Vercel デプロイ設定（本番公開時）
+
+### 3.1 Vercel アカウント
+1. [Vercel](https://vercel.com/) でアカウント作成
+2. GitHub リポジトリと連携
+
+### 3.2 環境変数設定
+Vercel ダッシュボード → プロジェクト → Settings → Environment Variables に以下を追加:
+
+| 変数名 | 値 | 備考 |
+|--------|-----|------|
+| `NEXT_PUBLIC_SUPABASE_URL` | （こちらから共有） | |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | （こちらから共有） | |
+| `SUPABASE_SERVICE_ROLE_KEY` | （こちらから共有） | |
+| `STRIPE_SECRET_KEY` | `sk_live_xxx` | Stripeから取得 |
+| `STRIPE_WEBHOOK_SECRET` | `whsec_xxx` | Stripeから取得 |
+| `NEXT_PUBLIC_APP_URL` | `https://your-domain.com` | 本番ドメイン |
+
+---
+
+## 4. ドメイン設定（任意）
+
+カスタムドメインを使用する場合:
+
+### 4.1 ドメイン取得
+- お名前.com、Google Domains、Cloudflare 等で取得
+
+### 4.2 DNS 設定
+Vercel にドメインを追加後、表示される DNS レコードを設定:
+- CNAME または A レコード
+
+---
+
+## 5. 共有いただきたい情報まとめ
+
+### 必須
+| 項目 | 形式 |
+|------|------|
+| Stripe 公開可能キー（テスト） | `pk_test_xxx` |
+| Stripe シークレットキー（テスト） | `sk_test_xxx` |
+| Stripe Webhook シークレット（テスト） | `whsec_xxx` |
+| Stripe 公開可能キー（本番） | `pk_live_xxx` |
+| Stripe シークレットキー（本番） | `sk_live_xxx` |
+| Stripe Webhook シークレット（本番） | `whsec_xxx` |
+
+### 任意（使用する場合）
+| 項目 | 形式 |
+|------|------|
+| Google OAuth クライアント ID | `xxx.apps.googleusercontent.com` |
+| Google OAuth クライアントシークレット | `GOCSPX-xxx` |
+| 本番ドメイン | `hitoon.example.com` |
+
+---
+
+## 6. タイムライン目安
+
+| タスク | 所要時間 |
+|--------|----------|
+| Stripe アカウント作成 | 10分 |
+| Stripe 本番申請 | 30分 + 審査 1-3営業日 |
+| Stripe APIキー取得 | 5分 |
+| Stripe Webhook 設定 | 10分 |
+| Google OAuth 設定 | 20分 |
+| Vercel 設定 | 15分 |
+
+---
+
+## 7. 注意事項
+
+1. **APIキーは絶対に公開しないでください**
+   - GitHubにプッシュしない
+   - Slackの公開チャンネルに投稿しない
+   - 安全な方法（DM、パスワード付きファイル等）で共有
+
+2. **テスト環境から始めてください**
+   - 最初は `_test_` キーで動作確認
+   - 本番キーは公開直前に設定
+
+3. **Stripe の本番申請は早めに**
+   - 審査に時間がかかることがあります
+   - 開発と並行して進めることを推奨
+
+---
+
+ご不明点があればお気軽にお問い合わせください。
