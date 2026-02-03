@@ -94,6 +94,19 @@ Google Workspaceなどでカスタムドメインのメールアドレスをお�
 
 <https://myaccount.google.com/apppasswords>
 
+
 ***
+
+## 6. 本番環境URL・ドメインについて
+
+| 項目 | 現在の設定 |
+|------|-----------|
+| 本番URL | https://hitoon-music.vercel.app |
+
+* 独自ドメイン（例: hitoon.jp）を使用する予定はありますか？
+* 使用する場合、ドメインの取得・DNS設定はどちらで行いますか？
+
+***
+
 
 お手隙の際にご確認をお願いいたします。
