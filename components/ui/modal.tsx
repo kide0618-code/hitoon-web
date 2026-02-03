@@ -34,9 +34,9 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
+      {/* Backdrop with blur */}
       <div
-        className="absolute inset-0 bg-black/95"
+        className="absolute inset-0 bg-black/80 backdrop-blur-md"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -45,7 +45,7 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
       <div
         className={cn(
           'relative w-full max-w-md bg-gray-900 rounded-2xl shadow-2xl border border-gray-700 overflow-hidden',
-          'animate-in fade-in zoom-in duration-200',
+          'animate-in fade-in slide-in-from-bottom-4 duration-300',
           className
         )}
         role="dialog"

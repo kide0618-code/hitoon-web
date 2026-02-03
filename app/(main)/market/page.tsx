@@ -79,10 +79,10 @@ export default async function MarketPage() {
               <Link
                 key={artist.id}
                 href={ROUTES.ARTIST(artist.id)}
-                className="block"
+                className="block group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-xl"
               >
-                <div className="bg-gray-900 rounded-xl border border-gray-800 p-3 flex items-center gap-4 hover:border-blue-500/50 transition-colors">
-                  <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-gray-700 flex-shrink-0">
+                <div className="bg-surface-raised rounded-xl border border-gray-800 p-4 flex items-center gap-4 hover:border-blue-500/50 transition-all group-hover:shadow-card">
+                  <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gray-700 flex-shrink-0 group-hover:border-blue-500/50 transition-colors">
                     <img
                       src={artist.imageUrl || 'https://placehold.co/600x600/1e293b/60a5fa?text=Artist'}
                       alt={artist.name}
@@ -95,17 +95,19 @@ export default async function MarketPage() {
                       <Users size={12} className="mr-1" />
                       {artist.memberCount} Members
                     </div>
-                    <p className="text-blue-400 font-bold">
+                    <p className="text-lg text-blue-400 font-bold">
                       {formatPrice(artist.lowestPrice)}〜
                     </p>
                   </div>
-                  <div className="text-gray-600">→</div>
+                  <div className="text-gray-600 group-hover:text-blue-400 transition-colors text-xl">→</div>
                 </div>
               </Link>
             ))
           ) : (
-            <div className="text-center py-20 text-gray-500">
-              <p>アーティストがまだ登録されていません。</p>
+            <div className="text-center py-20">
+              <Users className="mx-auto mb-4 text-gray-600" size={48} />
+              <p className="text-gray-500 mb-2">アーティストがまだ登録されていません。</p>
+              <p className="text-xs text-gray-600">新しいアーティストを準備中です</p>
             </div>
           )}
         </div>

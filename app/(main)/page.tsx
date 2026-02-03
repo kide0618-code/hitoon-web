@@ -63,14 +63,17 @@ export default async function HomePage() {
 
   return (
     <PageContainer>
-      {/* Hero Section */}
-      <div className="relative h-96 w-full overflow-hidden bg-gray-900">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 via-black to-purple-900 opacity-60" />
-        <div className="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-black via-transparent to-transparent">
-          <h1 className="text-4xl font-extrabold mb-3">{APP_CONFIG.tagline}</h1>
+      {/* Hero Section with animated gradient */}
+      <div className="relative h-96 w-full overflow-hidden bg-surface">
+        {/* Animated gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 via-black to-purple-900 animate-gradient-slow" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/30 via-transparent to-transparent" />
+        <div className="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-black via-black/50 to-transparent">
+          <p className="text-sm font-bold text-blue-400 tracking-widest uppercase mb-2">HITOON</p>
+          <h1 className="text-3xl sm:text-4xl font-extrabold mb-4 leading-tight">{APP_CONFIG.tagline}</h1>
           <Link
             href={ROUTES.MARKET}
-            className="w-full sm:w-auto bg-white text-black text-center font-bold py-3 px-8 rounded-full mt-4 inline-block hover:bg-gray-100 transition-colors"
+            className="w-full sm:w-auto bg-white text-black text-center font-bold py-3 px-8 rounded-full mt-2 inline-block hover:bg-gray-100 transition-all hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           >
             アーティストを探す
           </Link>
@@ -89,30 +92,32 @@ export default async function HomePage() {
               <Link
                 key={artist.id}
                 href={ROUTES.ARTIST(artist.id)}
-                className="block group"
+                className="block group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-xl"
               >
-                <div className="flex items-center gap-4 bg-gray-900/50 p-3 rounded-xl border border-gray-800 hover:border-blue-500/50 transition-colors">
+                <div className="flex items-center gap-4 bg-surface-raised p-4 rounded-xl border border-gray-800 hover:border-blue-500/50 transition-all group-hover:shadow-glow-blue/20">
                   <img
                     src={artist.imageUrl || 'https://placehold.co/600x600/1e293b/60a5fa?text=Artist'}
                     alt={artist.name}
-                    className="w-16 h-16 rounded-full object-cover"
+                    className="w-20 h-20 rounded-full object-cover border-2 border-gray-700 group-hover:border-blue-500/50 transition-colors"
                   />
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-sm truncate">{artist.name}</h3>
+                    <h3 className="font-bold text-base truncate">{artist.name}</h3>
                     <p className="text-xs text-gray-500">
                       {artist.memberCount} Members
                     </p>
                   </div>
-                  <div className="text-sm font-bold text-blue-400">
+                  <div className="text-base font-bold text-blue-400">
                     {formatPrice(artist.lowestPrice)}〜
                   </div>
                 </div>
               </Link>
             ))
           ) : (
-            <p className="text-gray-500 text-center py-8">
-              Coming soon...
-            </p>
+            <div className="text-center py-12">
+              <Sparkles className="mx-auto mb-4 text-gray-600" size={48} />
+              <p className="text-gray-500 mb-2">Coming soon...</p>
+              <p className="text-xs text-gray-600">新しいアーティストを準備中です</p>
+            </div>
           )}
         </div>
       </section>

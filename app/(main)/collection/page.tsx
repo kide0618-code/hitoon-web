@@ -143,59 +143,76 @@ export default async function CollectionPage() {
 
       {/* Collection List */}
       <div className="p-4 space-y-4">
-        {collection.map((item) => (
-          <Link
-            key={item.purchaseId}
-            href={ROUTES.COLLECTION_DETAIL(item.purchaseId)}
-            className="block group"
-          >
-            <div className="bg-gray-900 rounded-xl p-4 flex items-center gap-4 border border-gray-800 group-hover:border-blue-500/50 transition-all shadow-lg active:scale-[0.98]">
-              {/* Artist Image */}
-              <div className="relative flex-shrink-0">
-                <img
-                  src={item.artistImageUrl}
-                  alt={item.artistName}
-                  className="w-16 h-16 rounded-full object-cover border-2 border-blue-500/30"
-                />
-                <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-0.5 border border-black">
-                  <ShieldCheck size={12} className="text-white" />
-                </div>
-              </div>
+        {collection.map((item) => {
+          // Rarity-based accent colors
+          const rarityAccent = {
+            NORMAL: 'border-l-rarity-normal',
+            RARE: 'border-l-rarity-rare',
+            SUPER_RARE: 'border-l-rarity-sr',
+          }[item.rarity] || 'border-l-gray-500';
 
-              {/* Info */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <h3 className="font-bold truncate">{item.artistName}</h3>
-                  <RarityBadge rarity={item.rarity} />
-                </div>
-                <p className="text-[10px] text-gray-500 uppercase tracking-widest font-mono">
-                  {formatSerialNumber(item.serialNumber)}
-                  {item.totalSupply && ` / ${item.totalSupply}`}
-                </p>
-                {item.hasExclusiveContent && (
-                  <div className="mt-2 inline-block px-2 py-0.5 bg-blue-900/30 border border-blue-800/50 rounded text-[10px] text-blue-400 font-bold">
-                    CONTENT UNLOCKED
+          return (
+            <Link
+              key={item.purchaseId}
+              href={ROUTES.COLLECTION_DETAIL(item.purchaseId)}
+              className="block group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-xl"
+            >
+              <div className={`bg-surface-raised rounded-xl p-4 flex items-center gap-4 border border-gray-800 border-l-4 ${rarityAccent} group-hover:border-blue-500/50 group-hover:border-l-blue-500 transition-all shadow-card active:scale-[0.98]`}>
+                {/* Artist Image */}
+                <div className="relative flex-shrink-0">
+                  <img
+                    src={item.artistImageUrl}
+                    alt={item.artistName}
+                    className="w-16 h-16 rounded-full object-cover border-2 border-blue-500/30 group-hover:border-blue-500/60 transition-colors"
+                  />
+                  <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-0.5 border border-black">
+                    <ShieldCheck size={12} className="text-white" />
                   </div>
-                )}
-              </div>
+                </div>
 
-              {/* Arrow */}
-              <div className="text-gray-600 group-hover:text-blue-400 transition-colors">
-                <ArrowRight size={20} />
+                {/* Info */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <h3 className="font-bold truncate">{item.artistName}</h3>
+                    <RarityBadge rarity={item.rarity} />
+                  </div>
+                  <p className="text-2xs text-gray-500 uppercase tracking-widest font-mono">
+                    {formatSerialNumber(item.serialNumber)}
+                    {item.totalSupply && ` / ${item.totalSupply}`}
+                  </p>
+                  {item.hasExclusiveContent && (
+                    <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 bg-gradient-to-r from-blue-900/40 to-indigo-900/40 border border-blue-500/30 rounded-full text-2xs text-blue-300 font-bold">
+                      <ShieldCheck size={10} />
+                      CONTENT UNLOCKED
+                    </div>
+                  )}
+                </div>
+
+                {/* Arrow */}
+                <div className="text-gray-600 group-hover:text-blue-400 transition-colors">
+                  <ArrowRight size={20} />
+                </div>
               </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          );
+        })}
 
         {collection.length === 0 && (
-          <div className="text-center py-20 text-gray-500">
-            <Layers size={48} className="mx-auto mb-4 opacity-50" />
-            <p>まだコレクションがありません。</p>
+          <div className="text-center py-20">
+            <div className="relative w-24 h-24 mx-auto mb-6">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full animate-pulse" />
+              <div className="absolute inset-2 bg-surface-raised rounded-full flex items-center justify-center">
+                <Layers size={40} className="text-gray-500" />
+              </div>
+            </div>
+            <p className="text-lg font-bold text-gray-400 mb-2">コレクションは空です</p>
+            <p className="text-sm text-gray-500 mb-6">お気に入りのアーティストのカードを集めましょう</p>
             <Link
               href={ROUTES.MARKET}
-              className="text-blue-400 hover:underline mt-2 inline-block"
+              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-full transition-all hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
-              カードを探す →
+              カードを探す
+              <ArrowRight size={16} />
             </Link>
           </div>
         )}

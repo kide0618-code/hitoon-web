@@ -93,12 +93,12 @@ export default function PurchaseAgreement({ cardId, price, artistName, artistIma
           </div>
         </div>
 
-        {/* Purchase Button */}
+        {/* Purchase Button - Secondary outline style */}
         <button
           onClick={() => setIsOpen(true)}
-          className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-full flex items-center justify-center gap-2 shadow-lg transition-transform hover:scale-[1.02]"
+          className="w-full bg-transparent border-2 border-blue-500 text-blue-400 hover:bg-blue-500/10 font-bold py-3 rounded-full flex items-center justify-center gap-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
-          <Wallet size={20} /> 購入へ進む ({formatPrice(totalPrice)})
+          <Wallet size={20} /> 今すぐ購入 ({formatPrice(totalPrice)})
         </button>
       </div>
     );
@@ -139,8 +139,8 @@ export default function PurchaseAgreement({ cardId, price, artistName, artistIma
           {/* Card Preview & Order Summary */}
           <div className="mb-5 bg-gradient-to-br from-blue-900/40 to-indigo-900/40 border border-blue-500/30 p-4 rounded-xl">
             <div className="flex gap-4">
-              {/* Card Preview */}
-              <div className="w-20 flex-shrink-0">
+              {/* Card Preview - Using ArtistCard component */}
+              <div className="w-24 sm:w-28 flex-shrink-0">
                 <ArtistCard
                   artistName={artistName}
                   artistImageUrl={artistImageUrl}
@@ -149,10 +149,10 @@ export default function PurchaseAgreement({ cardId, price, artistName, artistIma
                 />
               </div>
               {/* Order Details */}
-              <div className="flex-1 flex flex-col justify-center">
-                <p className="text-white font-bold text-base mb-1">{artistName}</p>
-                {songTitle && <p className="text-gray-400 text-xs mb-2">{songTitle}</p>}
-                <div className="flex items-baseline gap-2">
+              <div className="flex-1 flex flex-col justify-center min-w-0">
+                <p className="text-white font-bold text-base mb-1 truncate">{artistName}</p>
+                {songTitle && <p className="text-gray-400 text-xs mb-2 truncate">{songTitle}</p>}
+                <div className="flex items-baseline gap-2 flex-wrap">
                   <span className="text-xl font-bold text-white">{quantity}枚</span>
                   <span className="text-gray-400">×</span>
                   <span className="text-blue-300">{formatPrice(price)}</span>

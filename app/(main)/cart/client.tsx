@@ -13,7 +13,7 @@ import {
   ShoppingBag,
 } from 'lucide-react';
 import { PageContainer } from '@/components/layout/page-container';
-import { RarityBadge } from '@/components/cards/rarity-badge';
+import { ArtistCard } from '@/components/cards/artist-card';
 import { useCart } from '@/contexts/cart-context';
 import { ROUTES } from '@/constants/routes';
 import { formatPrice } from '@/lib/utils/format';
@@ -35,27 +35,28 @@ function CartItem({
     item.card.currentSupply >= item.card.totalSupply;
 
   return (
-    <div className="bg-gray-900 rounded-xl p-4 border border-gray-800">
+    <div className="bg-surface-raised rounded-xl p-4 border border-gray-800">
       <div className="flex gap-4">
-        {/* Card Image */}
+        {/* Card Preview - Using ArtistCard component */}
         <Link
           href={ROUTES.ARTIST(item.card.artist.id)}
-          className="flex-shrink-0"
+          className="flex-shrink-0 w-24 sm:w-28"
         >
-          <img
-            src={
+          <ArtistCard
+            artistName={item.card.artist.name}
+            artistImageUrl={
               item.card.visual.artistImageUrl ||
               'https://placehold.co/120x160/1e293b/60a5fa?text=Card'
             }
-            alt={item.card.name}
-            className="w-20 h-28 sm:w-24 sm:h-32 object-cover rounded-lg border border-gray-700"
+            rarity={item.card.rarity}
+            songTitle={item.card.visual.songTitle}
           />
         </Link>
 
         {/* Card Info */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 flex flex-col">
           <div className="flex items-start justify-between gap-2">
-            <div>
+            <div className="min-w-0">
               <h3 className="font-bold text-sm sm:text-base truncate">
                 {item.card.artist.name}
               </h3>
@@ -64,14 +65,11 @@ function CartItem({
                   {item.card.visual.songTitle}
                 </p>
               )}
-              <div className="mt-1">
-                <RarityBadge rarity={item.card.rarity} />
-              </div>
             </div>
             <button
               onClick={onRemove}
               disabled={isUpdating}
-              className="p-2 text-gray-500 hover:text-red-400 transition-colors disabled:opacity-50"
+              className="p-2 text-gray-500 hover:text-red-400 transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded-lg"
               aria-label="Remove from cart"
             >
               <Trash2 size={18} />
@@ -82,9 +80,12 @@ function CartItem({
             <p className="text-xs text-red-400 font-bold mt-2">SOLD OUT</p>
           )}
 
+          {/* Spacer */}
+          <div className="flex-1" />
+
           {/* Price & Quantity */}
           <div className="flex items-center justify-between mt-3">
-            <p className="font-bold text-blue-400">
+            <p className="font-bold text-lg text-blue-400">
               {formatPrice(item.card.price)}
             </p>
 
@@ -93,17 +94,28 @@ function CartItem({
               <button
                 onClick={() => onUpdateQuantity(item.quantity - 1)}
                 disabled={item.quantity <= 1 || isUpdating}
-                className="w-7 h-7 flex items-center justify-center rounded bg-gray-700 text-white hover:bg-gray-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-7 h-7 flex items-center justify-center rounded bg-gray-700 text-white hover:bg-gray-600 transition disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 <Minus size={14} />
               </button>
-              <span className="text-sm font-bold w-6 text-center">
-                {item.quantity}
-              </span>
+              <input
+                type="number"
+                min={1}
+                max={10}
+                value={item.quantity}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value, 10);
+                  if (!isNaN(val) && val >= 1 && val <= 10) {
+                    onUpdateQuantity(val);
+                  }
+                }}
+                disabled={isUpdating || isSoldOut}
+                className="w-10 h-7 text-center text-sm font-bold text-white bg-transparent border-none outline-none disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
               <button
                 onClick={() => onUpdateQuantity(item.quantity + 1)}
                 disabled={item.quantity >= 10 || isUpdating || isSoldOut}
-                className="w-7 h-7 flex items-center justify-center rounded bg-blue-600 text-white hover:bg-blue-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-7 h-7 flex items-center justify-center rounded bg-blue-600 text-white hover:bg-blue-500 transition disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 <Plus size={14} />
               </button>

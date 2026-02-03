@@ -33,15 +33,23 @@ export function ArtistCard({
 }: ArtistCardProps) {
   const frame = getDefaultFrameForRarity(rarity);
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (onClick && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
   return (
     <div
       className={cn(
         'trading-card',
         frame.cssClass,
-        onClick && 'cursor-pointer',
+        onClick && 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black',
         className
       )}
       onClick={onClick}
+      onKeyDown={handleKeyDown}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
     >
@@ -69,14 +77,14 @@ export function ArtistCard({
 
           {/* Overlay text on image */}
           <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3 z-10">
-            <p className="text-[8px] sm:text-[10px] text-gray-300 uppercase tracking-widest font-medium truncate">
+            <p className="text-2xs sm:text-xs text-gray-300 uppercase tracking-widest font-medium truncate">
               IDOL
             </p>
-            <p className="text-[10px] sm:text-sm font-bold text-white truncate leading-tight">
+            <p className="text-xs sm:text-sm font-bold text-white truncate leading-tight">
               {artistName}
             </p>
             {songTitle && (
-              <p className="text-[8px] sm:text-[10px] text-gray-400 truncate mt-0.5">
+              <p className="text-2xs sm:text-xs text-gray-400 truncate mt-0.5">
                 SONG: {songTitle}
               </p>
             )}
@@ -88,7 +96,7 @@ export function ArtistCard({
           <div className="flex items-center justify-between gap-1">
             <RarityBadge rarity={rarity} size="sm" />
             {serialNumber !== undefined && (
-              <span className="font-mono text-[8px] sm:text-[10px] text-gray-400 tracking-tight">
+              <span className="font-mono text-2xs sm:text-xs text-gray-400 tracking-tight">
                 {formatSerialNumber(serialNumber, totalSupply)}
               </span>
             )}
@@ -96,8 +104,8 @@ export function ArtistCard({
 
           {owned !== undefined && (
             <div className="flex items-center justify-between mt-1">
-              <span className="text-[8px] sm:text-[10px] text-gray-500">Owned</span>
-              <span className="text-[8px] sm:text-[10px] text-white font-bold">{owned}</span>
+              <span className="text-2xs sm:text-xs text-gray-500">Owned</span>
+              <span className="text-2xs sm:text-xs text-white font-bold">{owned}</span>
             </div>
           )}
 
@@ -106,7 +114,7 @@ export function ArtistCard({
             <div className="mt-1 pt-1 border-t border-white/10">
               <div className="flex items-center gap-1">
                 <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-500 rounded-full animate-pulse" />
-                <span className="text-[7px] sm:text-[9px] text-blue-400 font-bold uppercase tracking-wider">
+                <span className="text-2xs text-blue-400 font-bold uppercase tracking-wider">
                   Bonus Content
                 </span>
               </div>

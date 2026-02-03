@@ -241,51 +241,74 @@ export function CartProvider({ children }: CartProviderProps) {
     async (cardId: string, quantity: number = 1) => {
       const clampedQty = Math.max(1, Math.min(10, quantity));
 
-      if (userId) {
-        // Authenticated: Save to DB
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const { error } = await (supabase.from('carts') as any).upsert(
-          {
-            user_id: userId,
-            card_id: cardId,
-            quantity: clampedQty,
-          },
-          {
-            onConflict: 'user_id,card_id',
-          }
+      // Check if item already exists
+      const existingItem = items.find((i) => i.cardId === cardId);
+
+      if (existingItem) {
+        // Item exists, update quantity optimistically
+        const newQty = Math.min(10, existingItem.quantity + clampedQty);
+        setItems((prev) =>
+          prev.map((item) =>
+            item.cardId === cardId ? { ...item, quantity: newQty } : item
+          )
         );
-        if (error) {
-          console.error('Failed to add to cart:', error);
-          return;
+
+        // Sync with backend
+        if (userId) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          await (supabase.from('carts') as any)
+            .update({ quantity: newQty })
+            .eq('user_id', userId)
+            .eq('card_id', cardId);
+        } else {
+          const localCart = getLocalCart();
+          const item = localCart.find((i) => i.cardId === cardId);
+          if (item) {
+            item.quantity = newQty;
+            saveLocalCart(localCart);
+          }
         }
       } else {
-        // Guest: Save to localStorage
-        const localCart = getLocalCart();
-        const existingIndex = localCart.findIndex((item) => item.cardId === cardId);
-
-        if (existingIndex >= 0) {
-          localCart[existingIndex].quantity = Math.min(
-            10,
-            localCart[existingIndex].quantity + clampedQty
+        // New item - need to fetch card details first, then add
+        if (userId) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const { error } = await (supabase.from('carts') as any).upsert(
+            {
+              user_id: userId,
+              card_id: cardId,
+              quantity: clampedQty,
+            },
+            {
+              onConflict: 'user_id,card_id',
+            }
           );
+          if (error) {
+            console.error('Failed to add to cart:', error);
+            return;
+          }
         } else {
+          const localCart = getLocalCart();
           localCart.push({
             cardId,
             quantity: clampedQty,
             addedAt: new Date().toISOString(),
           });
+          saveLocalCart(localCart);
         }
-        saveLocalCart(localCart);
+        // For new items, we need to load to get card details
+        await loadCart();
       }
-
-      await loadCart();
     },
-    [userId, supabase, loadCart]
+    [userId, supabase, loadCart, items]
   );
 
   // Remove item from cart
   const removeItem = useCallback(
     async (cardId: string) => {
+      // Optimistic update
+      setItems((prev) => prev.filter((item) => item.cardId !== cardId));
+
+      // Sync with backend
       if (userId) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await (supabase.from('carts') as any)
@@ -296,10 +319,8 @@ export function CartProvider({ children }: CartProviderProps) {
         const localCart = getLocalCart().filter((item) => item.cardId !== cardId);
         saveLocalCart(localCart);
       }
-
-      await loadCart();
     },
-    [userId, supabase, loadCart]
+    [userId, supabase]
   );
 
   // Update item quantity
@@ -307,6 +328,14 @@ export function CartProvider({ children }: CartProviderProps) {
     async (cardId: string, quantity: number) => {
       const clampedQty = Math.max(1, Math.min(10, quantity));
 
+      // Optimistic update
+      setItems((prev) =>
+        prev.map((item) =>
+          item.cardId === cardId ? { ...item, quantity: clampedQty } : item
+        )
+      );
+
+      // Sync with backend
       if (userId) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await (supabase.from('carts') as any)
@@ -321,10 +350,8 @@ export function CartProvider({ children }: CartProviderProps) {
           saveLocalCart(localCart);
         }
       }
-
-      await loadCart();
     },
-    [userId, supabase, loadCart]
+    [userId, supabase]
   );
 
   // Clear entire cart
