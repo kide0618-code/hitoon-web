@@ -64,6 +64,7 @@ export interface Card {
   price: number;
   totalSupply: number | null;
   currentSupply: number;
+  maxPurchasePerUser: number | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;

@@ -54,6 +54,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
     if (body.description !== undefined) updateData.description = body.description;
     if (body.price !== undefined) updateData.price = body.price;
     if (body.total_supply !== undefined) updateData.total_supply = body.total_supply;
+    if (body.max_purchase_per_user !== undefined) updateData.max_purchase_per_user = body.max_purchase_per_user;
     if (body.is_active !== undefined) updateData.is_active = body.is_active;
     // Note: rarity should not be changed after creation
 

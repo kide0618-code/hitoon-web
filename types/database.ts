@@ -141,6 +141,7 @@ export interface Database {
           price: number;
           total_supply: number | null;
           current_supply: number;
+          max_purchase_per_user: number | null;
           is_active: boolean;
           created_at: string;
           updated_at: string;
@@ -155,6 +156,7 @@ export interface Database {
           price: number;
           total_supply?: number | null;
           current_supply?: number;
+          max_purchase_per_user?: number | null;
           is_active?: boolean;
           created_at?: string;
           updated_at?: string;
@@ -169,6 +171,7 @@ export interface Database {
           price?: number;
           total_supply?: number | null;
           current_supply?: number;
+          max_purchase_per_user?: number | null;
           is_active?: boolean;
           created_at?: string;
           updated_at?: string;

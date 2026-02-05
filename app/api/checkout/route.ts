@@ -18,6 +18,7 @@ interface CardData {
   price: number;
   total_supply: number | null;
   current_supply: number;
+  max_purchase_per_user: number | null;
   artist: { id: string; name: string } | null;
   visual: { id: string; name: string; artist_image_url: string | null } | null;
 }
@@ -114,6 +115,32 @@ async function handleSingleCardCheckout(
     }
   }
 
+  // Check per-user purchase limit
+  if (cardData.max_purchase_per_user !== null) {
+    const { count: existingPurchaseCount } = await supabase
+      .from('purchases')
+      .select('*', { count: 'exact', head: true })
+      .eq('card_id', cardId)
+      .eq('user_id', user.id)
+      .eq('status', 'completed');
+
+    const currentOwned = existingPurchaseCount || 0;
+    const remainingAllowance = cardData.max_purchase_per_user - currentOwned;
+
+    if (remainingAllowance <= 0) {
+      return NextResponse.json(
+        { error: `購入上限に達しています（1人あたり${cardData.max_purchase_per_user}枚まで）` },
+        { status: 400 }
+      );
+    }
+    if (qty > remainingAllowance) {
+      return NextResponse.json(
+        { error: `あと${remainingAllowance}枚まで購入可能です（1人あたり${cardData.max_purchase_per_user}枚まで）` },
+        { status: 400 }
+      );
+    }
+  }
+
   // Get or create Stripe customer
   const customerId = await getOrCreateStripeCustomer(user.id, user.email!);
 
@@ -163,6 +190,7 @@ async function handleCartCheckout(
       price,
       total_supply,
       current_supply,
+      max_purchase_per_user,
       artist:artists (
         id,
         name
@@ -181,6 +209,25 @@ async function handleCartCheckout(
 
   if (cardsError || !cards || cards.length === 0) {
     return NextResponse.json({ error: 'Cards not found' }, { status: 404 });
+  }
+
+  // Get user's existing purchase counts for all cards in cart
+  const { data: existingPurchases } = await supabase
+    .from('purchases')
+    .select('card_id')
+    .in('card_id', cardIds)
+    .eq('user_id', user.id)
+    .eq('status', 'completed');
+
+  // Count purchases per card
+  const purchaseCountByCard = new Map<string, number>();
+  if (existingPurchases) {
+    for (const purchase of existingPurchases as { card_id: string | null }[]) {
+      if (purchase.card_id) {
+        const count = purchaseCountByCard.get(purchase.card_id) || 0;
+        purchaseCountByCard.set(purchase.card_id, count + 1);
+      }
+    }
   }
 
   // Validate stock and build checkout items
@@ -205,6 +252,21 @@ async function handleCartCheckout(
       }
       if (item.quantity > remainingSupply) {
         errors.push(`${cardData.name}: only ${remainingSupply} remaining`);
+        continue;
+      }
+    }
+
+    // Check per-user purchase limit
+    if (cardData.max_purchase_per_user !== null) {
+      const currentOwned = purchaseCountByCard.get(item.cardId) || 0;
+      const remainingAllowance = cardData.max_purchase_per_user - currentOwned;
+
+      if (remainingAllowance <= 0) {
+        errors.push(`${cardData.name}: 購入上限に達しています（1人あたり${cardData.max_purchase_per_user}枚まで）`);
+        continue;
+      }
+      if (item.quantity > remainingAllowance) {
+        errors.push(`${cardData.name}: あと${remainingAllowance}枚まで購入可能（1人あたり${cardData.max_purchase_per_user}枚まで）`);
         continue;
       }
     }
