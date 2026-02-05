@@ -52,6 +52,7 @@ export async function POST(request: Request) {
         rarity: body.rarity || 'NORMAL',
         price: body.price,
         total_supply: body.total_supply || null,
+        max_purchase_per_user: body.max_purchase_per_user || null,
         is_active: body.is_active ?? true,
       })
       .select()

@@ -35,6 +35,7 @@ export default function NewCardPage() {
     rarity: 'NORMAL' as 'NORMAL' | 'RARE' | 'SUPER_RARE',
     price: 1500,
     total_supply: null as number | null,
+    max_purchase_per_user: null as number | null,
     is_active: true,
   });
 
@@ -294,7 +295,7 @@ export default function NewCardPage() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                Price (JPY) <span className="text-red-400">*</span>
+                価格 (円) <span className="text-red-400">*</span>
               </label>
               <input
                 type="number"
@@ -313,7 +314,7 @@ export default function NewCardPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                Total Supply (empty = unlimited)
+                出品数 (空欄 = 無制限)
               </label>
               <input
                 type="number"
@@ -328,9 +329,34 @@ export default function NewCardPage() {
                 }
                 className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
                 min="1"
-                placeholder="Unlimited"
+                placeholder="無制限"
               />
             </div>
+          </div>
+
+          {/* Purchase Limit per User */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              1人あたりの購入上限 (空欄 = 無制限)
+            </label>
+            <input
+              type="number"
+              value={formData.max_purchase_per_user ?? ''}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  max_purchase_per_user: e.target.value
+                    ? parseInt(e.target.value)
+                    : null,
+                })
+              }
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+              min="1"
+              placeholder="無制限"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              1人のユーザーが購入できる最大数を設定できます
+            </p>
           </div>
 
           {/* Is Active */}
