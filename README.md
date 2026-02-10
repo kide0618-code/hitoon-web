@@ -6,12 +6,12 @@ Artist Digital Content Marketplace - アーティストのデジタルトレカ�
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS |
-| Backend/DB | Supabase (PostgreSQL, Auth, Storage, RLS) |
-| Payments | Stripe (Checkout, Webhooks) |
-| Hosting | Vercel |
+| Layer      | Technology                                     |
+| ---------- | ---------------------------------------------- |
+| Frontend   | Next.js 16, React 19, TypeScript, Tailwind CSS |
+| Backend/DB | Supabase (PostgreSQL, Auth, Storage, RLS)      |
+| Payments   | Stripe (Checkout, Webhooks)                    |
+| Hosting    | Vercel                                         |
 
 ## Getting Started
 
@@ -140,22 +140,23 @@ pnpm type-check   # TypeScript check
 
 ## API Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/artists` | List artists |
-| GET | `/api/artists/:id` | Artist detail with templates |
-| GET | `/api/cards` | List cards (filterable) |
-| GET | `/api/cards/:id` | Card detail with exclusive content |
-| GET | `/api/purchases` | User's purchase history |
-| GET | `/api/purchases/:id` | Purchase detail |
-| POST | `/api/checkout` | Create Stripe checkout |
-| POST | `/api/webhooks/stripe` | Stripe webhook handler |
-| GET | `/api/me` | Current user info |
-| DELETE | `/api/me` | Delete account |
+| Method | Endpoint               | Description                        |
+| ------ | ---------------------- | ---------------------------------- |
+| GET    | `/api/artists`         | List artists                       |
+| GET    | `/api/artists/:id`     | Artist detail with templates       |
+| GET    | `/api/cards`           | List cards (filterable)            |
+| GET    | `/api/cards/:id`       | Card detail with exclusive content |
+| GET    | `/api/purchases`       | User's purchase history            |
+| GET    | `/api/purchases/:id`   | Purchase detail                    |
+| POST   | `/api/checkout`        | Create Stripe checkout             |
+| POST   | `/api/webhooks/stripe` | Stripe webhook handler             |
+| GET    | `/api/me`              | Current user info                  |
+| DELETE | `/api/me`              | Delete account                     |
 
 ## Admin Access
 
 1. Add user to `operators` table:
+
 ```sql
 INSERT INTO operators (user_id, role)
 VALUES ('user-uuid', 'admin');
@@ -168,6 +169,7 @@ VALUES ('user-uuid', 'admin');
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-repo/hitoon-web)
 
 Required environment variables:
+
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`

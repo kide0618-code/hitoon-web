@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 export default async function AdminCardsPage() {
@@ -10,7 +11,7 @@ export default async function AdminCardsPage() {
       *,
       artist:artists (id, name),
       template:card_templates (id, name, artist_image_url)
-    `
+    `,
     )
     .order('created_at', { ascending: false })) as {
     data:
@@ -41,16 +42,16 @@ export default async function AdminCardsPage() {
         <h1 className="text-2xl font-bold text-white">Cards</h1>
         <a
           href="/admin/cards/new"
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+          className="rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
         >
           + Add Card
         </a>
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+      <div className="overflow-hidden rounded-xl border border-gray-800 bg-gray-900">
         <table className="w-full">
           <thead>
-            <tr className="text-left text-gray-500 text-sm border-b border-gray-800">
+            <tr className="border-b border-gray-800 text-left text-sm text-gray-500">
               <th className="px-6 py-4">Card</th>
               <th className="px-6 py-4">Artist</th>
               <th className="px-6 py-4">Rarity</th>
@@ -69,44 +70,41 @@ export default async function AdminCardsPage() {
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     {card.template?.artist_image_url && (
-                      <img
+                      <Image
                         src={card.template.artist_image_url}
                         alt={card.name}
-                        className="w-12 h-16 rounded object-cover"
+                        width={48}
+                        height={64}
+                        className="h-16 w-12 rounded object-cover"
+                        unoptimized
                       />
                     )}
                     <div>
-                      <p className="text-white font-medium">{card.name}</p>
-                      <p className="text-gray-500 text-xs">
-                        {card.template?.name}
-                      </p>
+                      <p className="font-medium text-white">{card.name}</p>
+                      <p className="text-xs text-gray-500">{card.template?.name}</p>
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-gray-400">
-                  {card.artist?.name}
-                </td>
+                <td className="px-6 py-4 text-gray-400">{card.artist?.name}</td>
                 <td className="px-6 py-4">
                   <span
-                    className={`text-xs px-2 py-1 rounded ${rarityStyles[card.rarity] || rarityStyles.NORMAL}`}
+                    className={`rounded px-2 py-1 text-xs ${rarityStyles[card.rarity] || rarityStyles.NORMAL}`}
                   >
                     {card.rarity}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-white">
-                  ¥{card.price.toLocaleString()}
-                </td>
-                <td className="px-6 py-4 text-gray-400 font-mono">
+                <td className="px-6 py-4 text-white">¥{card.price.toLocaleString()}</td>
+                <td className="px-6 py-4 font-mono text-gray-400">
                   {card.current_supply}
                   {card.total_supply !== null && ` / ${card.total_supply}`}
                 </td>
                 <td className="px-6 py-4">
                   {card.is_active ? (
-                    <span className="text-xs px-2 py-1 bg-green-900/50 text-green-400 rounded">
+                    <span className="rounded bg-green-900/50 px-2 py-1 text-xs text-green-400">
                       Active
                     </span>
                   ) : (
-                    <span className="text-xs px-2 py-1 bg-gray-800 text-gray-500 rounded">
+                    <span className="rounded bg-gray-800 px-2 py-1 text-xs text-gray-500">
                       Inactive
                     </span>
                   )}
@@ -115,14 +113,14 @@ export default async function AdminCardsPage() {
                   <div className="flex items-center gap-2">
                     <a
                       href={`/admin/cards/${card.id}`}
-                      className="text-blue-400 hover:text-blue-300 text-sm"
+                      className="text-sm text-blue-400 hover:text-blue-300"
                     >
                       Edit
                     </a>
                     <span className="text-gray-700">|</span>
                     <a
                       href={`/artists/${card.artist?.id}`}
-                      className="text-gray-500 hover:text-gray-300 text-sm"
+                      className="text-sm text-gray-500 hover:text-gray-300"
                       target="_blank"
                       rel="noopener noreferrer"
                     >

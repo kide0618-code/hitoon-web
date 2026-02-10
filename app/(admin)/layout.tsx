@@ -1,11 +1,8 @@
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 
-export default async function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createServerSupabaseClient();
 
   // Check authentication
@@ -32,58 +29,49 @@ export default async function AdminLayout({
     <div className="min-h-screen bg-black">
       {/* Admin Header */}
       <header className="border-b border-gray-800 bg-gray-900/50">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
           <div className="flex items-center gap-4">
-            <a href="/admin" className="text-xl font-bold text-white">
+            <Link href="/admin" className="text-xl font-bold text-white">
               HITOON Admin
-            </a>
-            <span className="text-xs px-2 py-1 bg-blue-600 rounded text-white">
+            </Link>
+            <span className="rounded bg-blue-600 px-2 py-1 text-xs text-white">
               {operator.role}
             </span>
           </div>
           <nav className="flex items-center gap-6">
-            <a
-              href="/admin"
-              className="text-gray-400 hover:text-white transition-colors"
-            >
+            <Link href="/admin" className="text-gray-400 transition-colors hover:text-white">
               Dashboard
-            </a>
-            <a
+            </Link>
+            <Link
               href="/admin/artists"
-              className="text-gray-400 hover:text-white transition-colors"
+              className="text-gray-400 transition-colors hover:text-white"
             >
               Artists
-            </a>
-            <a
+            </Link>
+            <Link
               href="/admin/templates"
-              className="text-gray-400 hover:text-white transition-colors"
+              className="text-gray-400 transition-colors hover:text-white"
             >
               Templates
-            </a>
-            <a
-              href="/admin/cards"
-              className="text-gray-400 hover:text-white transition-colors"
-            >
+            </Link>
+            <Link href="/admin/cards" className="text-gray-400 transition-colors hover:text-white">
               Cards
-            </a>
-            <a
+            </Link>
+            <Link
               href="/admin/purchases"
-              className="text-gray-400 hover:text-white transition-colors"
+              className="text-gray-400 transition-colors hover:text-white"
             >
               Purchases
-            </a>
-            <a
-              href="/"
-              className="text-gray-500 hover:text-gray-300 transition-colors text-sm"
-            >
+            </Link>
+            <Link href="/" className="text-sm text-gray-500 transition-colors hover:text-gray-300">
               ← Back to Site
-            </a>
+            </Link>
           </nav>
         </div>
       </header>
 
       {/* Admin Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8">{children}</main>
+      <main className="mx-auto max-w-7xl px-4 py-8">{children}</main>
     </div>
   );
 }

@@ -13,7 +13,7 @@ export default async function AdminPurchasesPage() {
         rarity,
         artist:artists (name)
       )
-    `
+    `,
     )
     .order('purchased_at', { ascending: false })
     .limit(100)) as {
@@ -38,10 +38,7 @@ export default async function AdminPurchasesPage() {
 
   // Calculate stats
   const completedPurchases = purchases?.filter((p) => p.status === 'completed') || [];
-  const totalRevenue = completedPurchases.reduce(
-    (sum, p) => sum + (p.price_paid || 0),
-    0
-  );
+  const totalRevenue = completedPurchases.reduce((sum, p) => sum + (p.price_paid || 0), 0);
   const totalCards = completedPurchases.length;
 
   const rarityStyles: Record<string, string> = {
@@ -61,32 +58,28 @@ export default async function AdminPurchasesPage() {
       <h1 className="text-2xl font-bold text-white">Purchases</h1>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-          <p className="text-gray-500 text-sm">Total Revenue</p>
-          <p className="text-3xl font-bold text-white mt-2">
-            ¥{totalRevenue.toLocaleString()}
-          </p>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="rounded-xl border border-gray-800 bg-gray-900 p-6">
+          <p className="text-sm text-gray-500">Total Revenue</p>
+          <p className="mt-2 text-3xl font-bold text-white">¥{totalRevenue.toLocaleString()}</p>
         </div>
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-          <p className="text-gray-500 text-sm">Cards Sold</p>
-          <p className="text-3xl font-bold text-white mt-2">
-            {totalCards.toLocaleString()}
-          </p>
+        <div className="rounded-xl border border-gray-800 bg-gray-900 p-6">
+          <p className="text-sm text-gray-500">Cards Sold</p>
+          <p className="mt-2 text-3xl font-bold text-white">{totalCards.toLocaleString()}</p>
         </div>
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-          <p className="text-gray-500 text-sm">Avg Order Value</p>
-          <p className="text-3xl font-bold text-white mt-2">
+        <div className="rounded-xl border border-gray-800 bg-gray-900 p-6">
+          <p className="text-sm text-gray-500">Avg Order Value</p>
+          <p className="mt-2 text-3xl font-bold text-white">
             ¥{totalCards > 0 ? Math.round(totalRevenue / totalCards).toLocaleString() : 0}
           </p>
         </div>
       </div>
 
       {/* Purchases Table */}
-      <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+      <div className="overflow-hidden rounded-xl border border-gray-800 bg-gray-900">
         <table className="w-full">
           <thead>
-            <tr className="text-left text-gray-500 text-sm border-b border-gray-800">
+            <tr className="border-b border-gray-800 text-left text-sm text-gray-500">
               <th className="px-6 py-4">Card</th>
               <th className="px-6 py-4">Artist</th>
               <th className="px-6 py-4">Rarity</th>
@@ -102,35 +95,27 @@ export default async function AdminPurchasesPage() {
                 key={purchase.id}
                 className="border-b border-gray-800 last:border-0 hover:bg-gray-800/50"
               >
-                <td className="px-6 py-4 text-white">
-                  {purchase.card?.name || 'Deleted Card'}
-                </td>
-                <td className="px-6 py-4 text-gray-400">
-                  {purchase.card?.artist?.name || '-'}
-                </td>
+                <td className="px-6 py-4 text-white">{purchase.card?.name || 'Deleted Card'}</td>
+                <td className="px-6 py-4 text-gray-400">{purchase.card?.artist?.name || '-'}</td>
                 <td className="px-6 py-4">
                   {purchase.card?.rarity && (
                     <span
-                      className={`text-xs px-2 py-1 rounded ${rarityStyles[purchase.card.rarity] || rarityStyles.NORMAL}`}
+                      className={`rounded px-2 py-1 text-xs ${rarityStyles[purchase.card.rarity] || rarityStyles.NORMAL}`}
                     >
                       {purchase.card.rarity}
                     </span>
                   )}
                 </td>
-                <td className="px-6 py-4 text-gray-400 font-mono">
-                  #{purchase.serial_number}
-                </td>
-                <td className="px-6 py-4 text-white">
-                  ¥{purchase.price_paid?.toLocaleString()}
-                </td>
+                <td className="px-6 py-4 font-mono text-gray-400">#{purchase.serial_number}</td>
+                <td className="px-6 py-4 text-white">¥{purchase.price_paid?.toLocaleString()}</td>
                 <td className="px-6 py-4">
                   <span
-                    className={`text-xs px-2 py-1 rounded ${statusStyles[purchase.status] || statusStyles.pending}`}
+                    className={`rounded px-2 py-1 text-xs ${statusStyles[purchase.status] || statusStyles.pending}`}
                   >
                     {purchase.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-gray-500 text-sm">
+                <td className="px-6 py-4 text-sm text-gray-500">
                   {new Date(purchase.purchased_at).toLocaleString('ja-JP')}
                 </td>
               </tr>

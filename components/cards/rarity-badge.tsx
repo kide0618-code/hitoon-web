@@ -27,7 +27,7 @@ export function RarityBadge({ rarity, size = 'md', className }: RarityBadgeProps
         'inline-flex items-center justify-center rounded font-bold tracking-wide',
         sizeClasses[size],
         config.badgeClass,
-        className
+        className,
       )}
     >
       {config.code}

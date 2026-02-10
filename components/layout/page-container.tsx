@@ -8,19 +8,9 @@ interface PageContainerProps {
   withBottomNav?: boolean;
 }
 
-export function PageContainer({
-  children,
-  className,
-  withBottomNav = true,
-}: PageContainerProps) {
+export function PageContainer({ children, className, withBottomNav = true }: PageContainerProps) {
   return (
-    <div
-      className={cn(
-        'min-h-screen bg-black text-white',
-        withBottomNav && 'pb-24',
-        className
-      )}
-    >
+    <div className={cn('min-h-screen bg-black text-white', withBottomNav && 'pb-24', className)}>
       {children}
     </div>
   );

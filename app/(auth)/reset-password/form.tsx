@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Lock, Loader2, CheckCircle, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { localizeAuthError } from '@/lib/utils/auth-errors';
 import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/constants/routes';
 
@@ -24,7 +25,9 @@ export function ResetPasswordForm() {
   // Check if user has a valid recovery session
   useEffect(() => {
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       // User should have a session after clicking the recovery link
       setIsValidSession(!!session);
     };
@@ -32,13 +35,13 @@ export function ResetPasswordForm() {
     checkSession();
 
     // Listen for auth state changes (recovery link sets up a session)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (event === 'PASSWORD_RECOVERY') {
-          setIsValidSession(true);
-        }
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setIsValidSession(true);
       }
-    );
+    });
 
     return () => {
       subscription.unsubscribe();
@@ -77,9 +80,7 @@ export function ResetPasswordForm() {
       }, 3000);
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : 'パスワードの更新に失敗しました'
+        err instanceof Error ? localizeAuthError(err.message) : 'パスワードの更新に失敗しました',
       );
     } finally {
       setIsLoading(false);
@@ -89,9 +90,9 @@ export function ResetPasswordForm() {
   // Show loading state while checking session
   if (isValidSession === null) {
     return (
-      <div className="w-full max-w-md mx-auto text-center">
-        <Loader2 size={32} className="animate-spin text-gray-400 mx-auto" />
-        <p className="text-gray-400 mt-4">読み込み中...</p>
+      <div className="mx-auto w-full max-w-md text-center">
+        <Loader2 size={32} className="mx-auto animate-spin text-gray-400" />
+        <p className="mt-4 text-gray-400">読み込み中...</p>
       </div>
     );
   }
@@ -99,21 +100,19 @@ export function ResetPasswordForm() {
   // Show error if no valid session
   if (isValidSession === false) {
     return (
-      <div className="w-full max-w-md mx-auto text-center">
-        <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+      <div className="mx-auto w-full max-w-md text-center">
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-red-500/20">
           <AlertCircle size={32} className="text-red-400" />
         </div>
-        <h1 className="text-2xl font-bold text-white mb-4">
-          リンクが無効です
-        </h1>
-        <p className="text-gray-400 mb-8">
+        <h1 className="mb-4 text-2xl font-bold text-white">リンクが無効です</h1>
+        <p className="mb-8 text-gray-400">
           パスワードリセットのリンクが無効または期限切れです。
           <br />
           もう一度パスワードリセットをお試しください。
         </p>
         <Link
           href={ROUTES.FORGOT_PASSWORD}
-          className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-colors"
+          className="inline-block rounded-xl bg-blue-600 px-6 py-3 font-bold text-white transition-colors hover:bg-blue-700"
         >
           パスワードリセットを再送信
         </Link>
@@ -124,22 +123,17 @@ export function ResetPasswordForm() {
   // Show success message
   if (isSuccess) {
     return (
-      <div className="w-full max-w-md mx-auto text-center">
-        <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+      <div className="mx-auto w-full max-w-md text-center">
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/20">
           <CheckCircle size={32} className="text-green-400" />
         </div>
-        <h1 className="text-2xl font-bold text-white mb-4">
-          パスワードを更新しました
-        </h1>
-        <p className="text-gray-400 mb-8">
+        <h1 className="mb-4 text-2xl font-bold text-white">パスワードを更新しました</h1>
+        <p className="mb-8 text-gray-400">
           新しいパスワードが設定されました。
           <br />
           ログインページへ自動的に移動します...
         </p>
-        <Link
-          href={ROUTES.LOGIN}
-          className="inline-block text-blue-400 hover:text-blue-300"
-        >
+        <Link href={ROUTES.LOGIN} className="inline-block text-blue-400 hover:text-blue-300">
           今すぐログインページへ
         </Link>
       </div>
@@ -147,20 +141,16 @@ export function ResetPasswordForm() {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="mx-auto w-full max-w-md">
       {/* Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold text-white mb-2">
-          新しいパスワードを設定
-        </h1>
-        <p className="text-gray-400">
-          新しいパスワードを入力してください。
-        </p>
+      <div className="mb-8 text-center">
+        <h1 className="mb-2 text-2xl font-bold text-white">新しいパスワードを設定</h1>
+        <p className="text-gray-400">新しいパスワードを入力してください。</p>
       </div>
 
       {/* Error Display */}
       {error && (
-        <div className="mb-4 p-4 bg-red-500/10 border border-red-500/50 rounded-xl text-red-400 text-sm">
+        <div className="mb-4 rounded-xl border border-red-500/50 bg-red-500/10 p-4 text-sm text-red-400">
           {error}
         </div>
       )}
@@ -169,15 +159,12 @@ export function ResetPasswordForm() {
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* New Password */}
         <div>
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium text-gray-300 mb-2"
-          >
+          <label htmlFor="password" className="mb-2 block text-sm font-medium text-gray-300">
             新しいパスワード
           </label>
           <div className="relative flex items-center">
-            <span className="absolute left-4 flex items-center pointer-events-none">
-              <Lock className="w-5 h-5 text-gray-400" />
+            <span className="pointer-events-none absolute left-4 flex items-center">
+              <Lock className="h-5 w-5 text-gray-400" />
             </span>
             <input
               id="password"
@@ -188,29 +175,26 @@ export function ResetPasswordForm() {
               minLength={8}
               placeholder="8文字以上"
               autoComplete="new-password"
-              className="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3.5 pl-12 pr-12 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+              className="w-full rounded-xl border border-gray-700 bg-gray-800/50 py-3.5 pl-12 pr-12 text-white transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 text-gray-400 hover:text-white transition-colors"
+              className="absolute right-4 text-gray-400 transition-colors hover:text-white"
             >
-              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
             </button>
           </div>
         </div>
 
         {/* Confirm Password */}
         <div>
-          <label
-            htmlFor="confirmPassword"
-            className="block text-sm font-medium text-gray-300 mb-2"
-          >
+          <label htmlFor="confirmPassword" className="mb-2 block text-sm font-medium text-gray-300">
             パスワード（確認）
           </label>
           <div className="relative flex items-center">
-            <span className="absolute left-4 flex items-center pointer-events-none">
-              <Lock className="w-5 h-5 text-gray-400" />
+            <span className="pointer-events-none absolute left-4 flex items-center">
+              <Lock className="h-5 w-5 text-gray-400" />
             </span>
             <input
               id="confirmPassword"
@@ -221,40 +205,29 @@ export function ResetPasswordForm() {
               minLength={8}
               placeholder="パスワードを再入力"
               autoComplete="new-password"
-              className="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3.5 pl-12 pr-12 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+              className="w-full rounded-xl border border-gray-700 bg-gray-800/50 py-3.5 pl-12 pr-12 text-white transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
             />
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-4 text-gray-400 hover:text-white transition-colors"
+              className="absolute right-4 text-gray-400 transition-colors hover:text-white"
             >
-              {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
             </button>
           </div>
         </div>
 
         {/* Password Requirements */}
-        <p className="text-xs text-gray-500">
-          ※ パスワードは8文字以上で設定してください
-        </p>
+        <p className="text-xs text-gray-500">※ パスワードは8文字以上で設定してください</p>
 
-        <Button
-          type="submit"
-          variant="primary"
-          size="lg"
-          isLoading={isLoading}
-          className="w-full"
-        >
+        <Button type="submit" variant="primary" size="lg" isLoading={isLoading} className="w-full">
           パスワードを更新
         </Button>
       </form>
 
       {/* Back to Login */}
       <p className="mt-6 text-center">
-        <Link
-          href={ROUTES.LOGIN}
-          className="text-gray-400 hover:text-white transition-colors"
-        >
+        <Link href={ROUTES.LOGIN} className="text-gray-400 transition-colors hover:text-white">
           ログインページに戻る
         </Link>
       </p>

@@ -20,16 +20,14 @@ export async function GET(request: Request, context: RouteContext) {
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get purchase with full card, visual, artist info
     const { data: purchase, error: purchaseError } = await supabase
       .from('purchases')
-      .select(`
+      .select(
+        `
         *,
         card:cards (
           *,
@@ -47,23 +45,18 @@ export async function GET(request: Request, context: RouteContext) {
             image_url
           )
         )
-      `)
+      `,
+      )
       .eq('id', id)
       .eq('user_id', user.id)
       .single();
 
     if (purchaseError || !purchase) {
       if (purchaseError?.code === 'PGRST116') {
-        return NextResponse.json(
-          { error: 'Purchase not found' },
-          { status: 404 }
-        );
+        return NextResponse.json({ error: 'Purchase not found' }, { status: 404 });
       }
       console.error('Error fetching purchase:', purchaseError);
-      return NextResponse.json(
-        { error: 'Failed to fetch purchase' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to fetch purchase' }, { status: 500 });
     }
 
     // Type assertion for purchase data
@@ -89,9 +82,6 @@ export async function GET(request: Request, context: RouteContext) {
     });
   } catch (error) {
     console.error('Unexpected error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -1,15 +1,30 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
-import { ArrowLeft, Play, Music, Image as ImageIcon, ExternalLink, Calendar, Hash } from 'lucide-react';
+import {
+  ArrowLeft,
+  Play,
+  Music,
+  Image as ImageIcon,
+  ExternalLink,
+  Calendar,
+  Hash,
+} from 'lucide-react';
 import { PageContainer } from '@/components/layout/page-container';
 import { ArtistCard } from '@/components/cards/artist-card';
+import { RotatableCard } from '@/components/cards/rotatable-card';
 import { RarityBadge } from '@/components/cards/rarity-badge';
 import { ROUTES } from '@/constants/routes';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { formatDate, formatPrice, formatSerialNumber } from '@/lib/utils/format';
 import type { Rarity } from '@/types/card';
-import type { Purchase, Card, Artist, CardVisual, ExclusiveContent as DbExclusiveContent } from '@/types/database';
+import type {
+  Purchase,
+  Card,
+  Artist,
+  CardVisual,
+  ExclusiveContent as DbExclusiveContent,
+} from '@/types/database';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -68,7 +83,10 @@ async function getPurchaseDetail(id: string): Promise<PurchaseDetail | null> {
     return null;
   }
 
-  const purchase = purchaseData as Pick<Purchase, 'id' | 'serial_number' | 'price_paid' | 'purchased_at' | 'card_id'>;
+  const purchase = purchaseData as Pick<
+    Purchase,
+    'id' | 'serial_number' | 'price_paid' | 'purchased_at' | 'card_id'
+  >;
 
   if (!purchase.card_id) {
     return null;
@@ -112,7 +130,10 @@ async function getPurchaseDetail(id: string): Promise<PurchaseDetail | null> {
     .eq('card_id', card.id)
     .order('display_order', { ascending: true });
 
-  const contents = (contentsData || []) as Pick<DbExclusiveContent, 'id' | 'type' | 'url' | 'title' | 'description'>[];
+  const contents = (contentsData || []) as Pick<
+    DbExclusiveContent,
+    'id' | 'type' | 'url' | 'title' | 'description'
+  >[];
 
   return {
     id: purchase.id,
@@ -175,36 +196,39 @@ export default async function CollectionDetailPage({ params }: PageProps) {
       {/* Back Button */}
       <Link
         href={ROUTES.COLLECTION}
-        className="fixed top-4 left-4 z-20 bg-black/50 p-2 rounded-full hover:bg-black/70 transition-colors"
+        className="fixed left-4 top-4 z-20 rounded-full bg-black/50 p-2 transition-colors hover:bg-black/70"
       >
         <ArrowLeft size={24} />
       </Link>
 
       {/* Card Display */}
       <div className="p-6 pt-16">
-        <div className="max-w-xs mx-auto">
-          <ArtistCard
-            artistName={purchase.artist.name}
-            artistImageUrl={purchase.card.template.artistImageUrl}
-            songTitle={purchase.card.template.songTitle}
-            rarity={purchase.card.rarity}
-            serialNumber={purchase.serialNumber}
-            totalSupply={purchase.card.totalSupply}
-            owned={1}
-          />
+        <div className="mx-auto max-w-xs">
+          <RotatableCard>
+            <ArtistCard
+              artistName={purchase.artist.name}
+              artistImageUrl={purchase.card.template.artistImageUrl}
+              songTitle={purchase.card.template.songTitle}
+              rarity={purchase.card.rarity}
+              serialNumber={purchase.serialNumber}
+              totalSupply={purchase.card.totalSupply}
+              owned={1}
+            />
+          </RotatableCard>
+          <p className="mt-2 text-center text-xs text-gray-500">スワイプでカードを回転</p>
         </div>
       </div>
 
       {/* Card Info */}
-      <div className="p-6 space-y-4">
+      <div className="space-y-4 p-6">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">{purchase.artist.name}</h1>
           <RarityBadge rarity={purchase.card.rarity} />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-gray-900/50 rounded-xl p-4 border border-gray-800">
-            <div className="flex items-center gap-2 text-gray-500 text-xs mb-1">
+          <div className="rounded-xl border border-gray-800 bg-gray-900/50 p-4">
+            <div className="mb-1 flex items-center gap-2 text-xs text-gray-500">
               <Hash size={12} />
               Serial Number
             </div>
@@ -216,8 +240,8 @@ export default async function CollectionDetailPage({ params }: PageProps) {
             </p>
           </div>
 
-          <div className="bg-gray-900/50 rounded-xl p-4 border border-gray-800">
-            <div className="flex items-center gap-2 text-gray-500 text-xs mb-1">
+          <div className="rounded-xl border border-gray-800 bg-gray-900/50 p-4">
+            <div className="mb-1 flex items-center gap-2 text-xs text-gray-500">
               <Calendar size={12} />
               Purchase Date
             </div>
@@ -225,17 +249,17 @@ export default async function CollectionDetailPage({ params }: PageProps) {
           </div>
         </div>
 
-        <div className="bg-gray-900/50 rounded-xl p-4 border border-gray-800">
-          <p className="text-gray-500 text-xs mb-1">購入価格</p>
-          <p className="font-bold text-lg">{formatPrice(purchase.pricePaid)}</p>
+        <div className="rounded-xl border border-gray-800 bg-gray-900/50 p-4">
+          <p className="mb-1 text-xs text-gray-500">購入価格</p>
+          <p className="text-lg font-bold">{formatPrice(purchase.pricePaid)}</p>
         </div>
       </div>
 
       {/* Exclusive Content */}
       {purchase.exclusiveContents.length > 0 && (
         <div className="p-6 pt-0">
-          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-            <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+          <h2 className="mb-4 flex items-center gap-2 text-lg font-bold">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-blue-500" />
             Exclusive Content
           </h2>
 
@@ -250,26 +274,24 @@ export default async function CollectionDetailPage({ params }: PageProps) {
                   href={content.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block bg-gradient-to-r from-gray-900 to-gray-900/50 rounded-xl p-4 border border-gray-800 hover:border-blue-500/50 transition-all group"
+                  className="group block rounded-xl border border-gray-800 bg-gradient-to-r from-gray-900 to-gray-900/50 p-4 transition-all hover:border-blue-500/50"
                 >
                   <div className="flex items-center gap-4">
-                    <div className={`p-3 rounded-lg bg-gray-800 ${config.color}`}>
+                    <div className={`rounded-lg bg-gray-800 p-3 ${config.color}`}>
                       <Icon size={24} />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className={`text-xs font-bold ${config.color}`}>
-                          {config.label}
-                        </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="mb-1 flex items-center gap-2">
+                        <span className={`text-xs font-bold ${config.color}`}>{config.label}</span>
                       </div>
-                      <h3 className="font-bold truncate">{content.title}</h3>
+                      <h3 className="truncate font-bold">{content.title}</h3>
                       {content.description && (
-                        <p className="text-sm text-gray-500 truncate">{content.description}</p>
+                        <p className="truncate text-sm text-gray-500">{content.description}</p>
                       )}
                     </div>
                     <ExternalLink
                       size={20}
-                      className="text-gray-600 group-hover:text-blue-400 transition-colors flex-shrink-0"
+                      className="flex-shrink-0 text-gray-600 transition-colors group-hover:text-blue-400"
                     />
                   </div>
                 </a>
@@ -283,7 +305,7 @@ export default async function CollectionDetailPage({ params }: PageProps) {
       <div className="p-6 pt-0">
         <Link
           href={ROUTES.ARTIST(purchase.artist.id)}
-          className="block w-full text-center py-3 border border-gray-700 rounded-xl text-gray-400 hover:text-white hover:border-gray-500 transition-colors"
+          className="block w-full rounded-xl border border-gray-700 py-3 text-center text-gray-400 transition-colors hover:border-gray-500 hover:text-white"
         >
           {purchase.artist.name} の他のカードを見る →
         </Link>

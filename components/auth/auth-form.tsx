@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Loader2, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { localizeAuthError } from '@/lib/utils/auth-errors';
 import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/constants/routes';
 
@@ -12,18 +13,48 @@ interface AuthFormProps {
   mode: 'login' | 'signup';
 }
 
+const REDIRECT_STORAGE_KEY = 'hitoon_auth_redirect';
+
+function getStoredRedirect(): string {
+  if (typeof window === 'undefined') return '/';
+  try {
+    return sessionStorage.getItem(REDIRECT_STORAGE_KEY) || '/';
+  } catch {
+    return '/';
+  }
+}
+
+function storeRedirect(path: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    sessionStorage.setItem(REDIRECT_STORAGE_KEY, path);
+  } catch {
+    // sessionStorage disabled
+  }
+}
+
+function clearStoredRedirect(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    sessionStorage.removeItem(REDIRECT_STORAGE_KEY);
+  } catch {
+    // Ignore
+  }
+}
+
 export function AuthForm({ mode }: AuthFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get('redirect') || '/';
+  const redirectTo = searchParams.get('redirect') || getStoredRedirect();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const initialError = searchParams.get('error');
   const [error, setError] = useState<string | null>(
-    searchParams.get('error') || null
+    initialError ? localizeAuthError(initialError) : null,
   );
   const [message, setMessage] = useState<string | null>(null);
 
@@ -37,18 +68,19 @@ export function AuthForm({ mode }: AuthFormProps) {
 
     try {
       if (mode === 'signup') {
+        storeRedirect(redirectTo);
         const { error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback?next=${redirectTo}`,
+            emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`,
           },
         });
 
         if (error) throw error;
 
         setMessage(
-          '確認メールを送信しました。メール内のリンクをクリックして登録を完了してください。'
+          '確認メールを送信しました。メール内のリンクをクリックして登録を完了してください。',
         );
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -58,16 +90,17 @@ export function AuthForm({ mode }: AuthFormProps) {
 
         if (error) throw error;
 
+        clearStoredRedirect();
         router.push(redirectTo);
         router.refresh();
       }
     } catch (err) {
       setError(
         err instanceof Error
-          ? err.message
+          ? localizeAuthError(err.message)
           : mode === 'login'
             ? 'ログインに失敗しました'
-            : '登録に失敗しました'
+            : '登録に失敗しました',
       );
     } finally {
       setIsLoading(false);
@@ -79,44 +112,41 @@ export function AuthForm({ mode }: AuthFormProps) {
     setError(null);
 
     try {
+      storeRedirect(redirectTo);
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=${redirectTo}`,
+          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`,
         },
       });
 
       if (error) throw error;
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Google認証に失敗しました'
-      );
+      setError(err instanceof Error ? localizeAuthError(err.message) : 'Google認証に失敗しました');
       setIsGoogleLoading(false);
     }
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="mx-auto w-full max-w-md">
       {/* Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold text-white mb-2">
+      <div className="mb-8 text-center">
+        <h1 className="mb-2 text-2xl font-bold text-white">
           {mode === 'login' ? 'ログイン' : 'アカウント作成'}
         </h1>
         <p className="text-gray-400">
-          {mode === 'login'
-            ? 'HITOONへようこそ'
-            : '新しいアカウントを作成'}
+          {mode === 'login' ? 'HITOONへようこそ' : '新しいアカウントを作成'}
         </p>
       </div>
 
       {/* Error/Message Display */}
       {error && (
-        <div className="mb-4 p-4 bg-red-500/10 border border-red-500/50 rounded-xl text-red-400 text-sm">
+        <div className="mb-4 rounded-xl border border-red-500/50 bg-red-500/10 p-4 text-sm text-red-400">
           {error}
         </div>
       )}
       {message && (
-        <div className="mb-4 p-4 bg-green-500/10 border border-green-500/50 rounded-xl text-green-400 text-sm">
+        <div className="mb-4 rounded-xl border border-green-500/50 bg-green-500/10 p-4 text-sm text-green-400">
           {message}
         </div>
       )}
@@ -126,12 +156,12 @@ export function AuthForm({ mode }: AuthFormProps) {
         type="button"
         onClick={handleGoogleAuth}
         disabled={isGoogleLoading || isLoading}
-        className="w-full flex items-center justify-center gap-3 bg-white text-gray-800 font-semibold py-3.5 px-4 rounded-xl hover:bg-gray-50 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+        className="flex w-full items-center justify-center gap-3 rounded-xl bg-white px-4 py-3.5 font-semibold text-gray-800 shadow-lg transition-all hover:bg-gray-50 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isGoogleLoading ? (
-          <Loader2 className="w-5 h-5 animate-spin text-gray-600" />
+          <Loader2 className="h-5 w-5 animate-spin text-gray-600" />
         ) : (
-          <svg className="w-5 h-5" viewBox="0 0 24 24">
+          <svg className="h-5 w-5" viewBox="0 0 24 24">
             <path
               fill="#4285F4"
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -154,21 +184,21 @@ export function AuthForm({ mode }: AuthFormProps) {
       </button>
 
       {/* Divider */}
-      <div className="flex items-center gap-4 my-6">
+      <div className="my-6 flex items-center gap-4">
         <div className="flex-1 border-t border-gray-800" />
-        <span className="text-gray-500 text-sm">または</span>
+        <span className="text-sm text-gray-500">または</span>
         <div className="flex-1 border-t border-gray-800" />
       </div>
 
       {/* Email Form */}
       <form onSubmit={handleEmailAuth} className="space-y-4">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+          <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-300">
             メールアドレス
           </label>
           <div className="relative flex items-center">
-            <span className="absolute left-4 flex items-center pointer-events-none">
-              <Mail className="w-5 h-5 text-gray-400" />
+            <span className="pointer-events-none absolute left-4 flex items-center">
+              <Mail className="h-5 w-5 text-gray-400" />
             </span>
             <input
               id="email"
@@ -178,21 +208,18 @@ export function AuthForm({ mode }: AuthFormProps) {
               required
               placeholder="you@example.com"
               autoComplete="email"
-              className="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3.5 pl-12 pr-4 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all [&:-webkit-autofill]:bg-gray-800/50 [&:-webkit-autofill]:[-webkit-text-fill-color:white] [&:-webkit-autofill]:[transition:background-color_9999s_ease-in-out_0s]"
+              className="w-full rounded-xl border border-gray-700 bg-gray-800/50 py-3.5 pl-12 pr-4 text-white transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 [&:-webkit-autofill]:bg-gray-800/50 [&:-webkit-autofill]:[-webkit-text-fill-color:white] [&:-webkit-autofill]:[transition:background-color_9999s_ease-in-out_0s]"
             />
           </div>
         </div>
 
         <div>
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium text-gray-300 mb-2"
-          >
+          <label htmlFor="password" className="mb-2 block text-sm font-medium text-gray-300">
             パスワード
           </label>
           <div className="relative flex items-center">
-            <span className="absolute left-4 flex items-center pointer-events-none">
-              <Lock className="w-5 h-5 text-gray-400" />
+            <span className="pointer-events-none absolute left-4 flex items-center">
+              <Lock className="h-5 w-5 text-gray-400" />
             </span>
             <input
               id="password"
@@ -203,18 +230,14 @@ export function AuthForm({ mode }: AuthFormProps) {
               minLength={6}
               placeholder="6文字以上"
               autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-              className="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3.5 pl-12 pr-12 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all [&:-webkit-autofill]:bg-gray-800/50 [&:-webkit-autofill]:[-webkit-text-fill-color:white] [&:-webkit-autofill]:[transition:background-color_9999s_ease-in-out_0s]"
+              className="w-full rounded-xl border border-gray-700 bg-gray-800/50 py-3.5 pl-12 pr-12 text-white transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 [&:-webkit-autofill]:bg-gray-800/50 [&:-webkit-autofill]:[-webkit-text-fill-color:white] [&:-webkit-autofill]:[transition:background-color_9999s_ease-in-out_0s]"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 flex items-center text-gray-400 hover:text-gray-300 transition-colors"
+              className="absolute right-4 flex items-center text-gray-400 transition-colors hover:text-gray-300"
             >
-              {showPassword ? (
-                <EyeOff className="w-5 h-5" />
-              ) : (
-                <Eye className="w-5 h-5" />
-              )}
+              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
             </button>
           </div>
         </div>

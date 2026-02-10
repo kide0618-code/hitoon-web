@@ -13,12 +13,15 @@ export async function GET(request: Request) {
   const error = requestUrl.searchParams.get('error');
   const errorDescription = requestUrl.searchParams.get('error_description');
 
-  // Handle OAuth errors
+  // Handle OAuth errors — preserve redirect so user can retry
   if (error) {
     console.error('OAuth error:', error, errorDescription);
-    return NextResponse.redirect(
-      new URL(`/login?error=${encodeURIComponent(errorDescription || error)}`, requestUrl.origin)
-    );
+    const loginUrl = new URL('/login', requestUrl.origin);
+    loginUrl.searchParams.set('error', errorDescription || error);
+    if (next !== '/') {
+      loginUrl.searchParams.set('redirect', next);
+    }
+    return NextResponse.redirect(loginUrl);
   }
 
   if (code) {
@@ -27,9 +30,12 @@ export async function GET(request: Request) {
 
     if (exchangeError) {
       console.error('Code exchange error:', exchangeError);
-      return NextResponse.redirect(
-        new URL(`/login?error=${encodeURIComponent(exchangeError.message)}`, requestUrl.origin)
-      );
+      const loginUrl = new URL('/login', requestUrl.origin);
+      loginUrl.searchParams.set('error', exchangeError.message);
+      if (next !== '/') {
+        loginUrl.searchParams.set('redirect', next);
+      }
+      return NextResponse.redirect(loginUrl);
     }
 
     // Successful login - redirect to intended destination
@@ -68,7 +74,7 @@ export async function POST(request: Request) {
     // Validate cart items format
     const validItems = cartItems.filter(
       (item: { cardId?: string; quantity?: number }) =>
-        item.cardId && typeof item.quantity === 'number' && item.quantity > 0
+        item.cardId && typeof item.quantity === 'number' && item.quantity > 0,
     );
 
     if (validItems.length === 0) {
@@ -90,10 +96,7 @@ export async function POST(request: Request) {
 
     if (mergeError) {
       console.error('Cart merge error:', mergeError);
-      return NextResponse.json(
-        { error: 'Failed to merge cart' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to merge cart' }, { status: 500 });
     }
 
     return NextResponse.json({
@@ -102,9 +105,6 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error('Cart merge error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

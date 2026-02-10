@@ -70,9 +70,7 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     const supabaseAdmin = createAdminClient();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabaseAdmin.from('artists') as any)
-      .delete()
-      .eq('id', id);
+    const { error } = await (supabaseAdmin.from('artists') as any).delete().eq('id', id);
 
     if (error) {
       return Response.json({ error: error.message }, { status: 500 });

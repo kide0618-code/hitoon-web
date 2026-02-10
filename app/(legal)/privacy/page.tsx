@@ -37,9 +37,7 @@ export default function PrivacyPage() {
 
       <section>
         <h2>3. 第三者への提供</h2>
-        <p>
-          当サービスは、以下の場合を除き、ユーザーの個人情報を第三者に提供しません：
-        </p>
+        <p>当サービスは、以下の場合を除き、ユーザーの個人情報を第三者に提供しません：</p>
         <ul>
           <li>ユーザーの同意がある場合</li>
           <li>法令に基づく場合</li>
@@ -57,9 +55,7 @@ export default function PrivacyPage() {
 
       <section>
         <h2>5. Cookieの使用</h2>
-        <p>
-          当サービスは、セッション管理およびユーザー体験向上のためにCookieを使用します。
-        </p>
+        <p>当サービスは、セッション管理およびユーザー体験向上のためにCookieを使用します。</p>
       </section>
 
       <section>

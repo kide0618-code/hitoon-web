@@ -165,7 +165,7 @@ import { Button } from '@/components/ui/button';
 // Sizes: sm, md, lg
 <Button variant="primary" size="lg" isLoading={isSubmitting}>
   購入する
-</Button>
+</Button>;
 ```
 
 ### Card Component
@@ -183,7 +183,7 @@ import { ArtistCard } from '@/components/cards/artist-card';
   owned={1}
   bonusContentUrl="https://..."
   onClick={() => handleSelect()}
-/>
+/>;
 ```
 
 ### Page Container
@@ -194,7 +194,7 @@ import { PageContainer } from '@/components/layout/page-container';
 // Automatically adds bottom padding for nav
 <PageContainer>
   <h1>Page Content</h1>
-</PageContainer>
+</PageContainer>;
 ```
 
 ## Styling Patterns

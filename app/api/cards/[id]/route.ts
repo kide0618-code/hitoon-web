@@ -17,7 +17,8 @@ export async function GET(request: Request, context: RouteContext) {
     // Get card with related data
     const { data: card, error: cardError } = await supabase
       .from('cards')
-      .select(`
+      .select(
+        `
         *,
         visual:card_visuals (
           id,
@@ -33,22 +34,17 @@ export async function GET(request: Request, context: RouteContext) {
           image_url,
           member_count
         )
-      `)
+      `,
+      )
       .eq('id', id)
       .single();
 
     if (cardError || !card) {
       if (cardError?.code === 'PGRST116') {
-        return NextResponse.json(
-          { error: 'Card not found' },
-          { status: 404 }
-        );
+        return NextResponse.json({ error: 'Card not found' }, { status: 404 });
       }
       console.error('Error fetching card:', cardError);
-      return NextResponse.json(
-        { error: 'Failed to fetch card' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to fetch card' }, { status: 500 });
     }
 
     // Check if current user owns this card (for exclusive content access)
@@ -91,8 +87,7 @@ export async function GET(request: Request, context: RouteContext) {
       [key: string]: unknown;
     };
     const isSoldOut =
-      cardData.total_supply !== null &&
-      cardData.current_supply >= cardData.total_supply;
+      cardData.total_supply !== null && cardData.current_supply >= cardData.total_supply;
 
     return NextResponse.json({
       ...cardData,
@@ -102,9 +97,6 @@ export async function GET(request: Request, context: RouteContext) {
     });
   } catch (error) {
     console.error('Unexpected error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

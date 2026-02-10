@@ -33,12 +33,8 @@ export default async function SettingsPage() {
   const providers = user.app_metadata?.providers as string[] | undefined;
   const provider = user.app_metadata?.provider as string | undefined;
 
-  const hasEmailProvider = Boolean(
-    providers?.includes('email') || (user.email && !provider)
-  );
-  const hasGoogleProvider = Boolean(
-    providers?.includes('google') || provider === 'google'
-  );
+  const hasEmailProvider = Boolean(providers?.includes('email') || (user.email && !provider));
+  const hasGoogleProvider = Boolean(providers?.includes('google') || provider === 'google');
 
   return (
     <SettingsClient

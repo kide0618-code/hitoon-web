@@ -14,26 +14,16 @@ export async function POST(request: Request) {
   const signature = headersList.get('stripe-signature');
 
   if (!signature) {
-    return NextResponse.json(
-      { error: 'Missing stripe-signature header' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Missing stripe-signature header' }, { status: 400 });
   }
 
   let event: Stripe.Event;
 
   try {
-    event = stripe.webhooks.constructEvent(
-      body,
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
-    );
+    event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET!);
   } catch (err) {
     console.error('Webhook signature verification failed:', err);
-    return NextResponse.json(
-      { error: 'Webhook signature verification failed' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Webhook signature verification failed' }, { status: 400 });
   }
 
   try {
@@ -55,10 +45,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ received: true });
   } catch (error) {
     console.error('Webhook handler error:', error);
-    return NextResponse.json(
-      { error: 'Webhook handler failed' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Webhook handler failed' }, { status: 500 });
   }
 }
 
@@ -67,8 +54,7 @@ export async function POST(request: Request) {
  * Supports both single card and cart checkout
  */
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
-  const { user_id, is_cart_checkout, cart_items, card_id, quantity } =
-    session.metadata || {};
+  const { user_id, is_cart_checkout, cart_items, card_id, quantity } = session.metadata || {};
 
   if (!user_id) {
     console.error('Missing user_id in checkout session:', session.id);
@@ -88,7 +74,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       session,
       user_id,
       card_id,
-      parseInt(quantity || '1', 10)
+      parseInt(quantity || '1', 10),
     );
   } else {
     console.error('Invalid checkout session metadata:', session.id);
@@ -106,17 +92,20 @@ async function handleSingleCardCheckoutCompleted(
   session: Stripe.Checkout.Session,
   userId: string,
   cardId: string,
-  qty: number
+  qty: number,
 ) {
   // Use atomic function to increment supply and get serial numbers
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: supplyResult, error: supplyError } = await (supabaseAdmin as any).rpc(
+  const { data: supplyResult, error: supplyError } = (await (supabaseAdmin as any).rpc(
     'increment_card_supply',
     {
       p_card_id: cardId,
       p_quantity: qty,
-    }
-  ) as { data: { new_supply: number; old_supply: number; card_price: number }[] | null; error: Error | null };
+    },
+  )) as {
+    data: { new_supply: number; old_supply: number; card_price: number }[] | null;
+    error: Error | null;
+  };
 
   if (supplyError) {
     console.error('Error incrementing card supply:', supplyError);
@@ -141,13 +130,23 @@ async function handleSingleCardCheckoutCompleted(
     });
   }
 
-  // Insert purchases (idempotent via unique constraint)
+  // Idempotency check: skip if already processed
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error: purchaseError } = await (supabaseAdmin.from('purchases') as any)
-    .upsert(purchases, {
-      onConflict: 'stripe_checkout_session_id,card_id,serial_number',
-      ignoreDuplicates: true,
-    });
+  const { data: existingPurchases } = (await (supabaseAdmin.from('purchases') as any)
+    .select('id')
+    .eq('stripe_checkout_session_id', session.id)
+    .eq('card_id', cardId)
+    .eq('status', 'completed')
+    .limit(1)) as { data: { id: string }[] | null };
+
+  if (existingPurchases && existingPurchases.length > 0) {
+    console.log(`Already processed session ${session.id}, skipping`);
+    return;
+  }
+
+  // Insert purchase records
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error: purchaseError } = await (supabaseAdmin.from('purchases') as any).insert(purchases);
 
   if (purchaseError) {
     console.error('Error creating purchase records:', purchaseError);
@@ -158,7 +157,7 @@ async function handleSingleCardCheckoutCompleted(
   await updateArtistMemberCount(supabaseAdmin, userId, cardId);
 
   console.log(
-    `Single card checkout completed: ${qty} card(s) for user ${userId}, session ${session.id}`
+    `Single card checkout completed: ${qty} card(s) for user ${userId}, session ${session.id}`,
   );
 }
 
@@ -169,7 +168,7 @@ async function handleCartCheckoutCompleted(
   supabaseAdmin: ReturnType<typeof createAdminClient>,
   session: Stripe.Checkout.Session,
   userId: string,
-  cartItemsJson: string
+  cartItemsJson: string,
 ) {
   let cartItems: { id: string; qty: number }[];
   try {
@@ -187,13 +186,16 @@ async function handleCartCheckoutCompleted(
     try {
       // Use atomic function to increment supply and get serial numbers
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: supplyResult, error: supplyError } = await (supabaseAdmin as any).rpc(
+      const { data: supplyResult, error: supplyError } = (await (supabaseAdmin as any).rpc(
         'increment_card_supply',
         {
           p_card_id: cardId,
           p_quantity: qty,
-        }
-      ) as { data: { new_supply: number; old_supply: number; card_price: number }[] | null; error: Error | null };
+        },
+      )) as {
+        data: { new_supply: number; old_supply: number; card_price: number }[] | null;
+        error: Error | null;
+      };
 
       if (supplyError) {
         console.error(`Error incrementing supply for card ${cardId}:`, supplyError);
@@ -218,13 +220,25 @@ async function handleCartCheckoutCompleted(
         });
       }
 
-      // Insert purchases (idempotent via unique constraint)
+      // Idempotency check: skip if already processed for this card
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error: purchaseError } = await (supabaseAdmin.from('purchases') as any)
-        .upsert(purchases, {
-          onConflict: 'stripe_checkout_session_id,card_id,serial_number',
-          ignoreDuplicates: true,
-        });
+      const { data: existingPurchases } = (await (supabaseAdmin.from('purchases') as any)
+        .select('id')
+        .eq('stripe_checkout_session_id', session.id)
+        .eq('card_id', cardId)
+        .eq('status', 'completed')
+        .limit(1)) as { data: { id: string }[] | null };
+
+      if (existingPurchases && existingPurchases.length > 0) {
+        console.log(`Already processed card ${cardId} for session ${session.id}, skipping`);
+        continue;
+      }
+
+      // Insert purchase records
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: purchaseError } = await (supabaseAdmin.from('purchases') as any).insert(
+        purchases,
+      );
 
       if (purchaseError) {
         console.error(`Error creating purchases for card ${cardId}:`, purchaseError);
@@ -239,22 +253,17 @@ async function handleCartCheckoutCompleted(
   }
 
   console.log(
-    `Cart checkout completed: ${cartItems.length} card type(s) for user ${userId}, session ${session.id}`
+    `Cart checkout completed: ${cartItems.length} card type(s) for user ${userId}, session ${session.id}`,
   );
 }
 
 /**
  * Clear user's cart after successful purchase
  */
-async function clearUserCart(
-  supabaseAdmin: ReturnType<typeof createAdminClient>,
-  userId: string
-) {
+async function clearUserCart(supabaseAdmin: ReturnType<typeof createAdminClient>, userId: string) {
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabaseAdmin.from('carts') as any)
-      .delete()
-      .eq('user_id', userId);
+    const { error } = await (supabaseAdmin.from('carts') as any).delete().eq('user_id', userId);
 
     if (error) {
       console.error('Error clearing user cart:', error);
@@ -273,42 +282,42 @@ async function clearUserCart(
 async function updateArtistMemberCount(
   supabaseAdmin: ReturnType<typeof createAdminClient>,
   userId: string,
-  cardId: string
+  cardId: string,
 ) {
   try {
     // Get artist_id from card
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: card } = await (supabaseAdmin.from('cards') as any)
+    const { data: card } = (await (supabaseAdmin.from('cards') as any)
       .select('artist_id')
       .eq('id', cardId)
-      .single() as { data: { artist_id: string } | null };
+      .single()) as { data: { artist_id: string } | null };
 
     if (!card?.artist_id) return;
 
     // Get all card IDs from this artist
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: artistCards } = await (supabaseAdmin.from('cards') as any)
+    const { data: artistCards } = (await (supabaseAdmin.from('cards') as any)
       .select('id')
-      .eq('artist_id', card.artist_id) as { data: { id: string }[] | null };
+      .eq('artist_id', card.artist_id)) as { data: { id: string }[] | null };
 
     const artistCardIds = artistCards?.map((c) => c.id) || [];
 
     // Check if user has any other purchases from this artist (excluding current card)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { count } = await (supabaseAdmin.from('purchases') as any)
+    const { count } = (await (supabaseAdmin.from('purchases') as any)
       .select('id', { count: 'exact', head: true })
       .eq('user_id', userId)
       .eq('status', 'completed')
       .neq('card_id', cardId)
-      .in('card_id', artistCardIds) as { count: number | null };
+      .in('card_id', artistCardIds)) as { count: number | null };
 
     // If this is their first purchase from this artist, increment member count
     if (count === 0) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: artist } = await (supabaseAdmin.from('artists') as any)
+      const { data: artist } = (await (supabaseAdmin.from('artists') as any)
         .select('member_count')
         .eq('id', card.artist_id)
-        .single() as { data: { member_count: number } | null };
+        .single()) as { data: { member_count: number } | null };
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (supabaseAdmin.from('artists') as any)

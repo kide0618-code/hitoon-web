@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 export default function NewArtistPage() {
@@ -89,69 +90,58 @@ export default function NewArtistPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="flex items-center gap-4 mb-8">
-        <a
-          href="/admin/artists"
-          className="text-gray-500 hover:text-white transition-colors"
-        >
+    <div className="mx-auto max-w-2xl">
+      <div className="mb-8 flex items-center gap-4">
+        <a href="/admin/artists" className="text-gray-500 transition-colors hover:text-white">
           ← Back
         </a>
         <h1 className="text-2xl font-bold text-white">New Artist</h1>
       </div>
 
       {error && (
-        <div className="bg-red-900/50 border border-red-700 text-red-400 px-4 py-3 rounded-lg mb-6">
+        <div className="mb-6 rounded-lg border border-red-700 bg-red-900/50 px-4 py-3 text-red-400">
           {error}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-6">
+        <div className="space-y-6 rounded-xl border border-gray-800 bg-gray-900 p-6">
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="mb-2 block text-sm font-medium text-gray-300">
               Name <span className="text-red-400">*</span>
             </label>
             <input
               type="text"
               required
               value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
               placeholder="Artist name"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Description
-            </label>
+            <label className="mb-2 block text-sm font-medium text-gray-300">Description</label>
             <textarea
               value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={4}
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+              className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
               placeholder="Artist description"
             />
           </div>
 
           {/* Image */}
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-gray-300">
-                Image
-              </label>
+            <div className="mb-2 flex items-center justify-between">
+              <label className="block text-sm font-medium text-gray-300">Image</label>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => setImageInputMode('upload')}
-                  className={`text-xs px-3 py-1 rounded transition-colors ${
+                  className={`rounded px-3 py-1 text-xs transition-colors ${
                     imageInputMode === 'upload'
                       ? 'bg-blue-600 text-white'
                       : 'bg-gray-800 text-gray-400 hover:text-white'
@@ -162,7 +152,7 @@ export default function NewArtistPage() {
                 <button
                   type="button"
                   onClick={() => setImageInputMode('url')}
-                  className={`text-xs px-3 py-1 rounded transition-colors ${
+                  className={`rounded px-3 py-1 text-xs transition-colors ${
                     imageInputMode === 'url'
                       ? 'bg-blue-600 text-white'
                       : 'bg-gray-800 text-gray-400 hover:text-white'
@@ -178,7 +168,7 @@ export default function NewArtistPage() {
                 onDrop={handleDrop}
                 onDragOver={(e) => e.preventDefault()}
                 onClick={() => fileInputRef.current?.click()}
-                className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
+                className={`cursor-pointer rounded-lg border-2 border-dashed p-6 text-center transition-colors ${
                   isUploading
                     ? 'border-blue-500 bg-blue-900/20'
                     : 'border-gray-700 hover:border-gray-600'
@@ -194,7 +184,7 @@ export default function NewArtistPage() {
                 {isUploading ? (
                   <div className="text-blue-400">
                     <svg
-                      className="animate-spin h-8 w-8 mx-auto mb-2"
+                      className="mx-auto mb-2 h-8 w-8 animate-spin"
                       fill="none"
                       viewBox="0 0 24 24"
                     >
@@ -216,19 +206,20 @@ export default function NewArtistPage() {
                   </div>
                 ) : formData.image_url ? (
                   <div>
-                    <img
+                    <Image
                       src={formData.image_url}
                       alt="Preview"
-                      className="w-24 h-24 rounded-full object-cover mx-auto mb-2"
+                      width={96}
+                      height={96}
+                      className="mx-auto mb-2 h-24 w-24 rounded-full object-cover"
+                      unoptimized
                     />
-                    <p className="text-sm text-gray-400">
-                      Click or drag to replace
-                    </p>
+                    <p className="text-sm text-gray-400">Click or drag to replace</p>
                   </div>
                 ) : (
                   <div className="text-gray-400">
                     <svg
-                      className="w-12 h-12 mx-auto mb-2"
+                      className="mx-auto mb-2 h-12 w-12"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -241,9 +232,7 @@ export default function NewArtistPage() {
                       />
                     </svg>
                     <p className="text-sm">Click or drag image here</p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      JPEG, PNG, WebP, GIF (max 5MB)
-                    </p>
+                    <p className="mt-1 text-xs text-gray-500">JPEG, PNG, WebP, GIF (max 5MB)</p>
                   </div>
                 )}
               </div>
@@ -251,20 +240,21 @@ export default function NewArtistPage() {
               <input
                 type="url"
                 value={formData.image_url}
-                onChange={(e) =>
-                  setFormData({ ...formData, image_url: e.target.value })
-                }
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
                 placeholder="https://example.com/image.jpg"
               />
             )}
 
             {imageInputMode === 'url' && formData.image_url && (
               <div className="mt-3">
-                <img
+                <Image
                   src={formData.image_url}
                   alt="Preview"
-                  className="w-24 h-24 rounded-full object-cover"
+                  width={96}
+                  height={96}
+                  className="h-24 w-24 rounded-full object-cover"
+                  unoptimized
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = 'none';
                   }}
@@ -276,25 +266,19 @@ export default function NewArtistPage() {
           {/* Featured & Display Order */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="flex items-center gap-3 cursor-pointer">
+              <label className="flex cursor-pointer items-center gap-3">
                 <input
                   type="checkbox"
                   checked={formData.is_featured}
-                  onChange={(e) =>
-                    setFormData({ ...formData, is_featured: e.target.checked })
-                  }
-                  className="w-5 h-5 bg-gray-800 border border-gray-700 rounded focus:ring-blue-500"
+                  onChange={(e) => setFormData({ ...formData, is_featured: e.target.checked })}
+                  className="h-5 w-5 rounded border border-gray-700 bg-gray-800 focus:ring-blue-500"
                 />
-                <span className="text-sm font-medium text-gray-300">
-                  Featured on Home
-                </span>
+                <span className="text-sm font-medium text-gray-300">Featured on Home</span>
               </label>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Display Order
-              </label>
+              <label className="mb-2 block text-sm font-medium text-gray-300">Display Order</label>
               <input
                 type="number"
                 value={formData.display_order}
@@ -304,7 +288,7 @@ export default function NewArtistPage() {
                     display_order: parseInt(e.target.value) || 0,
                   })
                 }
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
                 min="0"
               />
             </div>
@@ -316,14 +300,11 @@ export default function NewArtistPage() {
           <button
             type="submit"
             disabled={isLoading || isUploading}
-            className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed text-white font-medium px-6 py-3 rounded-lg transition-colors"
+            className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-800"
           >
             {isLoading ? 'Creating...' : 'Create Artist'}
           </button>
-          <a
-            href="/admin/artists"
-            className="text-gray-400 hover:text-white transition-colors"
-          >
+          <a href="/admin/artists" className="text-gray-400 transition-colors hover:text-white">
             Cancel
           </a>
         </div>

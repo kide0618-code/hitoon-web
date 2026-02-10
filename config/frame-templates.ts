@@ -11,10 +11,7 @@
 
 import type { Rarity } from '@/types/card';
 
-export type FrameTemplateId =
-  | 'classic-normal'
-  | 'classic-rare'
-  | 'classic-super-rare';
+export type FrameTemplateId = 'classic-normal' | 'classic-rare' | 'classic-super-rare';
 
 export interface FrameTemplate {
   id: FrameTemplateId;

@@ -19,7 +19,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     const baseStyles =
       'inline-flex items-center justify-center gap-2 font-bold rounded-full transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black';
@@ -45,11 +45,11 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled || isLoading}
         {...props}
       >
-        {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+        {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
         {children}
       </button>
     );
-  }
+  },
 );
 
 Button.displayName = 'Button';

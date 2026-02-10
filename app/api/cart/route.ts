@@ -19,7 +19,8 @@ export async function GET() {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: cartItems, error } = await (supabase.from('carts') as any)
-      .select(`
+      .select(
+        `
         id,
         user_id,
         card_id,
@@ -41,16 +42,14 @@ export async function GET() {
             name
           )
         )
-      `)
+      `,
+      )
       .eq('user_id', user.id)
       .order('added_at', { ascending: false });
 
     if (error) {
       console.error('Error fetching cart:', error);
-      return NextResponse.json(
-        { error: 'Failed to fetch cart' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to fetch cart' }, { status: 500 });
     }
 
     // Transform to expected format
@@ -61,12 +60,8 @@ export async function GET() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .map((item: any) => {
         const card = Array.isArray(item.card) ? item.card[0] : item.card;
-        const visual = Array.isArray(card?.visual)
-          ? card.visual[0]
-          : card?.visual;
-        const artist = Array.isArray(card?.artist)
-          ? card.artist[0]
-          : card?.artist;
+        const visual = Array.isArray(card?.visual) ? card.visual[0] : card?.visual;
+        const artist = Array.isArray(card?.artist) ? card.artist[0] : card?.artist;
 
         return {
           id: item.id,
@@ -96,10 +91,7 @@ export async function GET() {
     return NextResponse.json({ items });
   } catch (error) {
     console.error('Cart API error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -122,10 +114,7 @@ export async function POST(request: Request) {
     const { cardId, quantity = 1 } = await request.json();
 
     if (!cardId) {
-      return NextResponse.json(
-        { error: 'Card ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Card ID is required' }, { status: 400 });
     }
 
     // Validate quantity
@@ -139,7 +128,11 @@ export async function POST(request: Request) {
       .eq('is_active', true)
       .single();
 
-    const card = cardData as { id: string; total_supply: number | null; current_supply: number } | null;
+    const card = cardData as {
+      id: string;
+      total_supply: number | null;
+      current_supply: number;
+    } | null;
 
     if (cardError || !card) {
       return NextResponse.json({ error: 'Card not found' }, { status: 404 });
@@ -163,24 +156,18 @@ export async function POST(request: Request) {
       },
       {
         onConflict: 'user_id,card_id',
-      }
+      },
     );
 
     if (upsertError) {
       console.error('Error adding to cart:', upsertError);
-      return NextResponse.json(
-        { error: 'Failed to add to cart' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to add to cart' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Cart POST error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -204,10 +191,7 @@ export async function DELETE(request: Request) {
     const cardId = searchParams.get('cardId');
 
     if (!cardId) {
-      return NextResponse.json(
-        { error: 'Card ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Card ID is required' }, { status: 400 });
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -218,18 +202,12 @@ export async function DELETE(request: Request) {
 
     if (error) {
       console.error('Error removing from cart:', error);
-      return NextResponse.json(
-        { error: 'Failed to remove from cart' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to remove from cart' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Cart DELETE error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -6,31 +6,32 @@
 **Tagline**: 音楽を、一生モノにする。
 
 **原則**:
+
 - ダークテーマで音楽・ライブの世界観を表現
 - トレカのコレクション性・所有欲を刺激
 - モバイルファースト（Twitch/SNS連携を意識）
 
 ## Color Palette
 
-| Role | Color | Tailwind | Note |
-|------|-------|----------|------|
-| Background | `#000000` | `bg-black` | Pure Black |
-| Surface | `#111827` | `bg-gray-900` | Card背景 |
-| Border | `#1f2937` | `border-gray-800` | 控えめな区切り |
-| Primary | `#3b82f6` | `text-blue-500` | CTA、価格 |
-| Secondary | `#e879f9` | `text-fuchsia-400` | アクセント |
-| Gold | `#fbbf24` | `text-yellow-400` | レジェンダリー |
-| Text Primary | `#ffffff` | `text-white` | 見出し |
-| Text Secondary | `#6b7280` | `text-gray-500` | サブテキスト |
+| Role           | Color     | Tailwind           | Note           |
+| -------------- | --------- | ------------------ | -------------- |
+| Background     | `#000000` | `bg-black`         | Pure Black     |
+| Surface        | `#111827` | `bg-gray-900`      | Card背景       |
+| Border         | `#1f2937` | `border-gray-800`  | 控えめな区切り |
+| Primary        | `#3b82f6` | `text-blue-500`    | CTA、価格      |
+| Secondary      | `#e879f9` | `text-fuchsia-400` | アクセント     |
+| Gold           | `#fbbf24` | `text-yellow-400`  | レジェンダリー |
+| Text Primary   | `#ffffff` | `text-white`       | 見出し         |
+| Text Secondary | `#6b7280` | `text-gray-500`    | サブテキスト   |
 
 ## Typography
 
-| Use | Font | Class |
-|-----|------|-------|
-| 本文 | Inter | `font-sans` (default) |
-| 日本語 | System UI | ブラウザデフォルト |
-| シリアルNo. | Monospace | `font-mono` |
-| 価格 | Bold | `font-bold` |
+| Use         | Font      | Class                 |
+| ----------- | --------- | --------------------- |
+| 本文        | Inter     | `font-sans` (default) |
+| 日本語      | System UI | ブラウザデフォルト    |
+| シリアルNo. | Monospace | `font-mono`           |
+| 価格        | Bold      | `font-bold`           |
 
 ## Card Design (トレカスタイル)
 
@@ -66,13 +67,14 @@
 
 同じビジュアル（画像データ）で、フレームテンプレートが異なる3パターンを提供:
 
-| レアリティ | 価格帯 | フレーム特徴 | 発行上限 |
-|-----------|--------|-------------|---------|
-| NORMAL (N) | ¥800〜¥1,500 | シンプルな黒フレーム | 無制限 or 多め |
-| RARE (R) | ¥1,500〜¥3,000 | 青〜紫のグロー効果 | 100〜300枚 |
-| SUPER RARE (SR) | ¥3,000〜¥10,000 | ホログラム + ゴールド装飾 | 10〜50枚 |
+| レアリティ      | 価格帯          | フレーム特徴              | 発行上限       |
+| --------------- | --------------- | ------------------------- | -------------- |
+| NORMAL (N)      | ¥800〜¥1,500    | シンプルな黒フレーム      | 無制限 or 多め |
+| RARE (R)        | ¥1,500〜¥3,000  | 青〜紫のグロー効果        | 100〜300枚     |
+| SUPER RARE (SR) | ¥3,000〜¥10,000 | ホログラム + ゴールド装飾 | 10〜50枚       |
 
 ### Aspect Ratio
+
 - **3:4** (標準トレカ比率)
 - 600x800px を基準
 
@@ -110,11 +112,11 @@ Layer 6: Effects (ホログラム、パーティクル) ← FrameTemplate
 
 ### Frame Template Styles (config/frame-templates.ts)
 
-| Rarity | Frame Color | Background | Effect | CSS Class |
-|--------|-------------|------------|--------|-----------|
-| NORMAL | `#4b5563` (gray-600) | Dark gradient | なし | `card-normal` |
-| RARE | `#3b82f6` (blue-500) | Blue-purple gradient | Glow | `card-rare` |
-| SUPER_RARE | `#fbbf24` (yellow-400) | Gold-pink gradient | Hologram + Sparkle | `card-super-rare` |
+| Rarity     | Frame Color            | Background           | Effect             | CSS Class         |
+| ---------- | ---------------------- | -------------------- | ------------------ | ----------------- |
+| NORMAL     | `#4b5563` (gray-600)   | Dark gradient        | なし               | `card-normal`     |
+| RARE       | `#3b82f6` (blue-500)   | Blue-purple gradient | Glow               | `card-rare`       |
+| SUPER_RARE | `#fbbf24` (yellow-400) | Gold-pink gradient   | Hologram + Sparkle | `card-super-rare` |
 
 ```typescript
 // config/frame-templates.ts
@@ -140,18 +142,18 @@ export function getDefaultFrameForRarity(rarity: Rarity): FrameTemplate;
 interface CardVisualInput {
   // 必須
   artistId: string;
-  name: string;               // ビジュアル名（管理用: "1st Album"等）
-  artistImage: File;          // アップロード画像
+  name: string; // ビジュアル名（管理用: "1st Album"等）
+  artistImage: File; // アップロード画像
 
   // 任意
-  songTitle?: string;         // 楽曲名
-  subtitle?: string;          // サブタイトル
+  songTitle?: string; // 楽曲名
+  subtitle?: string; // サブタイトル
 
   // レアリティ別設定（3パターン）
   variants: {
     rarity: 'NORMAL' | 'RARE' | 'SUPER_RARE';
     price: number;
-    totalSupply: number | null;  // null = 無制限
+    totalSupply: number | null; // null = 無制限
     isActive: boolean;
   }[];
 }
@@ -204,8 +206,13 @@ interface CardVisualInput {
 }
 
 @keyframes holo-shine {
-  0%, 100% { background-position: -100% 0; }
-  50% { background-position: 200% 0; }
+  0%,
+  100% {
+    background-position: -100% 0;
+  }
+  50% {
+    background-position: 200% 0;
+  }
 }
 
 /* スパークルエフェクト（SUPER_RARE専用） */
@@ -220,8 +227,13 @@ interface CardVisualInput {
 }
 
 @keyframes sparkle {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.6; }
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
 }
 
 /* メタデータ表示 */
@@ -233,9 +245,18 @@ interface CardVisualInput {
 }
 
 /* レアリティバッジ */
-.rarity-badge-n { background: #4b5563; color: #fff; }
-.rarity-badge-r { background: #3b82f6; color: #fff; }
-.rarity-badge-sr { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #000; }
+.rarity-badge-n {
+  background: #4b5563;
+  color: #fff;
+}
+.rarity-badge-r {
+  background: #3b82f6;
+  color: #fff;
+}
+.rarity-badge-sr {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #000;
+}
 ```
 
 ### Tailwind Component Example (FrameTemplate使用)
@@ -270,31 +291,27 @@ function ArtistCard({
   const frame = getDefaultFrameForRarity(rarity);
 
   return (
-    <div className={cn(
-      'trading-card',
-      frame.cssClass,  // card-normal, card-rare, card-super-rare
-      'transition-transform hover:scale-105'
-    )}>
+    <div
+      className={cn(
+        'trading-card',
+        frame.cssClass, // card-normal, card-rare, card-super-rare
+        'transition-transform hover:scale-105',
+      )}
+    >
       {/* Main Visual - CardVisual (DB) */}
       <div className="relative h-[70%]">
-        <img
-          src={artistImageUrl}
-          alt={artistName}
-          className="w-full h-full object-cover"
-        />
+        <img src={artistImageUrl} alt={artistName} className="h-full w-full object-cover" />
         {/* Effects - FrameTemplate */}
         {frame.effects.includes('hologram') && (
-          <div className="absolute inset-0 holo-effect pointer-events-none" />
+          <div className="holo-effect pointer-events-none absolute inset-0" />
         )}
       </div>
 
       {/* Info Section */}
-      <div className="p-3 space-y-1">
-        <p className="text-xs text-gray-400 uppercase tracking-wider">IDOL: {artistName}</p>
-        {songTitle && (
-          <p className="text-xs text-gray-500">SONG: {songTitle}</p>
-        )}
-        <div className="flex items-center justify-between text-xs pt-2">
+      <div className="space-y-1 p-3">
+        <p className="text-xs uppercase tracking-wider text-gray-400">IDOL: {artistName}</p>
+        {songTitle && <p className="text-xs text-gray-500">SONG: {songTitle}</p>}
+        <div className="flex items-center justify-between pt-2 text-xs">
           <RarityBadge rarity={rarity} />
           {serialNumber !== undefined && (
             <span className="font-mono text-gray-400">
@@ -303,9 +320,7 @@ function ArtistCard({
             </span>
           )}
         </div>
-        {owned !== undefined && (
-          <p className="text-xs text-gray-500">Owned: {owned}</p>
-        )}
+        {owned !== undefined && <p className="text-xs text-gray-500">Owned: {owned}</p>}
       </div>
 
       {/* Bonus Content Link */}
@@ -326,14 +341,12 @@ function ArtistCard({
 ```tsx
 // Marketplace: 2x3 グリッド
 <div className="grid grid-cols-2 gap-4 p-4">
-  {cards.map(card => (
+  {cards.map((card) => (
     <div key={card.id} className="space-y-2">
       <ArtistCard {...card} />
       <div className="text-center">
         <p className="text-lg font-bold text-white">¥{card.price.toLocaleString()}</p>
-        <button className="w-full bg-blue-600 text-white py-2 rounded-lg font-bold">
-          BUY
-        </button>
+        <button className="w-full rounded-lg bg-blue-600 py-2 font-bold text-white">BUY</button>
       </div>
     </div>
   ))}
@@ -345,15 +358,13 @@ function ArtistCard({
 ```tsx
 // My Collection: 詳細表示
 <div className="p-4">
-  <h1 className="text-xl font-bold mb-4">My Collection - {totalCards} Cards</h1>
-  <div className="max-w-sm mx-auto">
+  <h1 className="mb-4 text-xl font-bold">My Collection - {totalCards} Cards</h1>
+  <div className="mx-auto max-w-sm">
     <ArtistCard {...selectedCard} />
     <div className="mt-4 space-y-2 text-sm">
       <p className="text-gray-400">BONUS CONTENT:</p>
       <p className="text-blue-400">SPECIAL LIVE URL</p>
-      <button className="w-full bg-white text-black py-3 rounded-lg font-bold">
-        VIEW
-      </button>
+      <button className="w-full rounded-lg bg-white py-3 font-bold text-black">VIEW</button>
     </div>
   </div>
 </div>
@@ -362,69 +373,66 @@ function ArtistCard({
 ## Layout Patterns
 
 ### Bottom Navigation
+
 ```tsx
 // 固定下部ナビ（モバイル標準）
-<nav className="
-  fixed bottom-0 left-0 w-full z-50
-  bg-black/90 backdrop-blur-md
-  border-t border-gray-800
-">
-  <div className="flex justify-around items-center p-2">
-    {/* Home, Store, Collection */}
-  </div>
+<nav className="fixed bottom-0 left-0 z-50 w-full border-t border-gray-800 bg-black/90 backdrop-blur-md">
+  <div className="flex items-center justify-around p-2">{/* Home, Store, Collection */}</div>
 </nav>
 ```
 
 ### Card Grid
+
 ```tsx
 // コレクション表示
-<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-  {cards.map(card => <ArtistCard key={card.id} {...card} />)}
+<div className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-3 lg:grid-cols-4">
+  {cards.map((card) => (
+    <ArtistCard key={card.id} {...card} />
+  ))}
 </div>
 ```
 
 ### Artist List Item
+
 ```tsx
-<div className="
-  flex items-center gap-4
-  bg-gray-900/50 p-3 rounded-xl
-  border border-gray-800
-  hover:border-blue-500/50 transition-colors
-">
-  <img className="w-16 h-16 rounded-full object-cover" />
+<div className="flex items-center gap-4 rounded-xl border border-gray-800 bg-gray-900/50 p-3 transition-colors hover:border-blue-500/50">
+  <img className="h-16 w-16 rounded-full object-cover" />
   <div className="flex-1">
     <h3 className="font-bold">{name}</h3>
     <p className="text-xs text-gray-500">{members} Members</p>
   </div>
-  <div className="text-blue-400 font-bold">¥{price}</div>
+  <div className="font-bold text-blue-400">¥{price}</div>
 </div>
 ```
 
 ## Animation Guidelines
 
 ### Micro-interactions
+
 - ホバー: `transition-all duration-200`
 - ボタン押下: `active:scale-95`
 - カードホバー: `hover:scale-105 hover:shadow-lg`
 
 ### Loading States
+
 ```tsx
 <div className="animate-pulse bg-gray-800 rounded-xl" />
 <Loader2 className="animate-spin" />
 ```
 
 ### Success Feedback
+
 - 購入完了: カードが光るエフェクト
 - コレクション追加: スライドインアニメーション
 
 ## Responsive Design
 
-| Breakpoint | Width | Use |
-|------------|-------|-----|
-| Default | < 640px | モバイル（1-2列） |
-| `sm:` | ≥ 640px | タブレット縦（2-3列） |
-| `md:` | ≥ 768px | タブレット横 |
-| `lg:` | ≥ 1024px | デスクトップ（3-4列） |
+| Breakpoint | Width    | Use                   |
+| ---------- | -------- | --------------------- |
+| Default    | < 640px  | モバイル（1-2列）     |
+| `sm:`      | ≥ 640px  | タブレット縦（2-3列） |
+| `md:`      | ≥ 768px  | タブレット横          |
+| `lg:`      | ≥ 1024px | デスクトップ（3-4列） |
 
 ## Accessibility
 
@@ -435,12 +443,14 @@ function ArtistCard({
 ## DO / DON'T
 
 ### DO
+
 - ダークテーマを一貫して使用
 - カードは「宝物」感を演出
 - アーティスト画像を大きく見せる
 - 価格・レアリティを明確に表示
 
 ### DON'T
+
 - 白背景の使用（眩しい）
 - 過度なアニメーション
 - テキスト詰め込みすぎ

@@ -242,6 +242,7 @@ CREATE POLICY "Users can view own purchases"
 ## Query Patterns
 
 ### 基本クエリ
+
 ```typescript
 // おすすめアーティスト（ホーム画面）
 const { data: featuredArtists } = await supabase
@@ -267,24 +268,28 @@ const isAdmin = !!operator;
 // Marketplace: カード一覧（ビジュアル・アーティスト情報付き）
 const { data: cards } = await supabase
   .from('cards')
-  .select(`
+  .select(
+    `
     *,
     visual:card_visuals(
       artist_image_url,
       song_title
     ),
     artist:artists(id, name)
-  `)
+  `,
+  )
   .eq('is_active', true)
   .order('created_at', { ascending: false });
 
 // 特定アーティストの3レアリティカード取得
 const { data: artistCards } = await supabase
   .from('cards')
-  .select(`
+  .select(
+    `
     *,
     visual:card_visuals(*)
-  `)
+  `,
+  )
   .eq('artist_id', artistId)
   .eq('is_active', true)
   .order('rarity', { ascending: true }); // NORMAL → RARE → SUPER_RARE
@@ -292,20 +297,23 @@ const { data: artistCards } = await supabase
 // ユーザーのコレクション
 const { data: collection } = await supabase
   .from('purchases')
-  .select(`
+  .select(
+    `
     *,
     card:cards(
       *,
       visual:card_visuals(*),
       artist:artists(*)
     )
-  `)
+  `,
+  )
   .eq('user_id', userId)
   .eq('status', 'completed')
   .order('purchased_at', { ascending: false });
 ```
 
 ### 管理画面: ビジュアル作成
+
 ```typescript
 // 1. ビジュアル作成（画像アップロード後）
 const { data: visual } = await supabaseAdmin
@@ -326,28 +334,25 @@ const cardVariants = [
   { rarity: 'SUPER_RARE', price: 8000, total_supply: 30 },
 ];
 
-await supabaseAdmin
-  .from('cards')
-  .insert(
-    cardVariants.map(v => ({
-      visual_id: visual.id,
-      artist_id: artistId,
-      name: `${artistName} - ${v.rarity}`,
-      rarity: v.rarity,
-      price: v.price,
-      total_supply: v.total_supply,
-    }))
-  );
+await supabaseAdmin.from('cards').insert(
+  cardVariants.map((v) => ({
+    visual_id: visual.id,
+    artist_id: artistId,
+    name: `${artistName} - ${v.rarity}`,
+    rarity: v.rarity,
+    price: v.price,
+    total_supply: v.total_supply,
+  })),
+);
 ```
 
 ### 購入処理（サーバーサイド）
+
 ```typescript
 // Webhook処理: 数量分のpurchaseレコードを作成
 // ※過剰販売は許容し、手動対応する方針
 
-async function handleCheckoutCompleted(
-  session: Stripe.Checkout.Session
-) {
+async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const { user_id, card_id, quantity } = session.metadata!;
   const qty = parseInt(quantity, 10);
 
@@ -366,10 +371,10 @@ async function handleCheckoutCompleted(
 
   // 2. アトミックにcurrent_supplyをインクリメントして新しい値を取得
   // PostgreSQL: UPDATE ... RETURNING で競合を防止
-  const { data: updatedCard, error } = await supabaseAdmin.rpc(
-    'increment_card_supply',
-    { p_card_id: card_id, p_quantity: qty }
-  );
+  const { data: updatedCard, error } = await supabaseAdmin.rpc('increment_card_supply', {
+    p_card_id: card_id,
+    p_quantity: qty,
+  });
 
   if (error) throw error;
 
@@ -397,7 +402,8 @@ async function handleCheckoutCompleted(
 ```
 
 ### シリアルNo.採番用のアトミック関数
-```sql
+
+````sql
 -- PostgreSQL Function: 競合を防ぐアトミックなカウンター更新
 CREATE OR REPLACE FUNCTION increment_card_supply(
   p_card_id UUID,
@@ -433,7 +439,7 @@ const { data: contents } = await supabase
   .select('*')
   .eq('card_id', cardId)
   .order('display_order', { ascending: true });
-```
+````
 
 ## Supabase Functions (Edge Functions)
 
@@ -454,7 +460,7 @@ serve(async (req) => {
   const event = stripe.webhooks.constructEvent(
     body,
     signature,
-    Deno.env.get('STRIPE_WEBHOOK_SECRET')!
+    Deno.env.get('STRIPE_WEBHOOK_SECRET')!,
   );
 
   // Handle event...

@@ -7,7 +7,9 @@ The codebase is **40% complete**. The UI/UX foundation is solid with pages, comp
 ## Critical Missing Features (Blocking MVP)
 
 ### 1. Authentication System (AUTH-001 to AUTH-007)
+
 **Status**: ❌ Not Started
+
 - **Pages Missing**: Login page, Signup page, OAuth callback
 - **Components Missing**: Login form, Signup form, password reset flow
 - **Integration Missing**: No Supabase Auth setup, no JWT handling
@@ -15,7 +17,9 @@ The codebase is **40% complete**. The UI/UX foundation is solid with pages, comp
 - **Definition Reference**: Section 2.1.1 (认证)
 
 ### 2. Database Integration (All Queries)
+
 **Status**: ❌ Not Started
+
 - All pages use MOCK_ARTISTS / MOCK_COLLECTION hardcoded data
 - No Supabase queries implemented
 - Required queries:
@@ -28,7 +32,9 @@ The codebase is **40% complete**. The UI/UX foundation is solid with pages, comp
 - **Definition Reference**: Section 5 (Data Model), Section 6.1 (API Design)
 
 ### 3. API Routes (All Endpoints)
+
 **Status**: ❌ Directories exist, files empty
+
 - **GET /api/artists** - List all artists
 - **GET /api/artists/:id** - Artist detail
 - **GET /api/cards** - Card list (with filters)
@@ -43,7 +49,9 @@ The codebase is **40% complete**. The UI/UX foundation is solid with pages, comp
 - **Definition Reference**: Section 6 (API Design)
 
 ### 4. Stripe Payment Integration
+
 **Status**: ⚠️ Partial
+
 - ✅ Stripe client initialized (lib/stripe/client.ts)
 - ✅ Helper functions `getOrCreateStripeCustomer()` and `createCheckoutSession()` defined
 - ❌ **POST /api/checkout** route not implemented
@@ -54,7 +62,9 @@ The codebase is **40% complete**. The UI/UX foundation is solid with pages, comp
 - **Definition Reference**: Section 2.1.3 (Purchase Flow)
 
 ### 5. Webhook Handling
+
 **Status**: ❌ Not Started
+
 - **Missing**: POST /api/webhooks/stripe route
 - **Missing**: Event processing (checkout.session.completed)
 - **Missing**: Database updates on payment success
@@ -66,7 +76,9 @@ The codebase is **40% complete**. The UI/UX foundation is solid with pages, comp
 - **Definition Reference**: Section 2.1.3 (技術要件)
 
 ### 6. Exclusive Content Access
+
 **Status**: ❌ Not Started
+
 - **Missing**: Content URL storage in database (exclusive_contents table)
 - **Missing**: RLS policy to check purchase ownership
 - **Missing**: API endpoint to fetch content URL (GET /api/purchases/:id/content)
@@ -75,9 +87,11 @@ The codebase is **40% complete**. The UI/UX foundation is solid with pages, comp
 - **Definition Reference**: Section 2.1.4 (Collection)
 
 ### 7. Admin Dashboard
+
 **Status**: ❌ Not Started
+
 - **Pages Missing**: /admin (dashboard), /admin/artists, /admin/templates, /admin/users, /admin/sales
-- **Features Missing**: 
+- **Features Missing**:
   - Card template creation with image upload
   - Rarity pricing configuration
   - Admin access control (operators table check)
@@ -89,17 +103,20 @@ The codebase is **40% complete**. The UI/UX foundation is solid with pages, comp
 ## Partially Complete Features
 
 ### Auth Pages Structure
+
 - ✅ Route group (app/(auth)/) created
 - ❌ No login.tsx, signup.tsx, or callback.tsx pages
 - **Estimated Effort**: Medium (form creation, validation, Supabase integration)
 
 ### Data Model Types
+
 - ✅ All TypeScript interfaces defined (Card, Artist, Purchase, etc.)
 - ❌ No corresponding database schema implementation
 - ❌ No migrations
 - **Estimated Effort**: Low (schema already designed in definition.md)
 
 ### Styling System
+
 - ✅ Dark theme, color palette, component styling complete
 - ⚠️ Some states/animations missing (loading, error states in some components)
 - **Estimated Effort**: Low (mostly done)
@@ -125,19 +142,19 @@ The codebase is **40% complete**. The UI/UX foundation is solid with pages, comp
 
 ## Estimated Implementation Effort
 
-| Feature | Complexity | Time (Days) | Priority |
-|---------|-----------|-----------|----------|
-| Supabase Auth Setup | Medium | 2 | P0 |
-| Auth Pages (Login/Signup) | Medium | 2 | P0 |
-| Database Migrations | Low | 1 | P0 |
-| API Routes (CRUD) | Medium | 3 | P0 |
-| Stripe Checkout Integration | Medium | 2 | P0 |
-| Webhook Processing | High | 2 | P0 |
-| Exclusive Content Access | Medium | 2 | P0 |
-| Collection Detail Page | Low | 1 | P1 |
-| Admin Dashboard Base | High | 5 | P1 |
-| Admin Templates Management | High | 3 | P1 |
-| **TOTAL FOR MVP** | | **23 days** | |
+| Feature                     | Complexity | Time (Days) | Priority |
+| --------------------------- | ---------- | ----------- | -------- |
+| Supabase Auth Setup         | Medium     | 2           | P0       |
+| Auth Pages (Login/Signup)   | Medium     | 2           | P0       |
+| Database Migrations         | Low        | 1           | P0       |
+| API Routes (CRUD)           | Medium     | 3           | P0       |
+| Stripe Checkout Integration | Medium     | 2           | P0       |
+| Webhook Processing          | High       | 2           | P0       |
+| Exclusive Content Access    | Medium     | 2           | P0       |
+| Collection Detail Page      | Low        | 1           | P1       |
+| Admin Dashboard Base        | High       | 5           | P1       |
+| Admin Templates Management  | High       | 3           | P1       |
+| **TOTAL FOR MVP**           |            | **23 days** |          |
 
 ## MVP Blockers (Must-Have)
 
@@ -169,7 +186,8 @@ Items marked **P0** from definition that are not implemented:
 ## Conclusion
 
 **Current State**: Excellent UI foundation, zero backend integration
-**Next Priority**: 
+**Next Priority**:
+
 1. Setup Supabase schema and RLS
 2. Implement auth system (login/signup)
 3. Implement API routes for data fetching

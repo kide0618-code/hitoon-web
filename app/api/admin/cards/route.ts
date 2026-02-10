@@ -10,10 +10,7 @@ export async function POST(request: Request) {
 
     // Validate required fields
     if (!body.visual_id) {
-      return Response.json(
-        { error: 'Visual ID is required' },
-        { status: 400 }
-      );
+      return Response.json({ error: 'Visual ID is required' }, { status: 400 });
     }
     if (!body.artist_id) {
       return Response.json({ error: 'Artist ID is required' }, { status: 400 });
@@ -38,7 +35,7 @@ export async function POST(request: Request) {
     if (existingCard) {
       return Response.json(
         { error: 'A card with this rarity already exists for this visual' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 interface Artist {
@@ -73,40 +74,35 @@ export default function NewVisualPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <div className="flex items-center gap-4 mb-8">
-        <a
-          href="/admin/visuals"
-          className="text-gray-500 hover:text-white transition-colors"
-        >
+    <div className="mx-auto max-w-3xl">
+      <div className="mb-8 flex items-center gap-4">
+        <a href="/admin/visuals" className="text-gray-500 transition-colors hover:text-white">
           ← Back
         </a>
         <h1 className="text-2xl font-bold text-white">New Visual</h1>
       </div>
 
       {error && (
-        <div className="bg-red-900/50 border border-red-700 text-red-400 px-4 py-3 rounded-lg mb-6">
+        <div className="mb-6 rounded-lg border border-red-700 bg-red-900/50 px-4 py-3 text-red-400">
           {error}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Info */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-6">
+        <div className="space-y-6 rounded-xl border border-gray-800 bg-gray-900 p-6">
           <h2 className="text-lg font-medium text-white">Visual Info</h2>
 
           {/* Artist Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="mb-2 block text-sm font-medium text-gray-300">
               Artist <span className="text-red-400">*</span>
             </label>
             <select
               required
               value={formData.artist_id}
-              onChange={(e) =>
-                setFormData({ ...formData, artist_id: e.target.value })
-              }
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+              onChange={(e) => setFormData({ ...formData, artist_id: e.target.value })}
+              className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
               disabled={isLoadingArtists}
             >
               <option value="">Select an artist</option>
@@ -120,42 +116,41 @@ export default function NewVisualPage() {
 
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="mb-2 block text-sm font-medium text-gray-300">
               Visual Name <span className="text-red-400">*</span>
             </label>
             <input
               type="text"
               required
               value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
               placeholder="e.g., 1st Album, Summer Single"
             />
           </div>
 
           {/* Image URL */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="mb-2 block text-sm font-medium text-gray-300">
               Card Image URL <span className="text-red-400">*</span>
             </label>
             <input
               type="url"
               required
               value={formData.artist_image_url}
-              onChange={(e) =>
-                setFormData({ ...formData, artist_image_url: e.target.value })
-              }
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+              onChange={(e) => setFormData({ ...formData, artist_image_url: e.target.value })}
+              className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
               placeholder="https://example.com/card-image.jpg"
             />
             {formData.artist_image_url && (
               <div className="mt-3">
-                <img
+                <Image
                   src={formData.artist_image_url}
                   alt="Preview"
-                  className="w-32 h-auto aspect-[3/4] rounded-lg object-cover"
+                  width={128}
+                  height={171}
+                  className="aspect-[3/4] h-auto w-32 rounded-lg object-cover"
+                  unoptimized
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = 'none';
                   }}
@@ -166,46 +161,36 @@ export default function NewVisualPage() {
 
           {/* Song Title */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Song Title
-            </label>
+            <label className="mb-2 block text-sm font-medium text-gray-300">Song Title</label>
             <input
               type="text"
               value={formData.song_title}
-              onChange={(e) =>
-                setFormData({ ...formData, song_title: e.target.value })
-              }
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+              onChange={(e) => setFormData({ ...formData, song_title: e.target.value })}
+              className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
               placeholder="Optional song title"
             />
           </div>
 
           {/* Subtitle */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Subtitle
-            </label>
+            <label className="mb-2 block text-sm font-medium text-gray-300">Subtitle</label>
             <input
               type="text"
               value={formData.subtitle}
-              onChange={(e) =>
-                setFormData({ ...formData, subtitle: e.target.value })
-              }
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+              onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
+              className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
               placeholder="Optional subtitle"
             />
           </div>
 
           {/* Is Active */}
           <div>
-            <label className="flex items-center gap-3 cursor-pointer">
+            <label className="flex cursor-pointer items-center gap-3">
               <input
                 type="checkbox"
                 checked={formData.is_active}
-                onChange={(e) =>
-                  setFormData({ ...formData, is_active: e.target.checked })
-                }
-                className="w-5 h-5 bg-gray-800 border border-gray-700 rounded focus:ring-blue-500"
+                onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                className="h-5 w-5 rounded border border-gray-700 bg-gray-800 focus:ring-blue-500"
               />
               <span className="text-sm font-medium text-gray-300">
                 Active (visible in marketplace)
@@ -215,12 +200,10 @@ export default function NewVisualPage() {
         </div>
 
         {/* Auto-create Cards */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-6">
+        <div className="space-y-6 rounded-xl border border-gray-800 bg-gray-900 p-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-medium text-white">
-              Auto-create Cards (3 Rarities)
-            </h2>
-            <label className="flex items-center gap-3 cursor-pointer">
+            <h2 className="text-lg font-medium text-white">Auto-create Cards (3 Rarities)</h2>
+            <label className="flex cursor-pointer items-center gap-3">
               <input
                 type="checkbox"
                 checked={formData.auto_create_cards}
@@ -230,7 +213,7 @@ export default function NewVisualPage() {
                     auto_create_cards: e.target.checked,
                   })
                 }
-                className="w-5 h-5 bg-gray-800 border border-gray-700 rounded focus:ring-blue-500"
+                className="h-5 w-5 rounded border border-gray-700 bg-gray-800 focus:ring-blue-500"
               />
               <span className="text-sm font-medium text-gray-300">Enable</span>
             </label>
@@ -239,18 +222,16 @@ export default function NewVisualPage() {
           {formData.auto_create_cards && (
             <div className="space-y-4">
               {/* NORMAL */}
-              <div className="border border-gray-800 rounded-lg p-4">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-xs px-2 py-1 bg-gray-800 text-gray-400 rounded font-bold">
+              <div className="rounded-lg border border-gray-800 p-4">
+                <div className="mb-3 flex items-center gap-2">
+                  <span className="rounded bg-gray-800 px-2 py-1 text-xs font-bold text-gray-400">
                     N
                   </span>
-                  <span className="text-white font-medium">NORMAL</span>
+                  <span className="font-medium text-white">NORMAL</span>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">
-                      Price (JPY)
-                    </label>
+                    <label className="mb-1 block text-xs text-gray-500">Price (JPY)</label>
                     <input
                       type="number"
                       value={formData.cards_config.normal.price}
@@ -266,12 +247,12 @@ export default function NewVisualPage() {
                           },
                         })
                       }
-                      className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white text-sm"
+                      className="w-full rounded border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white"
                       min="0"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">
+                    <label className="mb-1 block text-xs text-gray-500">
                       Supply (empty = unlimited)
                     </label>
                     <input
@@ -284,14 +265,12 @@ export default function NewVisualPage() {
                             ...formData.cards_config,
                             normal: {
                               ...formData.cards_config.normal,
-                              total_supply: e.target.value
-                                ? parseInt(e.target.value)
-                                : null,
+                              total_supply: e.target.value ? parseInt(e.target.value) : null,
                             },
                           },
                         })
                       }
-                      className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white text-sm"
+                      className="w-full rounded border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white"
                       min="1"
                       placeholder="Unlimited"
                     />
@@ -300,18 +279,16 @@ export default function NewVisualPage() {
               </div>
 
               {/* RARE */}
-              <div className="border border-blue-900/50 rounded-lg p-4">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-xs px-2 py-1 bg-blue-900/50 text-blue-400 rounded font-bold">
+              <div className="rounded-lg border border-blue-900/50 p-4">
+                <div className="mb-3 flex items-center gap-2">
+                  <span className="rounded bg-blue-900/50 px-2 py-1 text-xs font-bold text-blue-400">
                     R
                   </span>
-                  <span className="text-white font-medium">RARE</span>
+                  <span className="font-medium text-white">RARE</span>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">
-                      Price (JPY)
-                    </label>
+                    <label className="mb-1 block text-xs text-gray-500">Price (JPY)</label>
                     <input
                       type="number"
                       value={formData.cards_config.rare.price}
@@ -327,14 +304,12 @@ export default function NewVisualPage() {
                           },
                         })
                       }
-                      className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white text-sm"
+                      className="w-full rounded border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white"
                       min="0"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">
-                      Supply
-                    </label>
+                    <label className="mb-1 block text-xs text-gray-500">Supply</label>
                     <input
                       type="number"
                       value={formData.cards_config.rare.total_supply ?? ''}
@@ -345,14 +320,12 @@ export default function NewVisualPage() {
                             ...formData.cards_config,
                             rare: {
                               ...formData.cards_config.rare,
-                              total_supply: e.target.value
-                                ? parseInt(e.target.value)
-                                : null,
+                              total_supply: e.target.value ? parseInt(e.target.value) : null,
                             },
                           },
                         })
                       }
-                      className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white text-sm"
+                      className="w-full rounded border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white"
                       min="1"
                       placeholder="Unlimited"
                     />
@@ -361,18 +334,16 @@ export default function NewVisualPage() {
               </div>
 
               {/* SUPER RARE */}
-              <div className="border border-purple-900/50 rounded-lg p-4">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-xs px-2 py-1 bg-gradient-to-r from-yellow-400 to-amber-500 text-black rounded font-bold">
+              <div className="rounded-lg border border-purple-900/50 p-4">
+                <div className="mb-3 flex items-center gap-2">
+                  <span className="rounded bg-gradient-to-r from-yellow-400 to-amber-500 px-2 py-1 text-xs font-bold text-black">
                     SR
                   </span>
-                  <span className="text-white font-medium">SUPER RARE</span>
+                  <span className="font-medium text-white">SUPER RARE</span>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">
-                      Price (JPY)
-                    </label>
+                    <label className="mb-1 block text-xs text-gray-500">Price (JPY)</label>
                     <input
                       type="number"
                       value={formData.cards_config.super_rare.price}
@@ -388,14 +359,12 @@ export default function NewVisualPage() {
                           },
                         })
                       }
-                      className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white text-sm"
+                      className="w-full rounded border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white"
                       min="0"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">
-                      Supply
-                    </label>
+                    <label className="mb-1 block text-xs text-gray-500">Supply</label>
                     <input
                       type="number"
                       value={formData.cards_config.super_rare.total_supply ?? ''}
@@ -406,14 +375,12 @@ export default function NewVisualPage() {
                             ...formData.cards_config,
                             super_rare: {
                               ...formData.cards_config.super_rare,
-                              total_supply: e.target.value
-                                ? parseInt(e.target.value)
-                                : null,
+                              total_supply: e.target.value ? parseInt(e.target.value) : null,
                             },
                           },
                         })
                       }
-                      className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white text-sm"
+                      className="w-full rounded border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white"
                       min="1"
                       placeholder="Unlimited"
                     />
@@ -429,14 +396,11 @@ export default function NewVisualPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed text-white font-medium px-6 py-3 rounded-lg transition-colors"
+            className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-800"
           >
             {isLoading ? 'Creating...' : 'Create Visual'}
           </button>
-          <a
-            href="/admin/visuals"
-            className="text-gray-400 hover:text-white transition-colors"
-          >
+          <a href="/admin/visuals" className="text-gray-400 transition-colors hover:text-white">
             Cancel
           </a>
         </div>

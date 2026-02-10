@@ -16,7 +16,8 @@ export async function GET(request: Request) {
 
     let query = supabase
       .from('cards')
-      .select(`
+      .select(
+        `
         *,
         visual:card_visuals (
           id,
@@ -30,7 +31,8 @@ export async function GET(request: Request) {
           name,
           image_url
         )
-      `)
+      `,
+      )
       .eq('is_active', true);
 
     if (artistId) {
@@ -51,18 +53,12 @@ export async function GET(request: Request) {
 
     if (error) {
       console.error('Error fetching cards:', error);
-      return NextResponse.json(
-        { error: 'Failed to fetch cards' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to fetch cards' }, { status: 500 });
     }
 
     return NextResponse.json(data);
   } catch (error) {
     console.error('Unexpected error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

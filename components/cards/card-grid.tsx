@@ -15,9 +15,5 @@ export function CardGrid({ children, columns = 2, className }: CardGridProps) {
     4: 'grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4',
   };
 
-  return (
-    <div className={cn('grid', gridCols[columns], className)}>
-      {children}
-    </div>
-  );
+  return <div className={cn('grid', gridCols[columns], className)}>{children}</div>;
 }

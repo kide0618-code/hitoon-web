@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, use } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 interface ExclusiveContent {
@@ -115,11 +116,7 @@ export default function EditCardPage({ params }: PageProps) {
   };
 
   const handleDelete = async () => {
-    if (
-      !confirm(
-        'Are you sure you want to delete this card? This action cannot be undone.'
-      )
-    ) {
+    if (!confirm('Are you sure you want to delete this card? This action cannot be undone.')) {
       return;
     }
 
@@ -159,13 +156,13 @@ export default function EditCardPage({ params }: PageProps) {
 
   if (isLoading) {
     return (
-      <div className="max-w-3xl mx-auto">
+      <div className="mx-auto max-w-3xl">
         <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-gray-800 rounded w-1/3" />
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
-            <div className="h-10 bg-gray-800 rounded" />
-            <div className="h-24 bg-gray-800 rounded" />
-            <div className="h-10 bg-gray-800 rounded" />
+          <div className="h-8 w-1/3 rounded bg-gray-800" />
+          <div className="space-y-4 rounded-xl border border-gray-800 bg-gray-900 p-6">
+            <div className="h-10 rounded bg-gray-800" />
+            <div className="h-24 rounded bg-gray-800" />
+            <div className="h-10 rounded bg-gray-800" />
           </div>
         </div>
       </div>
@@ -174,8 +171,8 @@ export default function EditCardPage({ params }: PageProps) {
 
   if (!card) {
     return (
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-red-900/50 border border-red-700 text-red-400 px-4 py-3 rounded-lg">
+      <div className="mx-auto max-w-3xl">
+        <div className="rounded-lg border border-red-700 bg-red-900/50 px-4 py-3 text-red-400">
           Card not found
         </div>
       </div>
@@ -183,32 +180,31 @@ export default function EditCardPage({ params }: PageProps) {
   }
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <div className="flex items-center gap-4 mb-8">
-        <a
-          href="/admin/cards"
-          className="text-gray-500 hover:text-white transition-colors"
-        >
+    <div className="mx-auto max-w-3xl">
+      <div className="mb-8 flex items-center gap-4">
+        <a href="/admin/cards" className="text-gray-500 transition-colors hover:text-white">
           ← Back
         </a>
         <h1 className="text-2xl font-bold text-white">Edit Card</h1>
       </div>
 
       {error && (
-        <div className="bg-red-900/50 border border-red-700 text-red-400 px-4 py-3 rounded-lg mb-6">
+        <div className="mb-6 rounded-lg border border-red-700 bg-red-900/50 px-4 py-3 text-red-400">
           {error}
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Card Preview */}
         <div className="lg:col-span-1">
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 sticky top-4">
-            <div className="aspect-[3/4] rounded-lg overflow-hidden mb-4">
-              <img
+          <div className="sticky top-4 rounded-xl border border-gray-800 bg-gray-900 p-4">
+            <div className="relative mb-4 aspect-[3/4] overflow-hidden rounded-lg">
+              <Image
                 src={card.template.artist_image_url}
                 alt={card.name}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                unoptimized
               />
             </div>
             <div className="space-y-2 text-sm">
@@ -223,14 +219,14 @@ export default function EditCardPage({ params }: PageProps) {
               <div className="flex items-center justify-between">
                 <span className="text-gray-500">Rarity</span>
                 <span
-                  className={`text-xs px-2 py-1 rounded font-bold ${rarityStyles[card.rarity]}`}
+                  className={`rounded px-2 py-1 text-xs font-bold ${rarityStyles[card.rarity]}`}
                 >
                   {rarityLabels[card.rarity]}
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-500">Sold</span>
-                <span className="text-white font-mono">
+                <span className="font-mono text-white">
                   {card.current_supply}
                   {card.total_supply !== null && ` / ${card.total_supply}`}
                 </span>
@@ -242,35 +238,29 @@ export default function EditCardPage({ params }: PageProps) {
         {/* Edit Form */}
         <div className="lg:col-span-2">
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-6">
+            <div className="space-y-6 rounded-xl border border-gray-800 bg-gray-900 p-6">
               {/* Name */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="mb-2 block text-sm font-medium text-gray-300">
                   Card Name <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="text"
                   required
                   value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
                 />
               </div>
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Description
-                </label>
+                <label className="mb-2 block text-sm font-medium text-gray-300">Description</label>
                 <textarea
                   value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows={3}
-                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                  className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
                   placeholder="Optional card description"
                 />
               </div>
@@ -278,7 +268,7 @@ export default function EditCardPage({ params }: PageProps) {
               {/* Price & Supply */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="mb-2 block text-sm font-medium text-gray-300">
                     価格 (円) <span className="text-red-400">*</span>
                   </label>
                   <input
@@ -291,13 +281,13 @@ export default function EditCardPage({ params }: PageProps) {
                         price: parseInt(e.target.value) || 0,
                       })
                     }
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                    className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
                     min="0"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="mb-2 block text-sm font-medium text-gray-300">
                     出品数 (空欄 = 無制限)
                   </label>
                   <input
@@ -306,17 +296,15 @@ export default function EditCardPage({ params }: PageProps) {
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        total_supply: e.target.value
-                          ? parseInt(e.target.value)
-                          : null,
+                        total_supply: e.target.value ? parseInt(e.target.value) : null,
                       })
                     }
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                    className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
                     min={card.current_supply || 1}
                     placeholder="無制限"
                   />
                   {card.current_supply > 0 && (
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="mt-1 text-xs text-gray-500">
                       最小値: {card.current_supply} (販売済み)
                     </p>
                   )}
@@ -325,7 +313,7 @@ export default function EditCardPage({ params }: PageProps) {
 
               {/* Purchase Limit per User */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="mb-2 block text-sm font-medium text-gray-300">
                   1人あたりの購入上限 (空欄 = 無制限)
                 </label>
                 <input
@@ -334,30 +322,26 @@ export default function EditCardPage({ params }: PageProps) {
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      max_purchase_per_user: e.target.value
-                        ? parseInt(e.target.value)
-                        : null,
+                      max_purchase_per_user: e.target.value ? parseInt(e.target.value) : null,
                     })
                   }
-                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                  className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
                   min="1"
                   placeholder="無制限"
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="mt-1 text-xs text-gray-500">
                   1人のユーザーが購入できる最大数を設定できます
                 </p>
               </div>
 
               {/* Is Active */}
               <div>
-                <label className="flex items-center gap-3 cursor-pointer">
+                <label className="flex cursor-pointer items-center gap-3">
                   <input
                     type="checkbox"
                     checked={formData.is_active}
-                    onChange={(e) =>
-                      setFormData({ ...formData, is_active: e.target.checked })
-                    }
-                    className="w-5 h-5 bg-gray-800 border border-gray-700 rounded focus:ring-blue-500"
+                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                    className="h-5 w-5 rounded border border-gray-700 bg-gray-800 focus:ring-blue-500"
                   />
                   <span className="text-sm font-medium text-gray-300">
                     Active (available for purchase)
@@ -367,11 +351,9 @@ export default function EditCardPage({ params }: PageProps) {
             </div>
 
             {/* Exclusive Contents */}
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
+            <div className="space-y-4 rounded-xl border border-gray-800 bg-gray-900 p-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-medium text-white">
-                  Exclusive Contents
-                </h2>
+                <h2 className="text-lg font-medium text-white">Exclusive Contents</h2>
                 <a
                   href={`/admin/cards/${card.id}/contents/new`}
                   className="text-sm text-blue-400 hover:text-blue-300"
@@ -385,11 +367,11 @@ export default function EditCardPage({ params }: PageProps) {
                   {card.exclusive_contents.map((content) => (
                     <div
                       key={content.id}
-                      className="flex items-center justify-between p-3 bg-gray-800 rounded-lg"
+                      className="flex items-center justify-between rounded-lg bg-gray-800 p-3"
                     >
                       <div className="flex items-center gap-3">
                         <span
-                          className={`text-xs px-2 py-1 rounded ${
+                          className={`rounded px-2 py-1 text-xs ${
                             content.type === 'video'
                               ? 'bg-red-900/50 text-red-400'
                               : content.type === 'music'
@@ -403,7 +385,7 @@ export default function EditCardPage({ params }: PageProps) {
                       </div>
                       <a
                         href={`/admin/cards/${card.id}/contents/${content.id}`}
-                        className="text-blue-400 hover:text-blue-300 text-sm"
+                        className="text-sm text-blue-400 hover:text-blue-300"
                       >
                         Edit
                       </a>
@@ -411,9 +393,9 @@ export default function EditCardPage({ params }: PageProps) {
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 text-sm">
-                  No exclusive contents yet. Click &quot;+ Add Content&quot; to
-                  add bonus content for this card.
+                <p className="text-sm text-gray-500">
+                  No exclusive contents yet. Click &quot;+ Add Content&quot; to add bonus content
+                  for this card.
                 </p>
               )}
             </div>
@@ -424,14 +406,11 @@ export default function EditCardPage({ params }: PageProps) {
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed text-white font-medium px-6 py-3 rounded-lg transition-colors"
+                  className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-800"
                 >
                   {isSaving ? 'Saving...' : 'Save Changes'}
                 </button>
-                <a
-                  href="/admin/cards"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
+                <a href="/admin/cards" className="text-gray-400 transition-colors hover:text-white">
                   Cancel
                 </a>
               </div>
@@ -440,11 +419,9 @@ export default function EditCardPage({ params }: PageProps) {
                 type="button"
                 onClick={handleDelete}
                 disabled={isDeleting || card.current_supply > 0}
-                className="bg-red-900/50 hover:bg-red-900 disabled:opacity-50 disabled:cursor-not-allowed text-red-400 font-medium px-4 py-2 rounded-lg transition-colors"
+                className="rounded-lg bg-red-900/50 px-4 py-2 font-medium text-red-400 transition-colors hover:bg-red-900 disabled:cursor-not-allowed disabled:opacity-50"
                 title={
-                  card.current_supply > 0
-                    ? 'Cannot delete card with purchases'
-                    : 'Delete card'
+                  card.current_supply > 0 ? 'Cannot delete card with purchases' : 'Delete card'
                 }
               >
                 {isDeleting ? 'Deleting...' : 'Delete Card'}

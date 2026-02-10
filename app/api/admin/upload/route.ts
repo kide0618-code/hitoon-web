@@ -20,16 +20,13 @@ export async function POST(request: Request) {
     if (!ALLOWED_TYPES.includes(file.type)) {
       return Response.json(
         { error: 'Invalid file type. Allowed: JPEG, PNG, WebP, GIF' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Validate file size
     if (file.size > MAX_FILE_SIZE) {
-      return Response.json(
-        { error: 'File too large. Maximum size is 5MB' },
-        { status: 400 }
-      );
+      return Response.json({ error: 'File too large. Maximum size is 5MB' }, { status: 400 });
     }
 
     const supabaseAdmin = createAdminClient();
@@ -43,12 +40,10 @@ export async function POST(request: Request) {
     const buffer = new Uint8Array(arrayBuffer);
 
     // Upload to Supabase Storage
-    const { data, error } = await supabaseAdmin.storage
-      .from('images')
-      .upload(filename, buffer, {
-        contentType: file.type,
-        upsert: false,
-      });
+    const { data, error } = await supabaseAdmin.storage.from('images').upload(filename, buffer, {
+      contentType: file.type,
+      upsert: false,
+    });
 
     if (error) {
       console.error('Storage upload error:', error);

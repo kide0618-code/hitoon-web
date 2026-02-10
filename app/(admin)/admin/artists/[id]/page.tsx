@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef, use } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 interface Artist {
   id: string;
@@ -138,7 +140,7 @@ export default function EditArtistPage({ params }: PageProps) {
   const handleDelete = async () => {
     if (
       !confirm(
-        'Are you sure you want to delete this artist? This will also delete all associated templates and cards.'
+        'Are you sure you want to delete this artist? This will also delete all associated templates and cards.',
       )
     ) {
       return;
@@ -168,13 +170,13 @@ export default function EditArtistPage({ params }: PageProps) {
 
   if (isLoading) {
     return (
-      <div className="max-w-2xl mx-auto">
+      <div className="mx-auto max-w-2xl">
         <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-gray-800 rounded w-1/3" />
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
-            <div className="h-10 bg-gray-800 rounded" />
-            <div className="h-24 bg-gray-800 rounded" />
-            <div className="h-10 bg-gray-800 rounded" />
+          <div className="h-8 w-1/3 rounded bg-gray-800" />
+          <div className="space-y-4 rounded-xl border border-gray-800 bg-gray-900 p-6">
+            <div className="h-10 rounded bg-gray-800" />
+            <div className="h-24 rounded bg-gray-800" />
+            <div className="h-10 rounded bg-gray-800" />
           </div>
         </div>
       </div>
@@ -183,8 +185,8 @@ export default function EditArtistPage({ params }: PageProps) {
 
   if (!artist) {
     return (
-      <div className="max-w-2xl mx-auto">
-        <div className="bg-red-900/50 border border-red-700 text-red-400 px-4 py-3 rounded-lg">
+      <div className="mx-auto max-w-2xl">
+        <div className="rounded-lg border border-red-700 bg-red-900/50 px-4 py-3 text-red-400">
           Artist not found
         </div>
       </div>
@@ -192,69 +194,58 @@ export default function EditArtistPage({ params }: PageProps) {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="flex items-center gap-4 mb-8">
-        <a
-          href="/admin/artists"
-          className="text-gray-500 hover:text-white transition-colors"
-        >
+    <div className="mx-auto max-w-2xl">
+      <div className="mb-8 flex items-center gap-4">
+        <Link href="/admin/artists" className="text-gray-500 transition-colors hover:text-white">
           ← Back
-        </a>
+        </Link>
         <h1 className="text-2xl font-bold text-white">Edit Artist</h1>
       </div>
 
       {error && (
-        <div className="bg-red-900/50 border border-red-700 text-red-400 px-4 py-3 rounded-lg mb-6">
+        <div className="mb-6 rounded-lg border border-red-700 bg-red-900/50 px-4 py-3 text-red-400">
           {error}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-6">
+        <div className="space-y-6 rounded-xl border border-gray-800 bg-gray-900 p-6">
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="mb-2 block text-sm font-medium text-gray-300">
               Name <span className="text-red-400">*</span>
             </label>
             <input
               type="text"
               required
               value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
               placeholder="Artist name"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Description
-            </label>
+            <label className="mb-2 block text-sm font-medium text-gray-300">Description</label>
             <textarea
               value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={4}
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+              className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
               placeholder="Artist description"
             />
           </div>
 
           {/* Image */}
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-gray-300">
-                Image
-              </label>
+            <div className="mb-2 flex items-center justify-between">
+              <label className="block text-sm font-medium text-gray-300">Image</label>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => setImageInputMode('upload')}
-                  className={`text-xs px-3 py-1 rounded transition-colors ${
+                  className={`rounded px-3 py-1 text-xs transition-colors ${
                     imageInputMode === 'upload'
                       ? 'bg-blue-600 text-white'
                       : 'bg-gray-800 text-gray-400 hover:text-white'
@@ -265,7 +256,7 @@ export default function EditArtistPage({ params }: PageProps) {
                 <button
                   type="button"
                   onClick={() => setImageInputMode('url')}
-                  className={`text-xs px-3 py-1 rounded transition-colors ${
+                  className={`rounded px-3 py-1 text-xs transition-colors ${
                     imageInputMode === 'url'
                       ? 'bg-blue-600 text-white'
                       : 'bg-gray-800 text-gray-400 hover:text-white'
@@ -281,7 +272,7 @@ export default function EditArtistPage({ params }: PageProps) {
                 onDrop={handleDrop}
                 onDragOver={(e) => e.preventDefault()}
                 onClick={() => fileInputRef.current?.click()}
-                className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
+                className={`cursor-pointer rounded-lg border-2 border-dashed p-6 text-center transition-colors ${
                   isUploading
                     ? 'border-blue-500 bg-blue-900/20'
                     : 'border-gray-700 hover:border-gray-600'
@@ -297,7 +288,7 @@ export default function EditArtistPage({ params }: PageProps) {
                 {isUploading ? (
                   <div className="text-blue-400">
                     <svg
-                      className="animate-spin h-8 w-8 mx-auto mb-2"
+                      className="mx-auto mb-2 h-8 w-8 animate-spin"
                       fill="none"
                       viewBox="0 0 24 24"
                     >
@@ -319,19 +310,20 @@ export default function EditArtistPage({ params }: PageProps) {
                   </div>
                 ) : formData.image_url ? (
                   <div>
-                    <img
+                    <Image
                       src={formData.image_url}
                       alt="Preview"
-                      className="w-24 h-24 rounded-full object-cover mx-auto mb-2"
+                      width={96}
+                      height={96}
+                      className="mx-auto mb-2 h-24 w-24 rounded-full object-cover"
+                      unoptimized
                     />
-                    <p className="text-sm text-gray-400">
-                      Click or drag to replace
-                    </p>
+                    <p className="text-sm text-gray-400">Click or drag to replace</p>
                   </div>
                 ) : (
                   <div className="text-gray-400">
                     <svg
-                      className="w-12 h-12 mx-auto mb-2"
+                      className="mx-auto mb-2 h-12 w-12"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -344,9 +336,7 @@ export default function EditArtistPage({ params }: PageProps) {
                       />
                     </svg>
                     <p className="text-sm">Click or drag image here</p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      JPEG, PNG, WebP, GIF (max 5MB)
-                    </p>
+                    <p className="mt-1 text-xs text-gray-500">JPEG, PNG, WebP, GIF (max 5MB)</p>
                   </div>
                 )}
               </div>
@@ -354,20 +344,21 @@ export default function EditArtistPage({ params }: PageProps) {
               <input
                 type="url"
                 value={formData.image_url}
-                onChange={(e) =>
-                  setFormData({ ...formData, image_url: e.target.value })
-                }
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
                 placeholder="https://example.com/image.jpg"
               />
             )}
 
             {imageInputMode === 'url' && formData.image_url && (
               <div className="mt-3">
-                <img
+                <Image
                   src={formData.image_url}
                   alt="Preview"
-                  className="w-24 h-24 rounded-full object-cover"
+                  width={96}
+                  height={96}
+                  className="h-24 w-24 rounded-full object-cover"
+                  unoptimized
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = 'none';
                   }}
@@ -379,25 +370,19 @@ export default function EditArtistPage({ params }: PageProps) {
           {/* Featured & Display Order */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="flex items-center gap-3 cursor-pointer">
+              <label className="flex cursor-pointer items-center gap-3">
                 <input
                   type="checkbox"
                   checked={formData.is_featured}
-                  onChange={(e) =>
-                    setFormData({ ...formData, is_featured: e.target.checked })
-                  }
-                  className="w-5 h-5 bg-gray-800 border border-gray-700 rounded focus:ring-blue-500"
+                  onChange={(e) => setFormData({ ...formData, is_featured: e.target.checked })}
+                  className="h-5 w-5 rounded border border-gray-700 bg-gray-800 focus:ring-blue-500"
                 />
-                <span className="text-sm font-medium text-gray-300">
-                  Featured on Home
-                </span>
+                <span className="text-sm font-medium text-gray-300">Featured on Home</span>
               </label>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Display Order
-              </label>
+              <label className="mb-2 block text-sm font-medium text-gray-300">Display Order</label>
               <input
                 type="number"
                 value={formData.display_order}
@@ -407,7 +392,7 @@ export default function EditArtistPage({ params }: PageProps) {
                     display_order: parseInt(e.target.value) || 0,
                   })
                 }
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
                 min="0"
               />
             </div>
@@ -415,17 +400,15 @@ export default function EditArtistPage({ params }: PageProps) {
 
           {/* Read-only stats */}
           <div className="border-t border-gray-800 pt-6">
-            <h3 className="text-sm font-medium text-gray-500 mb-3">Stats</h3>
+            <h3 className="mb-3 text-sm font-medium text-gray-500">Stats</h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-gray-500">Members:</span>
-                <span className="text-white ml-2">
-                  {artist.member_count.toLocaleString()}
-                </span>
+                <span className="ml-2 text-white">{artist.member_count.toLocaleString()}</span>
               </div>
               <div>
                 <span className="text-gray-500">Created:</span>
-                <span className="text-white ml-2">
+                <span className="ml-2 text-white">
                   {new Date(artist.created_at).toLocaleDateString('ja-JP')}
                 </span>
               </div>
@@ -439,23 +422,23 @@ export default function EditArtistPage({ params }: PageProps) {
             <button
               type="submit"
               disabled={isSaving || isUploading}
-              className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed text-white font-medium px-6 py-3 rounded-lg transition-colors"
+              className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-800"
             >
               {isSaving ? 'Saving...' : 'Save Changes'}
             </button>
-            <a
+            <Link
               href="/admin/artists"
-              className="text-gray-400 hover:text-white transition-colors"
+              className="text-gray-400 transition-colors hover:text-white"
             >
               Cancel
-            </a>
+            </Link>
           </div>
 
           <button
             type="button"
             onClick={handleDelete}
             disabled={isDeleting}
-            className="bg-red-900/50 hover:bg-red-900 disabled:opacity-50 text-red-400 font-medium px-4 py-2 rounded-lg transition-colors"
+            className="rounded-lg bg-red-900/50 px-4 py-2 font-medium text-red-400 transition-colors hover:bg-red-900 disabled:opacity-50"
           >
             {isDeleting ? 'Deleting...' : 'Delete Artist'}
           </button>
