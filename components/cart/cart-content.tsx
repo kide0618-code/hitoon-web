@@ -2,7 +2,16 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Trash2, Minus, Plus, Loader2, ShoppingBag } from 'lucide-react';
+import {
+  Trash2,
+  Minus,
+  Plus,
+  Loader2,
+  ShoppingBag,
+  ShieldCheck,
+  ExternalLink,
+  Wallet,
+} from 'lucide-react';
 import { ArtistCard } from '@/components/cards/artist-card';
 import { useCart } from '@/contexts/cart-context';
 import { ROUTES } from '@/constants/routes';
@@ -111,16 +120,16 @@ function CartItem({
 }
 
 interface CartContentProps {
-  /** CSS class for sticky checkout bottom offset (default: 'bottom-20' for page with bottom nav) */
-  checkoutBottomClass?: string;
+  onClose?: () => void;
 }
 
-export function CartContent({ checkoutBottomClass = 'bottom-20' }: CartContentProps) {
+export function CartContent({ onClose }: CartContentProps = {}) {
   const { items, isLoading, totalItems, totalPrice, updateQuantity, removeItem, clearCart } =
     useCart();
   const [updatingCardId, setUpdatingCardId] = useState<string | null>(null);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [isAgreed, setIsAgreed] = useState(false);
 
   const handleUpdateQuantity = async (cardId: string, quantity: number) => {
     setUpdatingCardId(cardId);
@@ -135,7 +144,7 @@ export function CartContent({ checkoutBottomClass = 'bottom-20' }: CartContentPr
   };
 
   const handleCheckout = async () => {
-    if (items.length === 0) return;
+    if (items.length === 0 || !isAgreed) return;
 
     setIsCheckingOut(true);
     setCheckoutError(null);
@@ -197,7 +206,11 @@ export function CartContent({ checkoutBottomClass = 'bottom-20' }: CartContentPr
           <div className="py-20 text-center text-gray-500">
             <ShoppingBag size={48} className="mx-auto mb-4 opacity-50" />
             <p>カートは空です</p>
-            <Link href={ROUTES.MARKET} className="mt-2 inline-block text-blue-400 hover:underline">
+            <Link
+              href={ROUTES.MARKET}
+              className="mt-2 inline-block text-blue-400 hover:underline"
+              onClick={onClose}
+            >
               カードを探す →
             </Link>
           </div>
@@ -206,9 +219,7 @@ export function CartContent({ checkoutBottomClass = 'bottom-20' }: CartContentPr
 
       {/* Checkout Section */}
       {items.length > 0 && (
-        <div
-          className={`sticky ${checkoutBottomClass} bg-gradient-to-t from-black via-black to-transparent p-4 pt-8`}
-        >
+        <div className="p-4">
           {/* Clear Cart */}
           <div className="mb-3 flex justify-end">
             <button
@@ -219,11 +230,65 @@ export function CartContent({ checkoutBottomClass = 'bottom-20' }: CartContentPr
             </button>
           </div>
 
+          {/* 重要事項説明書 */}
+          <div className="mb-5">
+            <h4 className="mb-3 flex items-center gap-2 text-sm font-bold text-white">
+              <ShieldCheck size={16} className="text-blue-400" />
+              確認事項
+            </h4>
+            <div className="rounded-xl border border-gray-700 bg-gray-800 p-4 text-sm leading-relaxed text-gray-300">
+              <div className="space-y-4">
+                {/* <div>
+                  <p className="mb-1 font-semibold text-blue-400">1. 金融商品ではありません</p>
+                  <p className="text-gray-400">本パスは投資商品ではありません。</p>
+                </div>
+                <div>
+                  <p className="mb-1 font-semibold text-blue-400">2. 元本保証はありません</p>
+                  <p className="text-gray-400">収益が購入額を下回る可能性があります。</p>
+                </div> */}
+                <div>
+                  <p className="mb-1 font-semibold text-blue-400">1. 返金不可</p>
+                  <p className="text-gray-400">決済完了後のキャンセルはできません。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Agreement Checkbox */}
+          <div className="mb-5 flex items-start rounded-xl border border-gray-700 bg-gray-800/50 p-3">
+            <div className="mt-0.5 flex h-5 items-center">
+              <input
+                id="cart-agreement-checkbox"
+                type="checkbox"
+                checked={isAgreed}
+                onChange={() => setIsAgreed(!isAgreed)}
+                disabled={isCheckingOut}
+                className="h-5 w-5 cursor-pointer rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500 focus:ring-offset-0"
+              />
+            </div>
+            <label
+              htmlFor="cart-agreement-checkbox"
+              className="ml-3 cursor-pointer select-none text-sm leading-relaxed text-gray-300"
+            >
+              上記の確認事項および
+              <Link
+                href={ROUTES.TERMS}
+                target="_blank"
+                className="mx-1 inline-flex items-center gap-0.5 text-blue-400 hover:text-blue-300 hover:underline"
+                onClick={(e) => e.stopPropagation()}
+              >
+                利用規約
+                <ExternalLink size={12} />
+              </Link>
+              に同意し、申し込みます。
+            </label>
+          </div>
+
           {/* Total */}
           <div className="mb-4 rounded-xl border border-gray-800 bg-gray-900 p-4">
             <div className="flex items-center justify-between">
-              <span className="text-gray-400">合計 ({totalItems} items)</span>
-              <span className="text-xl font-bold text-white">{formatPrice(totalPrice)}</span>
+              <span className="text-gray-400">お支払い合計</span>
+              <span className="text-2xl font-bold text-white">{formatPrice(totalPrice)}</span>
             </div>
           </div>
 
@@ -237,19 +302,25 @@ export function CartContent({ checkoutBottomClass = 'bottom-20' }: CartContentPr
           {/* Checkout Button */}
           <button
             onClick={handleCheckout}
-            disabled={isCheckingOut || items.length === 0}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-blue-600 py-4 font-bold text-white shadow-lg transition-all hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-700"
+            disabled={!isAgreed || isCheckingOut}
+            className={`flex w-full items-center justify-center gap-2 rounded-full py-4 font-bold text-white transition-all ${
+              isAgreed && !isCheckingOut
+                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 shadow-lg shadow-blue-900/30 hover:from-blue-500 hover:to-indigo-500'
+                : 'cursor-not-allowed bg-gray-700 text-gray-500'
+            }`}
           >
             {isCheckingOut ? (
               <>
                 <Loader2 size={20} className="animate-spin" />
                 処理中...
               </>
-            ) : (
+            ) : isAgreed ? (
               <>
-                <ShoppingBag size={20} />
-                {formatPrice(totalPrice)} で購入へ進む
+                <Wallet size={20} />
+                決済へ進む
               </>
+            ) : (
+              '上記に同意してください'
             )}
           </button>
         </div>

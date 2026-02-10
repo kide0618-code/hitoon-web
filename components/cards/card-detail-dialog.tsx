@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, ShoppingCart, Check, Wallet, Minus, Plus } from 'lucide-react';
 import { ArtistCard } from './artist-card';
-import { RarityBadge } from './rarity-badge';
+import { RotatableCard } from './rotatable-card';
 import { formatPrice } from '@/lib/utils/format';
 import type { Rarity } from '@/types/card';
 
@@ -39,12 +39,7 @@ export function CardDetailDialog({
   isAuthenticated,
 }: CardDetailDialogProps) {
   const [mounted, setMounted] = useState(false);
-  const [rotation, setRotation] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
   const [quantity, setQuantity] = useState(1);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const startPos = useRef({ x: 0, y: 0 });
-  const startRotation = useRef({ x: 0, y: 0 });
 
   const isSoldOut = card.totalSupply !== null && card.currentSupply >= card.totalSupply;
 
@@ -54,10 +49,9 @@ export function CardDetailDialog({
     setMounted(true);
   }, []);
 
-  // Reset rotation and quantity when dialog opens
+  // Reset quantity when dialog opens
   useEffect(() => {
     if (isOpen) {
-      setRotation({ x: 0, y: 0 });
       setQuantity(cartQuantity > 0 ? cartQuantity : 1);
     }
   }, [isOpen, cartQuantity]);
@@ -78,74 +72,6 @@ export function CardDetailDialog({
       document.body.style.overflow = 'unset';
     };
   }, [isOpen, onClose]);
-
-  const handleStart = useCallback(
-    (clientX: number, clientY: number) => {
-      setIsDragging(true);
-      startPos.current = { x: clientX, y: clientY };
-      startRotation.current = { ...rotation };
-    },
-    [rotation],
-  );
-
-  const handleMove = useCallback(
-    (clientX: number, clientY: number) => {
-      if (!isDragging) return;
-
-      const deltaX = clientX - startPos.current.x;
-      const deltaY = clientY - startPos.current.y;
-
-      // Rotate Y based on horizontal movement, X based on vertical movement
-      const newRotationY = startRotation.current.y + deltaX * 0.5;
-      const newRotationX = startRotation.current.x - deltaY * 0.3;
-
-      // Clamp X rotation to prevent flipping too far
-      const clampedX = Math.max(-30, Math.min(30, newRotationX));
-
-      setRotation({
-        x: clampedX,
-        y: newRotationY,
-      });
-    },
-    [isDragging],
-  );
-
-  const handleEnd = useCallback(() => {
-    setIsDragging(false);
-  }, []);
-
-  // Mouse events
-  const handleMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault();
-    handleStart(e.clientX, e.clientY);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    handleMove(e.clientX, e.clientY);
-  };
-
-  const handleMouseUp = () => {
-    handleEnd();
-  };
-
-  const handleMouseLeave = () => {
-    handleEnd();
-  };
-
-  // Touch events
-  const handleTouchStart = (e: React.TouchEvent) => {
-    const touch = e.touches[0];
-    handleStart(touch.clientX, touch.clientY);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    const touch = e.touches[0];
-    handleMove(touch.clientX, touch.clientY);
-  };
-
-  const handleTouchEnd = () => {
-    handleEnd();
-  };
 
   if (!isOpen || !mounted) return null;
 
@@ -173,34 +99,14 @@ export function CardDetailDialog({
       {/* Scrollable Content Area */}
       <div className="relative z-10 flex-1 overflow-y-auto overflow-x-hidden">
         {/* 3D Card Container */}
-        <div
-          className="flex min-h-[340px] select-none items-center justify-center px-6 py-6"
-          style={{ perspective: '1000px' }}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseLeave}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        >
-          <div
-            ref={cardRef}
-            className="w-full max-w-[260px] cursor-grab transition-transform active:cursor-grabbing sm:max-w-sm"
-            style={{
-              transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
-              transformStyle: 'preserve-3d',
-              transition: isDragging ? 'none' : 'transform 0.3s ease-out',
-            }}
-          >
-            <ArtistCard
-              artistName={card.artistName}
-              artistImageUrl={card.artistImageUrl}
-              songTitle={card.songTitle}
-              rarity={card.rarity}
-            />
-          </div>
-        </div>
+        <RotatableCard className="flex min-h-[340px] items-center justify-center px-6 py-6">
+          <ArtistCard
+            artistName={card.artistName}
+            artistImageUrl={card.artistImageUrl}
+            songTitle={card.songTitle}
+            rarity={card.rarity}
+          />
+        </RotatableCard>
 
         {/* Drag hint */}
         <div className="mb-4 text-center text-xs text-gray-500">スワイプでカードを回転</div>

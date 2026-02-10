@@ -84,7 +84,7 @@ export function CartDialog({ isOpen, onClose }: CartDialogProps) {
 
         {/* Scrollable content - same UI as cart page */}
         <div className="flex-1 overflow-y-auto">
-          <CartContent checkoutBottomClass="bottom-0" />
+          <CartContent onClose={handleClose} />
         </div>
       </div>
     </div>

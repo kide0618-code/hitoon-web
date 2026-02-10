@@ -198,20 +198,20 @@ export default function PurchaseAgreement({
           <div className="mb-5">
             <h4 className="mb-3 flex items-center gap-2 text-sm font-bold text-white">
               <CheckCircle size={16} className="text-blue-400" />
-              重要事項説明書
+              確認事項
             </h4>
             <div className="h-32 overflow-y-auto rounded-xl border border-gray-700 bg-gray-800 p-4 text-sm leading-relaxed text-gray-300">
               <div className="space-y-4">
-                <div>
+                {/* <div>
                   <p className="mb-1 font-semibold text-blue-400">1. 金融商品ではありません</p>
                   <p className="text-gray-400">本パスは投資商品ではありません。</p>
                 </div>
                 <div>
                   <p className="mb-1 font-semibold text-blue-400">2. 元本保証はありません</p>
                   <p className="text-gray-400">収益が購入額を下回る可能性があります。</p>
-                </div>
+                </div> */}
                 <div>
-                  <p className="mb-1 font-semibold text-blue-400">3. 返金不可</p>
+                  <p className="mb-1 font-semibold text-blue-400">1. 返金不可</p>
                   <p className="text-gray-400">決済完了後のキャンセルはできません。</p>
                 </div>
               </div>
@@ -234,7 +234,7 @@ export default function PurchaseAgreement({
               htmlFor="agreement-checkbox"
               className="ml-3 cursor-pointer select-none text-sm leading-relaxed text-gray-300"
             >
-              上記重要事項および
+              上記の確認事項および
               <Link
                 href={ROUTES.TERMS}
                 target="_blank"

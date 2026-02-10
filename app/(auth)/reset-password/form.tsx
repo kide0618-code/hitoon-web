@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Lock, Loader2, CheckCircle, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { localizeAuthError } from '@/lib/utils/auth-errors';
 import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/constants/routes';
 
@@ -78,7 +79,9 @@ export function ResetPasswordForm() {
         router.push(ROUTES.LOGIN);
       }, 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'パスワードの更新に失敗しました');
+      setError(
+        err instanceof Error ? localizeAuthError(err.message) : 'パスワードの更新に失敗しました',
+      );
     } finally {
       setIsLoading(false);
     }

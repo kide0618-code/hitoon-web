@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Mail, Loader2, CheckCircle, ArrowLeft } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { localizeAuthError } from '@/lib/utils/auth-errors';
 import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/constants/routes';
 
@@ -29,7 +30,11 @@ export function ForgotPasswordForm() {
 
       setIsSuccess(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'パスワードリセットメールの送信に失敗しました');
+      setError(
+        err instanceof Error
+          ? localizeAuthError(err.message)
+          : 'パスワードリセットメールの送信に失敗しました',
+      );
     } finally {
       setIsLoading(false);
     }

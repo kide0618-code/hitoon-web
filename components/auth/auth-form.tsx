@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Loader2, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { localizeAuthError } from '@/lib/utils/auth-errors';
 import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/constants/routes';
 
@@ -51,7 +52,10 @@ export function AuthForm({ mode }: AuthFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [error, setError] = useState<string | null>(searchParams.get('error') || null);
+  const initialError = searchParams.get('error');
+  const [error, setError] = useState<string | null>(
+    initialError ? localizeAuthError(initialError) : null,
+  );
   const [message, setMessage] = useState<string | null>(null);
 
   const supabase = createClient();
@@ -93,7 +97,7 @@ export function AuthForm({ mode }: AuthFormProps) {
     } catch (err) {
       setError(
         err instanceof Error
-          ? err.message
+          ? localizeAuthError(err.message)
           : mode === 'login'
             ? 'ログインに失敗しました'
             : '登録に失敗しました',
@@ -118,7 +122,7 @@ export function AuthForm({ mode }: AuthFormProps) {
 
       if (error) throw error;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Google認証に失敗しました');
+      setError(err instanceof Error ? localizeAuthError(err.message) : 'Google認証に失敗しました');
       setIsGoogleLoading(false);
     }
   };
