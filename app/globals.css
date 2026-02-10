@@ -48,7 +48,8 @@ body {
   }
 
   @keyframes gradient-shift {
-    0%, 100% {
+    0%,
+    100% {
       background-position: 0% 50%;
     }
     50% {
@@ -106,7 +107,9 @@ body {
     border-radius: 12px;
     overflow: hidden;
     background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
   }
 
   .trading-card:hover {
@@ -154,8 +157,17 @@ body {
   }
 
   @keyframes rare-glow {
-    0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.4), 0 0 40px rgba(59, 130, 246, 0.2); }
-    50% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.6), 0 0 60px rgba(59, 130, 246, 0.3); }
+    0%,
+    100% {
+      box-shadow:
+        0 0 20px rgba(59, 130, 246, 0.4),
+        0 0 40px rgba(59, 130, 246, 0.2);
+    }
+    50% {
+      box-shadow:
+        0 0 30px rgba(59, 130, 246, 0.6),
+        0 0 60px rgba(59, 130, 246, 0.3);
+    }
   }
 
   /* Silver shine effect for Rare */
@@ -179,8 +191,12 @@ body {
   }
 
   @keyframes silver-shine {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
   }
 
   /* ===== SUPER RARE (SR) Card - Holographic rainbow effect ===== */
@@ -201,7 +217,8 @@ body {
   }
 
   @keyframes sr-glow {
-    0%, 100% {
+    0%,
+    100% {
       box-shadow:
         0 0 30px rgba(251, 191, 36, 0.5),
         0 0 60px rgba(251, 191, 36, 0.3),
@@ -241,8 +258,13 @@ body {
   }
 
   @keyframes holographic {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
   }
 
   /* Sparkle effect for Super Rare - optimized to 4 sparkles for performance */
@@ -262,8 +284,13 @@ body {
   }
 
   @keyframes sparkle {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 1; }
+    0%,
+    100% {
+      opacity: 0.4;
+    }
+    50% {
+      opacity: 1;
+    }
   }
 
   /* Card image area */
@@ -322,7 +349,12 @@ body {
   }
 
   @keyframes badge-pulse {
-    0%, 100% { box-shadow: 0 0 12px rgba(251, 191, 36, 0.6); }
-    50% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.9); }
+    0%,
+    100% {
+      box-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(251, 191, 36, 0.9);
+    }
   }
 }

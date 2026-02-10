@@ -68,9 +68,7 @@ export default function NewCardPage() {
   // Update artist_id when template changes
   useEffect(() => {
     if (formData.template_id) {
-      const selectedTemplate = templates.find(
-        (t) => t.id === formData.template_id
-      );
+      const selectedTemplate = templates.find((t) => t.id === formData.template_id);
       if (selectedTemplate) {
         setFormData((prev) => ({
           ...prev,
@@ -84,8 +82,7 @@ export default function NewCardPage() {
   useEffect(() => {
     const artist = artists.find((a) => a.id === formData.artist_id);
     if (artist && formData.rarity) {
-      const rarityLabel =
-        formData.rarity === 'SUPER_RARE' ? 'SUPER RARE' : formData.rarity;
+      const rarityLabel = formData.rarity === 'SUPER_RARE' ? 'SUPER RARE' : formData.rarity;
       setFormData((prev) => ({
         ...prev,
         name: `${artist.name} - ${rarityLabel}`,
@@ -149,28 +146,25 @@ export default function NewCardPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="flex items-center gap-4 mb-8">
-        <a
-          href="/admin/cards"
-          className="text-gray-500 hover:text-white transition-colors"
-        >
+    <div className="mx-auto max-w-2xl">
+      <div className="mb-8 flex items-center gap-4">
+        <a href="/admin/cards" className="text-gray-500 transition-colors hover:text-white">
           ← Back
         </a>
         <h1 className="text-2xl font-bold text-white">New Card</h1>
       </div>
 
       {error && (
-        <div className="bg-red-900/50 border border-red-700 text-red-400 px-4 py-3 rounded-lg mb-6">
+        <div className="mb-6 rounded-lg border border-red-700 bg-red-900/50 px-4 py-3 text-red-400">
           {error}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-6">
+        <div className="space-y-6 rounded-xl border border-gray-800 bg-gray-900 p-6">
           {/* Artist Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="mb-2 block text-sm font-medium text-gray-300">
               Artist <span className="text-red-400">*</span>
             </label>
             <select
@@ -183,7 +177,7 @@ export default function NewCardPage() {
                   template_id: '',
                 })
               }
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+              className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
               disabled={isLoadingData}
             >
               <option value="">Select an artist</option>
@@ -197,22 +191,18 @@ export default function NewCardPage() {
 
           {/* Template Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="mb-2 block text-sm font-medium text-gray-300">
               Template <span className="text-red-400">*</span>
             </label>
             <select
               required
               value={formData.template_id}
-              onChange={(e) =>
-                setFormData({ ...formData, template_id: e.target.value })
-              }
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+              onChange={(e) => setFormData({ ...formData, template_id: e.target.value })}
+              className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
               disabled={isLoadingData || !formData.artist_id}
             >
               <option value="">
-                {formData.artist_id
-                  ? 'Select a template'
-                  : 'Select an artist first'}
+                {formData.artist_id ? 'Select a template' : 'Select an artist first'}
               </option>
               {filteredTemplates.map((template) => (
                 <option key={template.id} value={template.id}>
@@ -224,7 +214,7 @@ export default function NewCardPage() {
 
           {/* Rarity Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="mb-2 block text-sm font-medium text-gray-300">
               Rarity <span className="text-red-400">*</span>
             </label>
             <div className="grid grid-cols-3 gap-3">
@@ -233,14 +223,14 @@ export default function NewCardPage() {
                   key={rarity}
                   type="button"
                   onClick={() => setFormData({ ...formData, rarity })}
-                  className={`p-3 rounded-lg border-2 transition-all ${
+                  className={`rounded-lg border-2 p-3 transition-all ${
                     formData.rarity === rarity
                       ? rarityStyles[rarity] + ' bg-gray-800'
                       : 'border-gray-800 bg-gray-900 hover:border-gray-700'
                   }`}
                 >
                   <span
-                    className={`text-xs px-2 py-1 rounded font-bold ${
+                    className={`rounded px-2 py-1 text-xs font-bold ${
                       rarity === 'NORMAL'
                         ? 'bg-gray-700 text-gray-300'
                         : rarity === 'RARE'
@@ -250,7 +240,7 @@ export default function NewCardPage() {
                   >
                     {rarity === 'SUPER_RARE' ? 'SR' : rarity[0]}
                   </span>
-                  <p className="text-white text-sm mt-2">
+                  <p className="mt-2 text-sm text-white">
                     {rarity === 'SUPER_RARE' ? 'Super Rare' : rarity}
                   </p>
                 </button>
@@ -260,33 +250,27 @@ export default function NewCardPage() {
 
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="mb-2 block text-sm font-medium text-gray-300">
               Card Name <span className="text-red-400">*</span>
             </label>
             <input
               type="text"
               required
               value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
               placeholder="Card name"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Description
-            </label>
+            <label className="mb-2 block text-sm font-medium text-gray-300">Description</label>
             <textarea
               value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={3}
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+              className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
               placeholder="Optional card description"
             />
           </div>
@@ -294,7 +278,7 @@ export default function NewCardPage() {
           {/* Price & Supply */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="mb-2 block text-sm font-medium text-gray-300">
                 価格 (円) <span className="text-red-400">*</span>
               </label>
               <input
@@ -307,13 +291,13 @@ export default function NewCardPage() {
                     price: parseInt(e.target.value) || 0,
                   })
                 }
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
                 min="0"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="mb-2 block text-sm font-medium text-gray-300">
                 出品数 (空欄 = 無制限)
               </label>
               <input
@@ -322,12 +306,10 @@ export default function NewCardPage() {
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    total_supply: e.target.value
-                      ? parseInt(e.target.value)
-                      : null,
+                    total_supply: e.target.value ? parseInt(e.target.value) : null,
                   })
                 }
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+                className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
                 min="1"
                 placeholder="無制限"
               />
@@ -336,7 +318,7 @@ export default function NewCardPage() {
 
           {/* Purchase Limit per User */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="mb-2 block text-sm font-medium text-gray-300">
               1人あたりの購入上限 (空欄 = 無制限)
             </label>
             <input
@@ -345,30 +327,26 @@ export default function NewCardPage() {
               onChange={(e) =>
                 setFormData({
                   ...formData,
-                  max_purchase_per_user: e.target.value
-                    ? parseInt(e.target.value)
-                    : null,
+                  max_purchase_per_user: e.target.value ? parseInt(e.target.value) : null,
                 })
               }
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+              className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
               min="1"
               placeholder="無制限"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="mt-1 text-xs text-gray-500">
               1人のユーザーが購入できる最大数を設定できます
             </p>
           </div>
 
           {/* Is Active */}
           <div>
-            <label className="flex items-center gap-3 cursor-pointer">
+            <label className="flex cursor-pointer items-center gap-3">
               <input
                 type="checkbox"
                 checked={formData.is_active}
-                onChange={(e) =>
-                  setFormData({ ...formData, is_active: e.target.checked })
-                }
-                className="w-5 h-5 bg-gray-800 border border-gray-700 rounded focus:ring-blue-500"
+                onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                className="h-5 w-5 rounded border border-gray-700 bg-gray-800 focus:ring-blue-500"
               />
               <span className="text-sm font-medium text-gray-300">
                 Active (available for purchase)
@@ -382,14 +360,11 @@ export default function NewCardPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed text-white font-medium px-6 py-3 rounded-lg transition-colors"
+            className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-800"
           >
             {isLoading ? 'Creating...' : 'Create Card'}
           </button>
-          <a
-            href="/admin/cards"
-            className="text-gray-400 hover:text-white transition-colors"
-          >
+          <a href="/admin/cards" className="text-gray-400 transition-colors hover:text-white">
             Cancel
           </a>
         </div>

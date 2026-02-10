@@ -105,7 +105,7 @@ export default function EditVisualPage({ params }: PageProps) {
   const handleDelete = async () => {
     if (
       !confirm(
-        'Are you sure you want to delete this visual? This will also delete all associated cards.'
+        'Are you sure you want to delete this visual? This will also delete all associated cards.',
       )
     ) {
       return;
@@ -147,13 +147,13 @@ export default function EditVisualPage({ params }: PageProps) {
 
   if (isLoading) {
     return (
-      <div className="max-w-3xl mx-auto">
+      <div className="mx-auto max-w-3xl">
         <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-gray-800 rounded w-1/3" />
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
-            <div className="h-10 bg-gray-800 rounded" />
-            <div className="h-40 bg-gray-800 rounded" />
-            <div className="h-10 bg-gray-800 rounded" />
+          <div className="h-8 w-1/3 rounded bg-gray-800" />
+          <div className="space-y-4 rounded-xl border border-gray-800 bg-gray-900 p-6">
+            <div className="h-10 rounded bg-gray-800" />
+            <div className="h-40 rounded bg-gray-800" />
+            <div className="h-10 rounded bg-gray-800" />
           </div>
         </div>
       </div>
@@ -162,8 +162,8 @@ export default function EditVisualPage({ params }: PageProps) {
 
   if (!visual) {
     return (
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-red-900/50 border border-red-700 text-red-400 px-4 py-3 rounded-lg">
+      <div className="mx-auto max-w-3xl">
+        <div className="rounded-lg border border-red-700 bg-red-900/50 px-4 py-3 text-red-400">
           Visual not found
         </div>
       </div>
@@ -171,63 +171,54 @@ export default function EditVisualPage({ params }: PageProps) {
   }
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <div className="flex items-center gap-4 mb-8">
-        <a
-          href="/admin/visuals"
-          className="text-gray-500 hover:text-white transition-colors"
-        >
+    <div className="mx-auto max-w-3xl">
+      <div className="mb-8 flex items-center gap-4">
+        <a href="/admin/visuals" className="text-gray-500 transition-colors hover:text-white">
           ← Back
         </a>
         <h1 className="text-2xl font-bold text-white">Edit Visual</h1>
       </div>
 
       {error && (
-        <div className="bg-red-900/50 border border-red-700 text-red-400 px-4 py-3 rounded-lg mb-6">
+        <div className="mb-6 rounded-lg border border-red-700 bg-red-900/50 px-4 py-3 text-red-400">
           {error}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Info */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-6">
+        <div className="space-y-6 rounded-xl border border-gray-800 bg-gray-900 p-6">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-medium text-white">Visual Info</h2>
-            <span className="text-sm text-gray-500">
-              Artist: {visual.artist.name}
-            </span>
+            <span className="text-sm text-gray-500">Artist: {visual.artist.name}</span>
           </div>
 
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="mb-2 block text-sm font-medium text-gray-300">
               Visual Name <span className="text-red-400">*</span>
             </label>
             <input
               type="text"
               required
               value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
               placeholder="e.g., 1st Album, Summer Single"
             />
           </div>
 
           {/* Image URL */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="mb-2 block text-sm font-medium text-gray-300">
               Card Image URL <span className="text-red-400">*</span>
             </label>
             <input
               type="url"
               required
               value={formData.artist_image_url}
-              onChange={(e) =>
-                setFormData({ ...formData, artist_image_url: e.target.value })
-              }
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+              onChange={(e) => setFormData({ ...formData, artist_image_url: e.target.value })}
+              className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
               placeholder="https://example.com/card-image.jpg"
             />
             {formData.artist_image_url && (
@@ -237,7 +228,7 @@ export default function EditVisualPage({ params }: PageProps) {
                   alt="Preview"
                   width={128}
                   height={171}
-                  className="w-32 h-auto aspect-[3/4] rounded-lg object-cover"
+                  className="aspect-[3/4] h-auto w-32 rounded-lg object-cover"
                   unoptimized
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = 'none';
@@ -249,46 +240,36 @@ export default function EditVisualPage({ params }: PageProps) {
 
           {/* Song Title */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Song Title
-            </label>
+            <label className="mb-2 block text-sm font-medium text-gray-300">Song Title</label>
             <input
               type="text"
               value={formData.song_title}
-              onChange={(e) =>
-                setFormData({ ...formData, song_title: e.target.value })
-              }
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+              onChange={(e) => setFormData({ ...formData, song_title: e.target.value })}
+              className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
               placeholder="Optional song title"
             />
           </div>
 
           {/* Subtitle */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Subtitle
-            </label>
+            <label className="mb-2 block text-sm font-medium text-gray-300">Subtitle</label>
             <input
               type="text"
               value={formData.subtitle}
-              onChange={(e) =>
-                setFormData({ ...formData, subtitle: e.target.value })
-              }
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500"
+              onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
+              className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
               placeholder="Optional subtitle"
             />
           </div>
 
           {/* Is Active */}
           <div>
-            <label className="flex items-center gap-3 cursor-pointer">
+            <label className="flex cursor-pointer items-center gap-3">
               <input
                 type="checkbox"
                 checked={formData.is_active}
-                onChange={(e) =>
-                  setFormData({ ...formData, is_active: e.target.checked })
-                }
-                className="w-5 h-5 bg-gray-800 border border-gray-700 rounded focus:ring-blue-500"
+                onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                className="h-5 w-5 rounded border border-gray-700 bg-gray-800 focus:ring-blue-500"
               />
               <span className="text-sm font-medium text-gray-300">
                 Active (visible in marketplace)
@@ -298,7 +279,7 @@ export default function EditVisualPage({ params }: PageProps) {
         </div>
 
         {/* Associated Cards */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
+        <div className="space-y-4 rounded-xl border border-gray-800 bg-gray-900 p-6">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-medium text-white">Associated Cards</h2>
             <a
@@ -314,32 +295,30 @@ export default function EditVisualPage({ params }: PageProps) {
               {visual.cards.map((card) => (
                 <div
                   key={card.id}
-                  className="flex items-center justify-between p-3 bg-gray-800 rounded-lg"
+                  className="flex items-center justify-between rounded-lg bg-gray-800 p-3"
                 >
                   <div className="flex items-center gap-3">
                     <span
-                      className={`text-xs px-2 py-1 rounded font-bold ${rarityStyles[card.rarity]}`}
+                      className={`rounded px-2 py-1 text-xs font-bold ${rarityStyles[card.rarity]}`}
                     >
                       {rarityLabels[card.rarity]}
                     </span>
                     <span className="text-white">{card.name}</span>
                     {!card.is_active && (
-                      <span className="text-xs px-2 py-0.5 bg-gray-700 text-gray-500 rounded">
+                      <span className="rounded bg-gray-700 px-2 py-0.5 text-xs text-gray-500">
                         Inactive
                       </span>
                     )}
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="text-gray-400 text-sm">
-                      ¥{card.price.toLocaleString()}
-                    </span>
-                    <span className="text-gray-500 text-sm font-mono">
+                    <span className="text-sm text-gray-400">¥{card.price.toLocaleString()}</span>
+                    <span className="font-mono text-sm text-gray-500">
                       {card.current_supply}
                       {card.total_supply !== null && ` / ${card.total_supply}`}
                     </span>
                     <a
                       href={`/admin/cards/${card.id}`}
-                      className="text-blue-400 hover:text-blue-300 text-sm"
+                      className="text-sm text-blue-400 hover:text-blue-300"
                     >
                       Edit
                     </a>
@@ -348,9 +327,8 @@ export default function EditVisualPage({ params }: PageProps) {
               ))}
             </div>
           ) : (
-            <p className="text-gray-500 text-sm">
-              No cards created yet. Click &quot;+ Add Card&quot; to create cards
-              for this visual.
+            <p className="text-sm text-gray-500">
+              No cards created yet. Click &quot;+ Add Card&quot; to create cards for this visual.
             </p>
           )}
         </div>
@@ -361,14 +339,11 @@ export default function EditVisualPage({ params }: PageProps) {
             <button
               type="submit"
               disabled={isSaving}
-              className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed text-white font-medium px-6 py-3 rounded-lg transition-colors"
+              className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-800"
             >
               {isSaving ? 'Saving...' : 'Save Changes'}
             </button>
-            <a
-              href="/admin/visuals"
-              className="text-gray-400 hover:text-white transition-colors"
-            >
+            <a href="/admin/visuals" className="text-gray-400 transition-colors hover:text-white">
               Cancel
             </a>
           </div>
@@ -377,7 +352,7 @@ export default function EditVisualPage({ params }: PageProps) {
             type="button"
             onClick={handleDelete}
             disabled={isDeleting}
-            className="bg-red-900/50 hover:bg-red-900 disabled:opacity-50 text-red-400 font-medium px-4 py-2 rounded-lg transition-colors"
+            className="rounded-lg bg-red-900/50 px-4 py-2 font-medium text-red-400 transition-colors hover:bg-red-900 disabled:opacity-50"
           >
             {isDeleting ? 'Deleting...' : 'Delete Visual'}
           </button>

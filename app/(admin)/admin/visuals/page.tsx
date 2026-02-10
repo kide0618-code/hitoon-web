@@ -11,7 +11,7 @@ export default async function AdminVisualsPage() {
       *,
       artist:artists (id, name),
       cards (id)
-    `
+    `,
     )
     .order('created_at', { ascending: false })) as {
     data:
@@ -35,19 +35,19 @@ export default async function AdminVisualsPage() {
         <h1 className="text-2xl font-bold text-white">Card Visuals</h1>
         <a
           href="/admin/visuals/new"
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+          className="rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
         >
           + Add Visual
         </a>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {visuals?.map((visual) => (
           <div
             key={visual.id}
-            className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-gray-700 transition-colors"
+            className="overflow-hidden rounded-xl border border-gray-800 bg-gray-900 transition-colors hover:border-gray-700"
           >
-            <div className="aspect-[3/4] relative">
+            <div className="relative aspect-[3/4]">
               <Image
                 src={visual.artist_image_url}
                 alt={visual.name}
@@ -56,26 +56,22 @@ export default async function AdminVisualsPage() {
                 unoptimized
               />
               {!visual.is_active && (
-                <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                <div className="absolute inset-0 flex items-center justify-center bg-black/60">
                   <span className="text-gray-400">Inactive</span>
                 </div>
               )}
             </div>
             <div className="p-4">
-              <p className="text-white font-medium">{visual.name}</p>
-              <p className="text-gray-500 text-sm">{visual.artist?.name}</p>
+              <p className="font-medium text-white">{visual.name}</p>
+              <p className="text-sm text-gray-500">{visual.artist?.name}</p>
               {visual.song_title && (
-                <p className="text-gray-600 text-xs mt-1">
-                  ♪ {visual.song_title}
-                </p>
+                <p className="mt-1 text-xs text-gray-600">♪ {visual.song_title}</p>
               )}
-              <div className="flex items-center justify-between mt-3">
-                <span className="text-xs text-gray-500">
-                  {visual.cards?.length || 0} cards
-                </span>
+              <div className="mt-3 flex items-center justify-between">
+                <span className="text-xs text-gray-500">{visual.cards?.length || 0} cards</span>
                 <a
                   href={`/admin/visuals/${visual.id}`}
-                  className="text-blue-400 hover:text-blue-300 text-sm"
+                  className="text-sm text-blue-400 hover:text-blue-300"
                 >
                   Edit
                 </a>

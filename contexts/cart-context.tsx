@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   createContext,
@@ -8,15 +8,11 @@ import {
   useState,
   useMemo,
   type ReactNode,
-} from "react";
-import { createClient } from "@/lib/supabase/client";
-import type {
-  CartContextType,
-  CartItemWithCard,
-  LocalCartItem,
-} from "@/types/cart";
+} from 'react';
+import { createClient } from '@/lib/supabase/client';
+import type { CartContextType, CartItemWithCard, LocalCartItem } from '@/types/cart';
 
-const CART_STORAGE_KEY = "hitoon_cart";
+const CART_STORAGE_KEY = 'hitoon_cart';
 
 const CartContext = createContext<CartContextType | null>(null);
 
@@ -24,7 +20,7 @@ const CartContext = createContext<CartContextType | null>(null);
  * Get cart items from localStorage (for guests)
  */
 function getLocalCart(): LocalCartItem[] {
-  if (typeof window === "undefined") return [];
+  if (typeof window === 'undefined') return [];
   try {
     const stored = localStorage.getItem(CART_STORAGE_KEY);
     return stored ? JSON.parse(stored) : [];
@@ -37,7 +33,7 @@ function getLocalCart(): LocalCartItem[] {
  * Save cart items to localStorage (for guests)
  */
 function saveLocalCart(items: LocalCartItem[]): void {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
   } catch {
@@ -49,7 +45,7 @@ function saveLocalCart(items: LocalCartItem[]): void {
  * Clear localStorage cart
  */
 function clearLocalCart(): void {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return;
   try {
     localStorage.removeItem(CART_STORAGE_KEY);
   } catch {
@@ -90,14 +86,12 @@ export function CartProvider({ children }: CartProviderProps) {
 
   // Fetch cart items with card details
   const fetchCartWithDetails = useCallback(
-    async (
-      cartItems: { cardId: string; quantity: number }[],
-    ): Promise<CartItemWithCard[]> => {
+    async (cartItems: { cardId: string; quantity: number }[]): Promise<CartItemWithCard[]> => {
       if (cartItems.length === 0) return [];
 
       const cardIds = cartItems.map((item) => item.cardId);
       const { data: cards, error } = await supabase
-        .from("cards")
+        .from('cards')
         .select(
           `
           id,
@@ -116,8 +110,8 @@ export function CartProvider({ children }: CartProviderProps) {
           )
         `,
         )
-        .in("id", cardIds)
-        .eq("is_active", true);
+        .in('id', cardIds)
+        .eq('is_active', true);
 
       if (error || !cards) return [];
 
@@ -130,16 +124,12 @@ export function CartProvider({ children }: CartProviderProps) {
           if (!card) return null;
 
           // Handle Supabase's nested types
-          const visual = Array.isArray(card.visual)
-            ? card.visual[0]
-            : card.visual;
-          const artist = Array.isArray(card.artist)
-            ? card.artist[0]
-            : card.artist;
+          const visual = Array.isArray(card.visual) ? card.visual[0] : card.visual;
+          const artist = Array.isArray(card.artist) ? card.artist[0] : card.artist;
 
           return {
-            id: `${userId || "guest"}-${item.cardId}`,
-            userId: userId || "guest",
+            id: `${userId || 'guest'}-${item.cardId}`,
+            userId: userId || 'guest',
             cardId: item.cardId,
             quantity: item.quantity,
             addedAt: new Date().toISOString(),
@@ -147,16 +137,16 @@ export function CartProvider({ children }: CartProviderProps) {
               id: card.id,
               name: card.name,
               price: card.price,
-              rarity: card.rarity as CartItemWithCard["card"]["rarity"],
+              rarity: card.rarity as CartItemWithCard['card']['rarity'],
               totalSupply: card.total_supply,
               currentSupply: card.current_supply,
               visual: {
-                artistImageUrl: visual?.artist_image_url || "",
+                artistImageUrl: visual?.artist_image_url || '',
                 songTitle: visual?.song_title || null,
               },
               artist: {
-                id: artist?.id || "",
-                name: artist?.name || "Unknown Artist",
+                id: artist?.id || '',
+                name: artist?.name || 'Unknown Artist',
               },
             },
           } as CartItemWithCard;
@@ -182,7 +172,7 @@ export function CartProvider({ children }: CartProviderProps) {
       if (localCart.length > 0) {
         try {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          await (supabase.rpc as any)("merge_cart", {
+          await (supabase.rpc as any)('merge_cart', {
             p_user_id: user.id,
             p_items: localCart.map((item) => ({
               card_id: item.cardId,
@@ -191,15 +181,15 @@ export function CartProvider({ children }: CartProviderProps) {
           });
           clearLocalCart();
         } catch (err) {
-          console.error("Failed to merge cart:", err);
+          console.error('Failed to merge cart:', err);
         }
       }
 
       // Authenticated: Load from DB
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: dbCart } = (await (supabase.from("carts") as any)
-        .select("card_id, quantity")
-        .eq("user_id", user.id)) as { data: CartDbItem[] | null };
+      const { data: dbCart } = (await (supabase.from('carts') as any)
+        .select('card_id, quantity')
+        .eq('user_id', user.id)) as { data: CartDbItem[] | null };
 
       if (dbCart && dbCart.length > 0) {
         const cartItems = dbCart.map((item) => ({
@@ -236,16 +226,16 @@ export function CartProvider({ children }: CartProviderProps) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === "SIGNED_IN" && session?.user) {
+      if (event === 'SIGNED_IN' && session?.user) {
         // Merge is handled inside loadCart() so it works for both
         // email/password (SIGNED_IN) and OAuth redirect (INITIAL_SESSION)
         setUserId(session.user.id);
         loadCart();
-      } else if (event === "INITIAL_SESSION" && session?.user) {
+      } else if (event === 'INITIAL_SESSION' && session?.user) {
         // OAuth redirect login fires INITIAL_SESSION instead of SIGNED_IN
         setUserId(session.user.id);
         loadCart();
-      } else if (event === "SIGNED_OUT") {
+      } else if (event === 'SIGNED_OUT') {
         setUserId(null);
         setItems([]);
         loadCart();
@@ -267,18 +257,16 @@ export function CartProvider({ children }: CartProviderProps) {
         // Item exists, update quantity optimistically
         const newQty = Math.min(10, existingItem.quantity + clampedQty);
         setItems((prev) =>
-          prev.map((item) =>
-            item.cardId === cardId ? { ...item, quantity: newQty } : item,
-          ),
+          prev.map((item) => (item.cardId === cardId ? { ...item, quantity: newQty } : item)),
         );
 
         // Sync with backend
         if (userId) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          await (supabase.from("carts") as any)
+          await (supabase.from('carts') as any)
             .update({ quantity: newQty })
-            .eq("user_id", userId)
-            .eq("card_id", cardId);
+            .eq('user_id', userId)
+            .eq('card_id', cardId);
         } else {
           const localCart = getLocalCart();
           const item = localCart.find((i) => i.cardId === cardId);
@@ -291,18 +279,18 @@ export function CartProvider({ children }: CartProviderProps) {
         // New item - need to fetch card details first, then add
         if (userId) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const { error } = await (supabase.from("carts") as any).upsert(
+          const { error } = await (supabase.from('carts') as any).upsert(
             {
               user_id: userId,
               card_id: cardId,
               quantity: clampedQty,
             },
             {
-              onConflict: "user_id,card_id",
+              onConflict: 'user_id,card_id',
             },
           );
           if (error) {
-            console.error("Failed to add to cart:", error);
+            console.error('Failed to add to cart:', error);
             return;
           }
         } else {
@@ -330,14 +318,9 @@ export function CartProvider({ children }: CartProviderProps) {
       // Sync with backend
       if (userId) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (supabase.from("carts") as any)
-          .delete()
-          .eq("user_id", userId)
-          .eq("card_id", cardId);
+        await (supabase.from('carts') as any).delete().eq('user_id', userId).eq('card_id', cardId);
       } else {
-        const localCart = getLocalCart().filter(
-          (item) => item.cardId !== cardId,
-        );
+        const localCart = getLocalCart().filter((item) => item.cardId !== cardId);
         saveLocalCart(localCart);
       }
     },
@@ -351,18 +334,16 @@ export function CartProvider({ children }: CartProviderProps) {
 
       // Optimistic update
       setItems((prev) =>
-        prev.map((item) =>
-          item.cardId === cardId ? { ...item, quantity: clampedQty } : item,
-        ),
+        prev.map((item) => (item.cardId === cardId ? { ...item, quantity: clampedQty } : item)),
       );
 
       // Sync with backend
       if (userId) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (supabase.from("carts") as any)
+        await (supabase.from('carts') as any)
           .update({ quantity: clampedQty })
-          .eq("user_id", userId)
-          .eq("card_id", cardId);
+          .eq('user_id', userId)
+          .eq('card_id', cardId);
       } else {
         const localCart = getLocalCart();
         const item = localCart.find((i) => i.cardId === cardId);
@@ -379,7 +360,7 @@ export function CartProvider({ children }: CartProviderProps) {
   const clearCart = useCallback(async () => {
     if (userId) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase.from("carts") as any).delete().eq("user_id", userId);
+      await (supabase.from('carts') as any).delete().eq('user_id', userId);
     } else {
       clearLocalCart();
     }
@@ -409,10 +390,7 @@ export function CartProvider({ children }: CartProviderProps) {
   }, [loadCart]);
 
   // Calculate totals
-  const totalItems = useMemo(
-    () => items.reduce((sum, item) => sum + item.quantity, 0),
-    [items],
-  );
+  const totalItems = useMemo(() => items.reduce((sum, item) => sum + item.quantity, 0), [items]);
 
   const totalPrice = useMemo(
     () => items.reduce((sum, item) => sum + item.card.price * item.quantity, 0),
@@ -442,7 +420,7 @@ export function CartProvider({ children }: CartProviderProps) {
 export function useCart(): CartContextType {
   const context = useContext(CartContext);
   if (!context) {
-    throw new Error("useCart must be used within a CartProvider");
+    throw new Error('useCart must be used within a CartProvider');
   }
   return context;
 }

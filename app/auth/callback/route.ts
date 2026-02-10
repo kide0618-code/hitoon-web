@@ -74,7 +74,7 @@ export async function POST(request: Request) {
     // Validate cart items format
     const validItems = cartItems.filter(
       (item: { cardId?: string; quantity?: number }) =>
-        item.cardId && typeof item.quantity === 'number' && item.quantity > 0
+        item.cardId && typeof item.quantity === 'number' && item.quantity > 0,
     );
 
     if (validItems.length === 0) {
@@ -96,10 +96,7 @@ export async function POST(request: Request) {
 
     if (mergeError) {
       console.error('Cart merge error:', mergeError);
-      return NextResponse.json(
-        { error: 'Failed to merge cart' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to merge cart' }, { status: 500 });
     }
 
     return NextResponse.json({
@@ -108,9 +105,6 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error('Cart merge error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

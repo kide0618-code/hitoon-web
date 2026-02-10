@@ -48,7 +48,8 @@ async function getRecentPurchases(): Promise<RecentPurchase[]> {
   // Fetch recent purchases with all related data in a single query
   const { data: purchasesData, error: purchasesError } = await supabase
     .from('purchases')
-    .select(`
+    .select(
+      `
       id,
       serial_number,
       price_paid,
@@ -62,7 +63,8 @@ async function getRecentPurchases(): Promise<RecentPurchase[]> {
           image_url
         )
       )
-    `)
+    `,
+    )
     .eq('user_id', user.id)
     .eq('status', 'completed')
     .order('purchased_at', { ascending: false })
@@ -119,15 +121,13 @@ export default async function ActivityPage({ searchParams }: PageProps) {
       {/* Success Message */}
       {isSuccess && (
         <div className="p-4">
-          <div className="bg-gradient-to-r from-green-900/50 to-emerald-900/50 border border-green-500/50 rounded-2xl p-6 text-center">
-            <CheckCircle2 size={48} className="text-green-400 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-white mb-2">購入完了！</h1>
-            <p className="text-gray-300 mb-6">
-              デジタルカードがコレクションに追加されました。
-            </p>
+          <div className="rounded-2xl border border-green-500/50 bg-gradient-to-r from-green-900/50 to-emerald-900/50 p-6 text-center">
+            <CheckCircle2 size={48} className="mx-auto mb-4 text-green-400" />
+            <h1 className="mb-2 text-2xl font-bold text-white">購入完了！</h1>
+            <p className="mb-6 text-gray-300">デジタルカードがコレクションに追加されました。</p>
             <Link
               href={ROUTES.COLLECTION}
-              className="inline-flex items-center gap-2 bg-white text-black font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-colors"
+              className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-3 font-bold text-black transition-colors hover:bg-gray-100"
             >
               <Layers size={20} />
               コレクションを見る
@@ -137,32 +137,32 @@ export default async function ActivityPage({ searchParams }: PageProps) {
       )}
 
       {/* Header */}
-      <div className="p-6 bg-gray-900 border-b border-gray-800 flex items-center gap-3">
+      <div className="flex items-center gap-3 border-b border-gray-800 bg-gray-900 p-6">
         <Clock className="text-blue-500" />
         <h2 className="text-xl font-bold">Recent Activity</h2>
       </div>
 
       {/* Recent Purchases */}
-      <div className="p-4 space-y-3">
+      <div className="space-y-3 p-4">
         {recentPurchases.length > 0 ? (
           recentPurchases.map((purchase) => (
             <Link
               key={purchase.id}
               href={ROUTES.COLLECTION_DETAIL(purchase.id)}
-              className="block group"
+              className="group block"
             >
-              <div className="bg-gray-900/50 rounded-xl p-4 flex items-center gap-4 border border-gray-800 group-hover:border-blue-500/50 transition-all">
+              <div className="flex items-center gap-4 rounded-xl border border-gray-800 bg-gray-900/50 p-4 transition-all group-hover:border-blue-500/50">
                 <Image
                   src={purchase.artistImageUrl}
                   alt={purchase.artistName}
                   width={48}
                   height={48}
-                  className="w-12 h-12 rounded-full object-cover"
+                  className="h-12 w-12 rounded-full object-cover"
                   unoptimized
                 />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-bold truncate">{purchase.artistName}</span>
+                <div className="min-w-0 flex-1">
+                  <div className="mb-1 flex items-center gap-2">
+                    <span className="truncate font-bold">{purchase.artistName}</span>
                     <RarityBadge rarity={purchase.rarity} size="sm" />
                   </div>
                   <div className="flex items-center gap-3 text-xs text-gray-500">
@@ -176,18 +176,21 @@ export default async function ActivityPage({ searchParams }: PageProps) {
                 </div>
                 <div className="text-right">
                   <p className="text-xs text-gray-500">{formatDate(purchase.purchasedAt)}</p>
-                  <ArrowRight size={16} className="text-gray-600 group-hover:text-blue-400 transition-colors ml-auto mt-1" />
+                  <ArrowRight
+                    size={16}
+                    className="ml-auto mt-1 text-gray-600 transition-colors group-hover:text-blue-400"
+                  />
                 </div>
               </div>
             </Link>
           ))
         ) : (
-          <div className="text-center py-16 text-gray-500">
+          <div className="py-16 text-center text-gray-500">
             <Clock size={48} className="mx-auto mb-4 opacity-50" />
             <p className="mb-4">まだ購入履歴がありません。</p>
             <Link
               href={ROUTES.MARKET}
-              className="text-blue-400 hover:underline inline-flex items-center gap-1"
+              className="inline-flex items-center gap-1 text-blue-400 hover:underline"
             >
               カードを探す <ArrowRight size={14} />
             </Link>
@@ -200,7 +203,7 @@ export default async function ActivityPage({ searchParams }: PageProps) {
         <div className="p-4">
           <Link
             href={ROUTES.COLLECTION}
-            className="block w-full text-center py-3 border border-gray-700 rounded-xl text-gray-400 hover:text-white hover:border-gray-500 transition-colors"
+            className="block w-full rounded-xl border border-gray-700 py-3 text-center text-gray-400 transition-colors hover:border-gray-500 hover:text-white"
           >
             すべてのコレクションを見る →
           </Link>

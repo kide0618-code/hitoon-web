@@ -1,6 +1,5 @@
--- HITOON Initial Schema Migration
--- Version: 1.0.0
--- Description: Core tables for artist trading card marketplace
+-- HITOON Full Schema Migration
+-- Description: All tables, functions, triggers, RLS policies, and storage buckets
 
 -- ============================================
 -- PROFILES (User extension for auth.users)
@@ -87,9 +86,11 @@ CREATE TABLE public.artists (
 );
 
 -- ============================================
--- CARD TEMPLATES
+-- CARD VISUALS
 -- ============================================
-CREATE TABLE public.card_templates (
+COMMENT ON TABLE public.card_visuals IS 'Card visual content (artist image, song title) - managed via admin. Frame templates are defined in TypeScript config.';
+
+CREATE TABLE public.card_visuals (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   artist_id UUID NOT NULL REFERENCES public.artists(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
@@ -102,27 +103,32 @@ CREATE TABLE public.card_templates (
 );
 
 -- ============================================
--- CARDS (3 per template: NORMAL, RARE, SUPER_RARE)
+-- CARDS (3 per visual: NORMAL, RARE, SUPER_RARE)
 -- ============================================
 CREATE TABLE public.cards (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  template_id UUID NOT NULL REFERENCES public.card_templates(id) ON DELETE CASCADE,
+  visual_id UUID NOT NULL REFERENCES public.card_visuals(id) ON DELETE CASCADE,
   artist_id UUID NOT NULL REFERENCES public.artists(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   description TEXT,
   rarity TEXT NOT NULL DEFAULT 'NORMAL',
   price INT NOT NULL,
-  total_supply INT, -- NULL = unlimited
+  total_supply INT,
   current_supply INT DEFAULT 0,
+  max_purchase_per_user INT DEFAULT NULL,
   is_active BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
 
   CONSTRAINT valid_rarity CHECK (rarity IN ('NORMAL', 'RARE', 'SUPER_RARE')),
-  CONSTRAINT unique_template_rarity UNIQUE (template_id, rarity),
+  CONSTRAINT unique_visual_rarity UNIQUE (visual_id, rarity),
   CONSTRAINT valid_price CHECK (price > 0),
-  CONSTRAINT valid_supply CHECK (current_supply >= 0)
+  CONSTRAINT valid_supply CHECK (current_supply >= 0),
+  CONSTRAINT valid_max_purchase_per_user CHECK (max_purchase_per_user IS NULL OR max_purchase_per_user > 0)
 );
+
+COMMENT ON COLUMN public.cards.visual_id IS 'Reference to card_visuals table (visual content, not frame template)';
+COMMENT ON COLUMN public.cards.max_purchase_per_user IS 'Maximum number of this card a single user can purchase. NULL means unlimited.';
 
 -- ============================================
 -- EXCLUSIVE CONTENTS (per card/rarity)
@@ -160,15 +166,29 @@ CREATE TABLE public.purchases (
 );
 
 -- ============================================
+-- CARTS
+-- ============================================
+CREATE TABLE public.carts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  card_id UUID NOT NULL REFERENCES public.cards(id) ON DELETE CASCADE,
+  quantity INT NOT NULL DEFAULT 1,
+  added_at TIMESTAMPTZ DEFAULT NOW(),
+
+  CONSTRAINT unique_user_card UNIQUE (user_id, card_id),
+  CONSTRAINT valid_quantity CHECK (quantity >= 1 AND quantity <= 10)
+);
+
+-- ============================================
 -- INDEXES
 -- ============================================
 CREATE INDEX idx_profiles_email_verified ON public.profiles(email_verified);
 CREATE INDEX idx_operators_user ON public.operators(user_id);
 CREATE INDEX idx_artists_featured ON public.artists(is_featured) WHERE is_featured = TRUE;
 CREATE INDEX idx_artists_display_order ON public.artists(display_order) WHERE is_featured = TRUE;
-CREATE INDEX idx_card_templates_artist ON public.card_templates(artist_id);
-CREATE INDEX idx_card_templates_active ON public.card_templates(is_active) WHERE is_active = TRUE;
-CREATE INDEX idx_cards_template ON public.cards(template_id);
+CREATE INDEX idx_card_visuals_artist ON public.card_visuals(artist_id);
+CREATE INDEX idx_card_visuals_active ON public.card_visuals(is_active) WHERE is_active = TRUE;
+CREATE INDEX idx_cards_visual ON public.cards(visual_id);
 CREATE INDEX idx_cards_artist ON public.cards(artist_id);
 CREATE INDEX idx_cards_rarity ON public.cards(rarity);
 CREATE INDEX idx_cards_active ON public.cards(is_active) WHERE is_active = TRUE;
@@ -178,6 +198,9 @@ CREATE INDEX idx_purchases_card ON public.purchases(card_id);
 CREATE INDEX idx_purchases_status ON public.purchases(status);
 CREATE INDEX idx_purchases_purchased_at ON public.purchases(purchased_at DESC);
 CREATE INDEX idx_purchases_session ON public.purchases(stripe_checkout_session_id);
+CREATE INDEX idx_carts_user ON public.carts(user_id);
+CREATE INDEX idx_carts_card ON public.carts(card_id);
+CREATE INDEX idx_carts_added_at ON public.carts(added_at DESC);
 
 -- Idempotency constraint for webhook handling
 CREATE UNIQUE INDEX idx_purchases_idempotency
@@ -185,8 +208,10 @@ CREATE UNIQUE INDEX idx_purchases_idempotency
   WHERE status = 'completed';
 
 -- ============================================
--- ATOMIC SERIAL NUMBER INCREMENT FUNCTION
+-- FUNCTIONS
 -- ============================================
+
+-- Atomic serial number increment
 CREATE OR REPLACE FUNCTION public.increment_card_supply(
   p_card_id UUID,
   p_quantity INT
@@ -196,7 +221,6 @@ DECLARE
   v_new_supply INT;
   v_price INT;
 BEGIN
-  -- Lock row and get current values
   SELECT current_supply, price INTO v_old_supply, v_price
   FROM public.cards
   WHERE id = p_card_id
@@ -208,7 +232,6 @@ BEGIN
 
   v_new_supply := v_old_supply + p_quantity;
 
-  -- Update supply
   UPDATE public.cards
   SET current_supply = v_new_supply,
       updated_at = NOW()
@@ -218,14 +241,11 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- ============================================
--- MEMBER COUNT UPDATE FUNCTION
--- ============================================
+-- Member count update trigger function
 CREATE OR REPLACE FUNCTION public.update_artist_member_count()
 RETURNS TRIGGER AS $$
 BEGIN
   IF TG_OP = 'INSERT' AND NEW.status = 'completed' THEN
-    -- Check if this is the user's first purchase for this artist
     IF NOT EXISTS (
       SELECT 1 FROM public.purchases p
       JOIN public.cards c ON p.card_id = c.id
@@ -248,65 +268,7 @@ CREATE TRIGGER on_purchase_completed
   AFTER INSERT ON public.purchases
   FOR EACH ROW EXECUTE FUNCTION public.update_artist_member_count();
 
--- ============================================
--- ROW LEVEL SECURITY
--- ============================================
-ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.operators ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.artists ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.card_templates ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.cards ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.exclusive_contents ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.purchases ENABLE ROW LEVEL SECURITY;
-
--- Profiles: Public read, self-update
-CREATE POLICY "Profiles are viewable by everyone"
-  ON public.profiles FOR SELECT USING (true);
-
-CREATE POLICY "Users can update own profile"
-  ON public.profiles FOR UPDATE USING (auth.uid() = id);
-
--- Operators: Self-read only
-CREATE POLICY "Operators can view own record"
-  ON public.operators FOR SELECT USING (auth.uid() = user_id);
-
--- Artists: Public read
-CREATE POLICY "Artists are viewable by everyone"
-  ON public.artists FOR SELECT USING (true);
-
--- Card Templates: Public read (active only for non-admins)
-CREATE POLICY "Card templates are viewable by everyone"
-  ON public.card_templates FOR SELECT USING (
-    is_active = true OR public.is_operator()
-  );
-
--- Cards: Public read (active only for non-admins)
-CREATE POLICY "Cards are viewable by everyone"
-  ON public.cards FOR SELECT USING (
-    is_active = true OR public.is_operator()
-  );
-
--- Exclusive Contents: Owners only
-CREATE POLICY "Buyers can view exclusive content"
-  ON public.exclusive_contents FOR SELECT USING (
-    EXISTS (
-      SELECT 1 FROM public.purchases
-      WHERE purchases.card_id = exclusive_contents.card_id
-        AND purchases.user_id = auth.uid()
-        AND purchases.status = 'completed'
-    )
-    OR public.is_operator()
-  );
-
--- Purchases: Self-read only
-CREATE POLICY "Users can view own purchases"
-  ON public.purchases FOR SELECT USING (
-    auth.uid() = user_id OR public.is_operator()
-  );
-
--- ============================================
--- UPDATED_AT TRIGGER FUNCTION
--- ============================================
+-- updated_at trigger function
 CREATE OR REPLACE FUNCTION public.update_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -323,10 +285,177 @@ CREATE TRIGGER set_artists_updated_at
   BEFORE UPDATE ON public.artists
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
-CREATE TRIGGER set_card_templates_updated_at
-  BEFORE UPDATE ON public.card_templates
+CREATE TRIGGER set_card_visuals_updated_at
+  BEFORE UPDATE ON public.card_visuals
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 CREATE TRIGGER set_cards_updated_at
   BEFORE UPDATE ON public.cards
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
+-- Cart helper functions
+CREATE OR REPLACE FUNCTION public.clear_user_cart(p_user_id UUID)
+RETURNS void AS $$
+BEGIN
+  DELETE FROM public.carts WHERE user_id = p_user_id;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE OR REPLACE FUNCTION public.merge_cart(
+  p_user_id UUID,
+  p_items JSONB
+) RETURNS void AS $$
+DECLARE
+  item JSONB;
+  v_card_id UUID;
+  v_quantity INT;
+BEGIN
+  FOR item IN SELECT * FROM jsonb_array_elements(p_items)
+  LOOP
+    v_card_id := (item->>'card_id')::UUID;
+    v_quantity := COALESCE((item->>'quantity')::INT, 1);
+    v_quantity := GREATEST(1, LEAST(10, v_quantity));
+
+    INSERT INTO public.carts (user_id, card_id, quantity)
+    VALUES (p_user_id, v_card_id, v_quantity)
+    ON CONFLICT (user_id, card_id) DO UPDATE
+    SET quantity = LEAST(10, public.carts.quantity + EXCLUDED.quantity),
+        added_at = NOW();
+  END LOOP;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- ============================================
+-- ROW LEVEL SECURITY
+-- ============================================
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.operators ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.artists ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.card_visuals ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.cards ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.exclusive_contents ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.purchases ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.carts ENABLE ROW LEVEL SECURITY;
+
+-- Profiles
+CREATE POLICY "Profiles are viewable by everyone"
+  ON public.profiles FOR SELECT USING (true);
+CREATE POLICY "Users can update own profile"
+  ON public.profiles FOR UPDATE USING (auth.uid() = id);
+
+-- Operators
+CREATE POLICY "Operators can view own record"
+  ON public.operators FOR SELECT USING (auth.uid() = user_id);
+
+-- Artists
+CREATE POLICY "Artists are viewable by everyone"
+  ON public.artists FOR SELECT USING (true);
+
+-- Card Visuals
+CREATE POLICY "Card visuals are viewable by everyone"
+  ON public.card_visuals FOR SELECT USING (true);
+
+-- Cards
+CREATE POLICY "Cards are viewable by everyone"
+  ON public.cards FOR SELECT USING (
+    is_active = true OR public.is_operator()
+  );
+
+-- Exclusive Contents
+CREATE POLICY "Buyers can view exclusive content"
+  ON public.exclusive_contents FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM public.purchases
+      WHERE purchases.card_id = exclusive_contents.card_id
+        AND purchases.user_id = auth.uid()
+        AND purchases.status = 'completed'
+    )
+    OR public.is_operator()
+  );
+
+-- Purchases
+CREATE POLICY "Users can view own purchases"
+  ON public.purchases FOR SELECT USING (
+    auth.uid() = user_id OR public.is_operator()
+  );
+
+-- Carts
+CREATE POLICY "Users can view own cart"
+  ON public.carts FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own cart items"
+  ON public.carts FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update own cart items"
+  ON public.carts FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete own cart items"
+  ON public.carts FOR DELETE USING (auth.uid() = user_id);
+
+-- ============================================
+-- STORAGE BUCKETS
+-- ============================================
+
+-- images bucket (for artist/admin uploads)
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+  'images', 'images', TRUE, 5242880,
+  ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+) ON CONFLICT (id) DO NOTHING;
+
+-- avatars bucket (for user profile images)
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+  'avatars', 'avatars', TRUE, 2097152,
+  ARRAY['image/jpeg', 'image/png', 'image/webp']
+) ON CONFLICT (id) DO NOTHING;
+
+-- ============================================
+-- STORAGE RLS POLICIES
+-- ============================================
+
+-- images: public read
+CREATE POLICY "Public read access for images"
+  ON storage.objects FOR SELECT USING (bucket_id = 'images');
+-- images: operators can upload/update/delete
+CREATE POLICY "Operators can upload images"
+  ON storage.objects FOR INSERT
+  WITH CHECK (
+    bucket_id = 'images' AND
+    EXISTS (SELECT 1 FROM public.operators WHERE user_id = auth.uid())
+  );
+CREATE POLICY "Operators can update images"
+  ON storage.objects FOR UPDATE
+  USING (
+    bucket_id = 'images' AND
+    EXISTS (SELECT 1 FROM public.operators WHERE user_id = auth.uid())
+  );
+CREATE POLICY "Operators can delete images"
+  ON storage.objects FOR DELETE
+  USING (
+    bucket_id = 'images' AND
+    EXISTS (SELECT 1 FROM public.operators WHERE user_id = auth.uid())
+  );
+
+-- avatars: public read
+CREATE POLICY "Public read access for avatars"
+  ON storage.objects FOR SELECT USING (bucket_id = 'avatars');
+-- avatars: users can manage own avatar (folder = user_id)
+CREATE POLICY "Users can upload own avatar"
+  ON storage.objects FOR INSERT
+  WITH CHECK (
+    bucket_id = 'avatars' AND
+    auth.uid() IS NOT NULL AND
+    (storage.foldername(name))[1] = auth.uid()::text
+  );
+CREATE POLICY "Users can update own avatar"
+  ON storage.objects FOR UPDATE
+  USING (
+    bucket_id = 'avatars' AND
+    auth.uid() IS NOT NULL AND
+    (storage.foldername(name))[1] = auth.uid()::text
+  );
+CREATE POLICY "Users can delete own avatar"
+  ON storage.objects FOR DELETE
+  USING (
+    bucket_id = 'avatars' AND
+    auth.uid() IS NOT NULL AND
+    (storage.foldername(name))[1] = auth.uid()::text
+  );

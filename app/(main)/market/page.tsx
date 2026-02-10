@@ -36,7 +36,10 @@ async function getArtists(): Promise<ArtistItem[]> {
     return [];
   }
 
-  const artists = data as Pick<Artist, 'id' | 'name' | 'description' | 'image_url' | 'member_count'>[];
+  const artists = data as Pick<
+    Artist,
+    'id' | 'name' | 'description' | 'image_url' | 'member_count'
+  >[];
 
   // Fetch lowest price for each artist
   const artistsWithPrices = await Promise.all(
@@ -59,7 +62,7 @@ async function getArtists(): Promise<ArtistItem[]> {
         memberCount: artist.member_count,
         lowestPrice: cards?.[0]?.price ?? 0,
       };
-    })
+    }),
   );
 
   // Only return artists that have active cards
@@ -72,7 +75,7 @@ export default async function MarketPage() {
   return (
     <PageContainer>
       <div className="p-4">
-        <h1 className="text-2xl font-bold mb-6">Find Artists</h1>
+        <h1 className="mb-6 text-2xl font-bold">Find Artists</h1>
 
         <div className="grid grid-cols-1 gap-4">
           {artists.length > 0 ? (
@@ -80,36 +83,40 @@ export default async function MarketPage() {
               <Link
                 key={artist.id}
                 href={ROUTES.ARTIST(artist.id)}
-                className="block group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-xl"
+                className="group block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
               >
-                <div className="bg-surface-raised rounded-xl border border-gray-800 p-4 flex items-center gap-4 hover:border-blue-500/50 transition-all group-hover:shadow-card">
-                  <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gray-700 flex-shrink-0 group-hover:border-blue-500/50 transition-colors relative">
+                <div className="flex items-center gap-4 rounded-xl border border-gray-800 bg-surface-raised p-4 transition-all hover:border-blue-500/50 group-hover:shadow-card">
+                  <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-full border-2 border-gray-700 transition-colors group-hover:border-blue-500/50">
                     <Image
-                      src={artist.imageUrl || 'https://placehold.co/600x600/1e293b/60a5fa?text=Artist'}
+                      src={
+                        artist.imageUrl || 'https://placehold.co/600x600/1e293b/60a5fa?text=Artist'
+                      }
                       alt={artist.name}
                       fill
                       className="object-cover"
                       unoptimized
                     />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-lg truncate">{artist.name}</h3>
-                    <div className="flex items-center text-xs text-gray-500 mb-2">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="truncate text-lg font-bold">{artist.name}</h3>
+                    <div className="mb-2 flex items-center text-xs text-gray-500">
                       <Users size={12} className="mr-1" />
                       {artist.memberCount} Members
                     </div>
-                    <p className="text-lg text-blue-400 font-bold">
+                    <p className="text-lg font-bold text-blue-400">
                       {formatPrice(artist.lowestPrice)}〜
                     </p>
                   </div>
-                  <div className="text-gray-600 group-hover:text-blue-400 transition-colors text-xl">→</div>
+                  <div className="text-xl text-gray-600 transition-colors group-hover:text-blue-400">
+                    →
+                  </div>
                 </div>
               </Link>
             ))
           ) : (
-            <div className="text-center py-20">
+            <div className="py-20 text-center">
               <Users className="mx-auto mb-4 text-gray-600" size={48} />
-              <p className="text-gray-500 mb-2">アーティストがまだ登録されていません。</p>
+              <p className="mb-2 text-gray-500">アーティストがまだ登録されていません。</p>
               <p className="text-xs text-gray-600">新しいアーティストを準備中です</p>
             </div>
           )}

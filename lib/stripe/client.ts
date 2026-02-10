@@ -30,10 +30,7 @@ export const stripe = new Proxy({} as Stripe, {
 /**
  * Get or create Stripe customer for a user
  */
-export async function getOrCreateStripeCustomer(
-  userId: string,
-  email: string
-): Promise<string> {
+export async function getOrCreateStripeCustomer(userId: string, email: string): Promise<string> {
   // First, check if customer already exists in our DB
   // For now, create a new customer each time (should be cached in DB)
 

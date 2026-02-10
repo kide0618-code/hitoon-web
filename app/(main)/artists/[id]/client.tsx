@@ -84,7 +84,7 @@ export function ArtistDetailClient({ artist, isAuthenticated }: Props) {
       {/* Back Button */}
       <Link
         href={ROUTES.MARKET}
-        className="fixed top-4 left-4 z-20 bg-black/50 p-2 rounded-full hover:bg-black/70 transition-colors"
+        className="fixed left-4 top-4 z-20 rounded-full bg-black/50 p-2 transition-colors hover:bg-black/70"
       >
         <ArrowLeft size={24} />
       </Link>
@@ -100,7 +100,7 @@ export function ArtistDetailClient({ artist, isAuthenticated }: Props) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
         <div className="absolute bottom-4 left-4 right-4">
-          <h1 className="text-2xl font-bold mb-1">{artist.name}</h1>
+          <h1 className="mb-1 text-2xl font-bold">{artist.name}</h1>
           <div className="flex items-center text-sm text-gray-400">
             <Users size={14} className="mr-1" />
             {artist.memberCount} Members
@@ -110,22 +110,17 @@ export function ArtistDetailClient({ artist, isAuthenticated }: Props) {
 
       {/* Description */}
       <div className="p-4">
-        <p className="text-gray-400 text-sm">{artist.description}</p>
+        <p className="text-sm text-gray-400">{artist.description}</p>
       </div>
 
       {/* Card Selection */}
-      <div className="px-3 sm:px-4 py-4 pb-24">
-        <h2 className="text-base sm:text-lg font-bold mb-3 sm:mb-4">Select Card</h2>
+      <div className="px-3 py-4 pb-24 sm:px-4">
+        <h2 className="mb-3 text-base font-bold sm:mb-4 sm:text-lg">Select Card</h2>
         <CardGrid columns={4}>
           {artist.cards.map((card) => {
-            const isSoldOut =
-              card.totalSupply !== null &&
-              card.currentSupply >= card.totalSupply;
+            const isSoldOut = card.totalSupply !== null && card.currentSupply >= card.totalSupply;
             return (
-              <div
-                key={card.id}
-                className={`relative ${isSoldOut ? 'opacity-50' : ''}`}
-              >
+              <div key={card.id} className={`relative ${isSoldOut ? 'opacity-50' : ''}`}>
                 <ArtistCard
                   artistName={artist.name}
                   artistImageUrl={card.visual.artistImageUrl}
@@ -133,15 +128,15 @@ export function ArtistDetailClient({ artist, isAuthenticated }: Props) {
                   rarity={card.rarity}
                   onClick={() => !isSoldOut && handleCardClick(card.id)}
                 />
-                <div className="mt-1.5 sm:mt-2 text-center">
-                  <p className="text-sm sm:text-lg font-bold">{formatPrice(card.price)}</p>
+                <div className="mt-1.5 text-center sm:mt-2">
+                  <p className="text-sm font-bold sm:text-lg">{formatPrice(card.price)}</p>
                   {card.totalSupply && (
-                    <p className="text-2xs sm:text-xs text-gray-500">
+                    <p className="text-2xs text-gray-500 sm:text-xs">
                       {card.currentSupply} / {card.totalSupply} sold
                     </p>
                   )}
                   {isSoldOut && (
-                    <p className="text-2xs sm:text-xs text-red-400 font-bold">SOLD OUT</p>
+                    <p className="text-2xs font-bold text-red-400 sm:text-xs">SOLD OUT</p>
                   )}
                 </div>
               </div>

@@ -44,7 +44,8 @@ async function getCollection(): Promise<CollectionItem[]> {
   // Fetch purchases with all related data in a single query using Supabase relations
   const { data: purchasesData, error: purchasesError } = await supabase
     .from('purchases')
-    .select(`
+    .select(
+      `
       id,
       serial_number,
       purchased_at,
@@ -62,7 +63,8 @@ async function getCollection(): Promise<CollectionItem[]> {
           song_title
         )
       )
-    `)
+    `,
+    )
     .eq('user_id', user.id)
     .eq('status', 'completed')
     .order('purchased_at', { ascending: false });
@@ -100,9 +102,7 @@ async function getCollection(): Promise<CollectionItem[]> {
     .in('card_id', cardIds.length > 0 ? cardIds : ['']);
 
   const exclusiveContents = (exclusiveData || []) as { card_id: string }[];
-  const cardsWithExclusiveContent = new Set(
-    exclusiveContents.map((e) => e.card_id)
-  );
+  const cardsWithExclusiveContent = new Set(exclusiveContents.map((e) => e.card_id));
 
   // Map to collection items
   return purchases
@@ -118,8 +118,7 @@ async function getCollection(): Promise<CollectionItem[]> {
         artistId: artist?.id || '',
         artistName: artist?.name || 'Unknown Artist',
         artistImageUrl:
-          artist?.image_url ||
-          'https://placehold.co/600x600/1e293b/60a5fa?text=Artist',
+          artist?.image_url || 'https://placehold.co/600x600/1e293b/60a5fa?text=Artist',
         songTitle: visual?.song_title || null,
         rarity: card.rarity as Rarity,
         serialNumber: purchase.serial_number,
@@ -136,29 +135,32 @@ export default async function CollectionPage() {
   return (
     <PageContainer>
       {/* Header */}
-      <div className="p-6 bg-gray-900 border-b border-gray-800 flex items-center gap-3 sticky top-0 z-10">
+      <div className="sticky top-0 z-10 flex items-center gap-3 border-b border-gray-800 bg-gray-900 p-6">
         <Layers className="text-blue-500" />
         <h1 className="text-2xl font-bold">Collection</h1>
         {/* <span className="text-gray-500 text-sm ml-auto">{collection.length} Cards</span> */}
       </div>
 
       {/* Collection List */}
-      <div className="p-4 space-y-4">
+      <div className="space-y-4 p-4">
         {collection.map((item) => {
           // Rarity-based accent colors
-          const rarityAccent = {
-            NORMAL: 'border-l-rarity-normal',
-            RARE: 'border-l-rarity-rare',
-            SUPER_RARE: 'border-l-rarity-sr',
-          }[item.rarity] || 'border-l-gray-500';
+          const rarityAccent =
+            {
+              NORMAL: 'border-l-rarity-normal',
+              RARE: 'border-l-rarity-rare',
+              SUPER_RARE: 'border-l-rarity-sr',
+            }[item.rarity] || 'border-l-gray-500';
 
           return (
             <Link
               key={item.purchaseId}
               href={ROUTES.COLLECTION_DETAIL(item.purchaseId)}
-              className="block group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-xl"
+              className="group block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
-              <div className={`bg-surface-raised rounded-xl p-4 flex items-center gap-4 border border-gray-800 border-l-4 ${rarityAccent} group-hover:border-blue-500/50 group-hover:border-l-blue-500 transition-all shadow-card active:scale-[0.98]`}>
+              <div
+                className={`flex items-center gap-4 rounded-xl border border-l-4 border-gray-800 bg-surface-raised p-4 ${rarityAccent} shadow-card transition-all active:scale-[0.98] group-hover:border-blue-500/50 group-hover:border-l-blue-500`}
+              >
                 {/* Artist Image */}
                 <div className="relative flex-shrink-0">
                   <Image
@@ -166,26 +168,26 @@ export default async function CollectionPage() {
                     alt={item.artistName}
                     width={64}
                     height={64}
-                    className="w-16 h-16 rounded-full object-cover border-2 border-blue-500/30 group-hover:border-blue-500/60 transition-colors"
+                    className="h-16 w-16 rounded-full border-2 border-blue-500/30 object-cover transition-colors group-hover:border-blue-500/60"
                     unoptimized
                   />
-                  <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-0.5 border border-black">
+                  <div className="absolute -bottom-1 -right-1 rounded-full border border-black bg-blue-600 p-0.5">
                     <ShieldCheck size={12} className="text-white" />
                   </div>
                 </div>
 
                 {/* Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <h3 className="font-bold truncate">{item.artistName}</h3>
+                <div className="min-w-0 flex-1">
+                  <div className="mb-0.5 flex items-center gap-2">
+                    <h3 className="truncate font-bold">{item.artistName}</h3>
                     <RarityBadge rarity={item.rarity} />
                   </div>
-                  <p className="text-2xs text-gray-500 uppercase tracking-widest font-mono">
+                  <p className="font-mono text-2xs uppercase tracking-widest text-gray-500">
                     {formatSerialNumber(item.serialNumber)}
                     {item.totalSupply && ` / ${item.totalSupply}`}
                   </p>
                   {item.hasExclusiveContent && (
-                    <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 bg-gradient-to-r from-blue-900/40 to-indigo-900/40 border border-blue-500/30 rounded-full text-2xs text-blue-300 font-bold">
+                    <div className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-blue-500/30 bg-gradient-to-r from-blue-900/40 to-indigo-900/40 px-2.5 py-1 text-2xs font-bold text-blue-300">
                       <ShieldCheck size={10} />
                       CONTENT UNLOCKED
                     </div>
@@ -193,7 +195,7 @@ export default async function CollectionPage() {
                 </div>
 
                 {/* Arrow */}
-                <div className="text-gray-600 group-hover:text-blue-400 transition-colors">
+                <div className="text-gray-600 transition-colors group-hover:text-blue-400">
                   <ArrowRight size={20} />
                 </div>
               </div>
@@ -202,18 +204,20 @@ export default async function CollectionPage() {
         })}
 
         {collection.length === 0 && (
-          <div className="text-center py-20">
-            <div className="relative w-24 h-24 mx-auto mb-6">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full animate-pulse" />
-              <div className="absolute inset-2 bg-surface-raised rounded-full flex items-center justify-center">
+          <div className="py-20 text-center">
+            <div className="relative mx-auto mb-6 h-24 w-24">
+              <div className="absolute inset-0 animate-pulse rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20" />
+              <div className="absolute inset-2 flex items-center justify-center rounded-full bg-surface-raised">
                 <Layers size={40} className="text-gray-500" />
               </div>
             </div>
-            <p className="text-lg font-bold text-gray-400 mb-2">コレクションは空です</p>
-            <p className="text-sm text-gray-500 mb-6">お気に入りのアーティストのカードを集めましょう</p>
+            <p className="mb-2 text-lg font-bold text-gray-400">コレクションは空です</p>
+            <p className="mb-6 text-sm text-gray-500">
+              お気に入りのアーティストのカードを集めましょう
+            </p>
             <Link
               href={ROUTES.MARKET}
-              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-full transition-all hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+              className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-6 py-3 font-bold text-white transition-all hover:scale-[1.02] hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
               カードを探す
               <ArrowRight size={16} />

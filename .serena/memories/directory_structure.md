@@ -1,6 +1,7 @@
 # Complete Directory Structure
 
 ## Root Level Files
+
 - package.json, tsconfig.json, next.config.ts
 - tailwind.config.js, postcss.config.mjs
 - eslint.config.mjs

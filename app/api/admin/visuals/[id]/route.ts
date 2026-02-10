@@ -20,7 +20,7 @@ export async function GET(request: Request, { params }: RouteParams) {
         *,
         artist:artists (id, name),
         cards (*)
-      `
+      `,
       )
       .eq('id', id)
       .single();
@@ -77,9 +77,7 @@ export async function DELETE(request: Request, { params }: RouteParams) {
 
     // Note: This will cascade delete related cards due to FK constraint
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabaseAdmin.from('card_visuals') as any)
-      .delete()
-      .eq('id', id);
+    const { error } = await (supabaseAdmin.from('card_visuals') as any).delete().eq('id', id);
 
     if (error) {
       return Response.json({ error: error.message }, { status: 500 });

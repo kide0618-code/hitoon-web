@@ -3,6 +3,7 @@
 ## Completed Features
 
 ### Pages & Routes
+
 - ✅ **Home** (app/(main)/page.tsx) - Featured artists, hero section
 - ✅ **Market/Store** (app/(main)/market/page.tsx) - Artist list grid
 - ✅ **Artist Detail** (app/(main)/artists/[id]/page.tsx) - Card selection, purchase flow
@@ -15,6 +16,7 @@
 - ✅ **Main Layout** (app/(main)/layout.tsx) - Bottom navigation
 
 ### Components
+
 - ✅ **BottomNav** - Fixed navigation with Home, Store, Collection
 - ✅ **Button** - Reusable button with variants (primary, secondary, ghost, danger) and sizes (sm, md, lg)
 - ✅ **Modal** - Accessible modal with escape key support
@@ -25,6 +27,7 @@
 - ✅ **PurchaseAgreement** - Purchase modal with quantity selector and terms acceptance
 
 ### Utilities & Helpers
+
 - ✅ **formatPrice()** - Format numbers as Japanese Yen
 - ✅ **formatSerialNumber()** - Format card serial number with leading zeros
 - ✅ **formatDate()** - Format date in Japanese format
@@ -35,16 +38,19 @@
 - ✅ **Stripe Client** (lib/stripe/client.ts) - Stripe instance and helper functions
 
 ### Types Defined
+
 - ✅ **Card Types** (types/card.ts) - Rarity, Card, CardTemplate, ExclusiveContent, RARITY_CONFIG
 - ✅ **Artist Types** (types/artist.ts) - Artist, ArtistWithCards, ArtistListItem
 - ✅ **Purchase Types** (types/purchase.ts) - Purchase, PurchaseStatus, PurchaseWithDetails, CollectionItem, GroupedCollection
 - ✅ **Operator Types** (types/operator.ts) - Operator, OperatorRole
 
 ### Constants
+
 - ✅ **routes.ts** - All route paths and API endpoints
 - ✅ **config.ts** - APP_CONFIG, CARD_CONFIG, RARITY_PRICING, PAGINATION
 
 ### Styling
+
 - ✅ **globals.css** - Global styles and animations (holo-shine)
 - ✅ **Dark theme** - Black/gray color palette
 - ✅ **Rarity styling** - Frame colors for NORMAL, RARE, SUPER_RARE
@@ -52,11 +58,13 @@
 ## NOT Implemented
 
 ### Missing Pages
-- ❌ **Auth Pages** - Login, Signup (app/(auth)/* empty)
+
+- ❌ **Auth Pages** - Login, Signup (app/(auth)/\* empty)
 - ❌ **Collection Detail** (app/(main)/collection/[id]/) - Individual card detail view
-- ❌ **Admin Dashboard** (app/(admin)/*) - Management interface
+- ❌ **Admin Dashboard** (app/(admin)/\*) - Management interface
 
 ### Missing API Routes
+
 - ❌ **GET /api/artists** - Fetch artist list
 - ❌ **GET /api/artists/:id** - Fetch artist detail
 - ❌ **GET /api/cards** - Fetch cards
@@ -68,6 +76,7 @@
 - ❌ **Admin API Routes** - User management, template creation, sales reports
 
 ### Missing Features
+
 - ❌ **Authentication** - No login/signup UI or Supabase auth setup
 - ❌ **Database Integration** - Pages use mock data (MOCK_ARTISTS, MOCK_COLLECTION)
 - ❌ **Stripe Integration** - Checkout session creation not connected
@@ -79,6 +88,7 @@
 ## Mock Data Usage
 
 Current pages use hardcoded mock data:
+
 - app/(main)/page.tsx - MOCK_ARTISTS
 - app/(main)/market/page.tsx - MOCK_ARTISTS
 - app/(main)/artists/[id]/page.tsx - MOCK_ARTISTS with cards
@@ -87,15 +97,18 @@ Current pages use hardcoded mock data:
 All marked with TODO comments to replace with Supabase queries.
 
 ## Database Schema Status
+
 **Assumed but NOT implemented**:
+
 - All tables from definition.md (artists, cards, card_templates, exclusive_contents, purchases, profiles, operators)
 - Row Level Security policies
 - Foreign key relationships
 - Indices for performance
 
 ## Key TODOs in Codebase
+
 1. Replace mock data with Supabase queries
-2. Implement API routes (all /api/* directories are empty)
+2. Implement API routes (all /api/\* directories are empty)
 3. Implement authentication flow (auth pages missing)
 4. Connect Stripe checkout to backend
 5. Implement webhook for purchase completion

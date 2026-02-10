@@ -44,7 +44,10 @@ async function getArtist(id: string): Promise<ArtistData | null> {
     return null;
   }
 
-  const artist = artistData as Pick<Artist, 'id' | 'name' | 'description' | 'image_url' | 'member_count'>;
+  const artist = artistData as Pick<
+    Artist,
+    'id' | 'name' | 'description' | 'image_url' | 'member_count'
+  >;
 
   // Fetch cards for this artist
   const { data: cardsData, error: cardsError } = await supabase
@@ -58,7 +61,10 @@ async function getArtist(id: string): Promise<ArtistData | null> {
     return null;
   }
 
-  const cards = cardsData as Pick<Card, 'id' | 'rarity' | 'price' | 'total_supply' | 'current_supply' | 'visual_id'>[];
+  const cards = cardsData as Pick<
+    Card,
+    'id' | 'rarity' | 'price' | 'total_supply' | 'current_supply' | 'visual_id'
+  >[];
 
   // Fetch visual for the first card (all cards share the same visual)
   const { data: visualData } = await supabase

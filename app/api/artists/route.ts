@@ -12,14 +12,10 @@ export async function GET(request: Request) {
 
     const supabase = await createServerSupabaseClient();
 
-    let query = supabase
-      .from('artists')
-      .select('*');
+    let query = supabase.from('artists').select('*');
 
     if (featured === 'true') {
-      query = query
-        .eq('is_featured', true)
-        .order('display_order', { ascending: true });
+      query = query.eq('is_featured', true).order('display_order', { ascending: true });
     } else {
       query = query.order('member_count', { ascending: false });
     }
@@ -28,18 +24,12 @@ export async function GET(request: Request) {
 
     if (error) {
       console.error('Error fetching artists:', error);
-      return NextResponse.json(
-        { error: 'Failed to fetch artists' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to fetch artists' }, { status: 500 });
     }
 
     return NextResponse.json(data);
   } catch (error) {
     console.error('Unexpected error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

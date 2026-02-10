@@ -4,16 +4,7 @@ import { useState, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import {
-  ArrowLeft,
-  User,
-  Mail,
-  Lock,
-  Camera,
-  Check,
-  Loader2,
-  AlertCircle,
-} from 'lucide-react';
+import { ArrowLeft, User, Mail, Lock, Camera, Check, Loader2, AlertCircle } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/constants/routes';
@@ -54,10 +45,22 @@ export function SettingsClient({ user, providers }: SettingsClientProps) {
   const [isPasswordSaving, setIsPasswordSaving] = useState(false);
   const [isLinkingGoogle, setIsLinkingGoogle] = useState(false);
 
-  const [profileMessage, setProfileMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-  const [emailMessage, setEmailMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-  const [passwordMessage, setPasswordMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-  const [linkMessage, setLinkMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [profileMessage, setProfileMessage] = useState<{
+    type: 'success' | 'error';
+    text: string;
+  } | null>(null);
+  const [emailMessage, setEmailMessage] = useState<{
+    type: 'success' | 'error';
+    text: string;
+  } | null>(null);
+  const [passwordMessage, setPasswordMessage] = useState<{
+    type: 'success' | 'error';
+    text: string;
+  } | null>(null);
+  const [linkMessage, setLinkMessage] = useState<{
+    type: 'success' | 'error';
+    text: string;
+  } | null>(null);
 
   // Handle avatar file selection
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,9 +94,9 @@ export function SettingsClient({ user, providers }: SettingsClientProps) {
 
         if (uploadError) throw uploadError;
 
-        const { data: { publicUrl } } = supabase.storage
-          .from('avatars')
-          .getPublicUrl(fileName);
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from('avatars').getPublicUrl(fileName);
 
         newAvatarUrl = `${publicUrl}?t=${Date.now()}`;
       }
@@ -214,16 +217,17 @@ export function SettingsClient({ user, providers }: SettingsClientProps) {
   };
 
   const displayAvatar = avatarPreview || avatarUrl;
-  const userInitial = displayName?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || 'U';
+  const userInitial =
+    displayName?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || 'U';
 
   return (
     <div className="min-h-screen pb-24">
       {/* Header */}
-      <div className="sticky top-0 z-20 bg-black/90 backdrop-blur-md border-b border-gray-800">
-        <div className="flex items-center h-14 px-4">
+      <div className="sticky top-0 z-20 border-b border-gray-800 bg-black/90 backdrop-blur-md">
+        <div className="flex h-14 items-center px-4">
           <Link
             href={ROUTES.HOME}
-            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+            className="flex items-center gap-2 text-gray-400 transition-colors hover:text-white"
           >
             <ArrowLeft size={20} />
           </Link>
@@ -231,17 +235,17 @@ export function SettingsClient({ user, providers }: SettingsClientProps) {
         </div>
       </div>
 
-      <div className="max-w-lg mx-auto p-4 space-y-6">
+      <div className="mx-auto max-w-lg space-y-6 p-4">
         {/* Profile Section */}
-        <section className="bg-gray-900/50 rounded-2xl border border-gray-800 overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-800 bg-gray-800/50">
-            <h2 className="font-bold flex items-center gap-2">
+        <section className="overflow-hidden rounded-2xl border border-gray-800 bg-gray-900/50">
+          <div className="border-b border-gray-800 bg-gray-800/50 px-4 py-3">
+            <h2 className="flex items-center gap-2 font-bold">
               <User size={18} className="text-blue-400" />
               プロフィール
             </h2>
           </div>
 
-          <div className="p-4 space-y-4">
+          <div className="space-y-4 p-4">
             {/* Avatar */}
             <div className="flex items-center gap-4">
               <div className="relative">
@@ -251,17 +255,17 @@ export function SettingsClient({ user, providers }: SettingsClientProps) {
                     alt="Avatar"
                     width={80}
                     height={80}
-                    className="w-20 h-20 rounded-full object-cover border-2 border-gray-700"
+                    className="h-20 w-20 rounded-full border-2 border-gray-700 object-cover"
                     unoptimized
                   />
                 ) : (
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-2xl font-bold text-white">
+                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-2xl font-bold text-white">
                     {userInitial}
                   </div>
                 )}
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="absolute bottom-0 right-0 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-500 transition-colors shadow-lg"
+                  className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition-colors hover:bg-blue-500"
                 >
                   <Camera size={16} />
                 </button>
@@ -281,54 +285,52 @@ export function SettingsClient({ user, providers }: SettingsClientProps) {
 
             {/* Display Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                表示名
-              </label>
+              <label className="mb-2 block text-sm font-medium text-gray-300">表示名</label>
               <input
                 type="text"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 placeholder="表示名を入力"
-                className="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3 px-4 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+                className="w-full rounded-xl border border-gray-700 bg-gray-800/50 px-4 py-3 text-white transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
               />
             </div>
 
             {/* Message */}
             {profileMessage && (
               <div
-                className={`flex items-center gap-2 p-3 rounded-lg text-sm ${
+                className={`flex items-center gap-2 rounded-lg p-3 text-sm ${
                   profileMessage.type === 'success'
-                    ? 'bg-green-500/10 border border-green-500/50 text-green-400'
-                    : 'bg-red-500/10 border border-red-500/50 text-red-400'
+                    ? 'border border-green-500/50 bg-green-500/10 text-green-400'
+                    : 'border border-red-500/50 bg-red-500/10 text-red-400'
                 }`}
               >
-                {profileMessage.type === 'success' ? <Check size={16} /> : <AlertCircle size={16} />}
+                {profileMessage.type === 'success' ? (
+                  <Check size={16} />
+                ) : (
+                  <AlertCircle size={16} />
+                )}
                 {profileMessage.text}
               </div>
             )}
 
-            <Button
-              onClick={handleProfileSave}
-              isLoading={isProfileSaving}
-              className="w-full"
-            >
+            <Button onClick={handleProfileSave} isLoading={isProfileSaving} className="w-full">
               プロフィールを保存
             </Button>
           </div>
         </section>
 
         {/* Login Methods Section */}
-        <section className="bg-gray-900/50 rounded-2xl border border-gray-800 overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-800 bg-gray-800/50">
-            <h2 className="font-bold flex items-center gap-2">
+        <section className="overflow-hidden rounded-2xl border border-gray-800 bg-gray-900/50">
+          <div className="border-b border-gray-800 bg-gray-800/50 px-4 py-3">
+            <h2 className="flex items-center gap-2 font-bold">
               <Lock size={18} className="text-blue-400" />
               ログイン方法
             </h2>
           </div>
 
-          <div className="p-4 space-y-3">
+          <div className="space-y-3 p-4">
             {/* Email Provider */}
-            <div className="flex items-center justify-between p-3 bg-gray-800/30 rounded-xl">
+            <div className="flex items-center justify-between rounded-xl bg-gray-800/30 p-3">
               <div className="flex items-center gap-3">
                 <Mail size={20} className="text-gray-400" />
                 <div>
@@ -337,16 +339,16 @@ export function SettingsClient({ user, providers }: SettingsClientProps) {
                 </div>
               </div>
               {providers.email && (
-                <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">
+                <span className="rounded bg-green-500/20 px-2 py-1 text-xs text-green-400">
                   有効
                 </span>
               )}
             </div>
 
             {/* Google Provider */}
-            <div className="flex items-center justify-between p-3 bg-gray-800/30 rounded-xl">
+            <div className="flex items-center justify-between rounded-xl bg-gray-800/30 p-3">
               <div className="flex items-center gap-3">
-                <svg className="w-5 h-5" viewBox="0 0 24 24">
+                <svg className="h-5 w-5" viewBox="0 0 24 24">
                   <path
                     fill="#4285F4"
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -370,14 +372,14 @@ export function SettingsClient({ user, providers }: SettingsClientProps) {
                 </div>
               </div>
               {providers.google ? (
-                <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">
+                <span className="rounded bg-green-500/20 px-2 py-1 text-xs text-green-400">
                   連携済み
                 </span>
               ) : (
                 <button
                   onClick={handleLinkGoogle}
                   disabled={isLinkingGoogle}
-                  className="text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                  className="rounded-lg bg-blue-600 px-3 py-1.5 text-xs text-white transition-colors hover:bg-blue-500 disabled:opacity-50"
                 >
                   {isLinkingGoogle ? <Loader2 size={14} className="animate-spin" /> : '連携する'}
                 </button>
@@ -386,10 +388,10 @@ export function SettingsClient({ user, providers }: SettingsClientProps) {
 
             {linkMessage && (
               <div
-                className={`flex items-center gap-2 p-3 rounded-lg text-sm ${
+                className={`flex items-center gap-2 rounded-lg p-3 text-sm ${
                   linkMessage.type === 'success'
-                    ? 'bg-green-500/10 border border-green-500/50 text-green-400'
-                    : 'bg-red-500/10 border border-red-500/50 text-red-400'
+                    ? 'border border-green-500/50 bg-green-500/10 text-green-400'
+                    : 'border border-red-500/50 bg-red-500/10 text-red-400'
                 }`}
               >
                 {linkMessage.type === 'success' ? <Check size={16} /> : <AlertCircle size={16} />}
@@ -401,17 +403,17 @@ export function SettingsClient({ user, providers }: SettingsClientProps) {
 
         {/* Email Change Section (only for email providers) */}
         {providers.email && (
-          <section className="bg-gray-900/50 rounded-2xl border border-gray-800 overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-800 bg-gray-800/50">
-              <h2 className="font-bold flex items-center gap-2">
+          <section className="overflow-hidden rounded-2xl border border-gray-800 bg-gray-900/50">
+            <div className="border-b border-gray-800 bg-gray-800/50 px-4 py-3">
+              <h2 className="flex items-center gap-2 font-bold">
                 <Mail size={18} className="text-blue-400" />
                 メールアドレスの変更
               </h2>
             </div>
 
-            <div className="p-4 space-y-4">
+            <div className="space-y-4 p-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="mb-2 block text-sm font-medium text-gray-300">
                   新しいメールアドレス
                 </label>
                 <input
@@ -419,19 +421,23 @@ export function SettingsClient({ user, providers }: SettingsClientProps) {
                   value={newEmail}
                   onChange={(e) => setNewEmail(e.target.value)}
                   placeholder="new@example.com"
-                  className="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3 px-4 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+                  className="w-full rounded-xl border border-gray-700 bg-gray-800/50 px-4 py-3 text-white transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                 />
               </div>
 
               {emailMessage && (
                 <div
-                  className={`flex items-center gap-2 p-3 rounded-lg text-sm ${
+                  className={`flex items-center gap-2 rounded-lg p-3 text-sm ${
                     emailMessage.type === 'success'
-                      ? 'bg-green-500/10 border border-green-500/50 text-green-400'
-                      : 'bg-red-500/10 border border-red-500/50 text-red-400'
+                      ? 'border border-green-500/50 bg-green-500/10 text-green-400'
+                      : 'border border-red-500/50 bg-red-500/10 text-red-400'
                   }`}
                 >
-                  {emailMessage.type === 'success' ? <Check size={16} /> : <AlertCircle size={16} />}
+                  {emailMessage.type === 'success' ? (
+                    <Check size={16} />
+                  ) : (
+                    <AlertCircle size={16} />
+                  )}
                   {emailMessage.text}
                 </div>
               )}
@@ -450,17 +456,17 @@ export function SettingsClient({ user, providers }: SettingsClientProps) {
 
         {/* Password Change Section (only for email providers) */}
         {providers.email && (
-          <section className="bg-gray-900/50 rounded-2xl border border-gray-800 overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-800 bg-gray-800/50">
-              <h2 className="font-bold flex items-center gap-2">
+          <section className="overflow-hidden rounded-2xl border border-gray-800 bg-gray-900/50">
+            <div className="border-b border-gray-800 bg-gray-800/50 px-4 py-3">
+              <h2 className="flex items-center gap-2 font-bold">
                 <Lock size={18} className="text-blue-400" />
                 パスワードの変更
               </h2>
             </div>
 
-            <div className="p-4 space-y-4">
+            <div className="space-y-4 p-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="mb-2 block text-sm font-medium text-gray-300">
                   新しいパスワード
                 </label>
                 <input
@@ -468,12 +474,12 @@ export function SettingsClient({ user, providers }: SettingsClientProps) {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="6文字以上"
-                  className="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3 px-4 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+                  className="w-full rounded-xl border border-gray-700 bg-gray-800/50 px-4 py-3 text-white transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="mb-2 block text-sm font-medium text-gray-300">
                   新しいパスワード（確認）
                 </label>
                 <input
@@ -481,19 +487,23 @@ export function SettingsClient({ user, providers }: SettingsClientProps) {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="パスワードを再入力"
-                  className="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3 px-4 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+                  className="w-full rounded-xl border border-gray-700 bg-gray-800/50 px-4 py-3 text-white transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                 />
               </div>
 
               {passwordMessage && (
                 <div
-                  className={`flex items-center gap-2 p-3 rounded-lg text-sm ${
+                  className={`flex items-center gap-2 rounded-lg p-3 text-sm ${
                     passwordMessage.type === 'success'
-                      ? 'bg-green-500/10 border border-green-500/50 text-green-400'
-                      : 'bg-red-500/10 border border-red-500/50 text-red-400'
+                      ? 'border border-green-500/50 bg-green-500/10 text-green-400'
+                      : 'border border-red-500/50 bg-red-500/10 text-red-400'
                   }`}
                 >
-                  {passwordMessage.type === 'success' ? <Check size={16} /> : <AlertCircle size={16} />}
+                  {passwordMessage.type === 'success' ? (
+                    <Check size={16} />
+                  ) : (
+                    <AlertCircle size={16} />
+                  )}
                   {passwordMessage.text}
                 </div>
               )}

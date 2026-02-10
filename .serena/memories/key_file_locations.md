@@ -3,7 +3,7 @@
 ## Type Definitions (Start Here for Understanding Domain)
 
 - `/Users/hidenari-yuda/hitoon-web/types/card.ts` - Rarity, Card, CardTemplate, ExclusiveContent types
-- `/Users/hidenari-yuda/hitoon-web/types/artist.ts` - Artist, ArtistWithCards types  
+- `/Users/hidenari-yuda/hitoon-web/types/artist.ts` - Artist, ArtistWithCards types
 - `/Users/hidenari-yuda/hitoon-web/types/purchase.ts` - Purchase, CollectionItem types
 - `/Users/hidenari-yuda/hitoon-web/types/operator.ts` - Operator type
 - `/Users/hidenari-yuda/hitoon-web/types/index.ts` - Type exports
@@ -11,53 +11,64 @@
 ## Pages Implemented
 
 ### Main App Pages
+
 - `/Users/hidenari-yuda/hitoon-web/app/(main)/page.tsx` - Home (featured artists)
 - `/Users/hidenari-yuda/hitoon-web/app/(main)/market/page.tsx` - Market/Store (all artists)
 - `/Users/hidenari-yuda/hitoon-web/app/(main)/artists/[id]/page.tsx` - Artist detail with card selection
 - `/Users/hidenari-yuda/hitoon-web/app/(main)/collection/page.tsx` - User's collection list (mock data)
 
 ### Layout Files
+
 - `/Users/hidenari-yuda/hitoon-web/app/layout.tsx` - Root layout with metadata
 - `/Users/hidenari-yuda/hitoon-web/app/(main)/layout.tsx` - Main layout with BottomNav
 - `/Users/hidenari-yuda/hitoon-web/app/(legal)/layout.tsx` - Legal pages layout
 
 ### Legal Pages
+
 - `/Users/hidenari-yuda/hitoon-web/app/(legal)/terms/page.tsx` - Terms of Service
 - `/Users/hidenari-yuda/hitoon-web/app/(legal)/privacy/page.tsx` - Privacy Policy
 
 ### Error Pages
+
 - `/Users/hidenari-yuda/hitoon-web/app/error.tsx` - Error boundary
 - `/Users/hidenari-yuda/hitoon-web/app/not-found.tsx` - 404 page
 
 ## Components
 
 ### Layout Components
+
 - `/Users/hidenari-yuda/hitoon-web/components/layout/bottom-nav.tsx` - Fixed bottom navigation
 - `/Users/hidenari-yuda/hitoon-web/components/layout/page-container.tsx` - Page wrapper with consistent padding
 
 ### UI Components
+
 - `/Users/hidenari-yuda/hitoon-web/components/ui/button.tsx` - Reusable button (primary, secondary, ghost, danger variants)
 - `/Users/hidenari-yuda/hitoon-web/components/ui/modal.tsx` - Modal dialog with accessibility features
 
 ### Card Components
+
 - `/Users/hidenari-yuda/hitoon-web/components/cards/artist-card.tsx` - Trading card (3:4 aspect ratio) with rarity styling
 - `/Users/hidenari-yuda/hitoon-web/components/cards/card-grid.tsx` - Responsive grid layout (2-4 columns)
 - `/Users/hidenari-yuda/hitoon-web/components/cards/rarity-badge.tsx` - Rarity badge indicator
 
 ### Feature Components
+
 - `/Users/hidenari-yuda/hitoon-web/components/PurchaseAgreement.tsx` - Purchase modal with quantity selector, terms acceptance, and mock checkout
 
 ## Utilities & Helpers
 
 ### Format Utilities
+
 - `/Users/hidenari-yuda/hitoon-web/lib/utils/format.ts` - formatPrice(), formatSerialNumber(), formatDate(), formatMemberCount()
 - `/Users/hidenari-yuda/hitoon-web/lib/utils/cn.ts` - Class name merge utility (clsx + tailwind-merge)
 
 ### Supabase Integration
+
 - `/Users/hidenari-yuda/hitoon-web/lib/supabase/client.ts` - Browser client for 'use client' components
 - `/Users/hidenari-yuda/hitoon-web/lib/supabase/server.ts` - Server client and admin client with service role
 
 ### Stripe Integration
+
 - `/Users/hidenari-yuda/hitoon-web/lib/stripe/client.ts` - Stripe client instance and helper functions (getOrCreateStripeCustomer, createCheckoutSession)
 
 ## Configuration
@@ -85,10 +96,12 @@
 ## Empty/Not Implemented Directories
 
 ### Empty Route Groups
+
 - `/Users/hidenari-yuda/hitoon-web/app/(auth)/` - Needs login/, signup/ pages
 - `/Users/hidenari-yuda/hitoon-web/app/(main)/collection/[id]/` - Needs page.tsx for collection detail
 
 ### Empty API Routes
+
 - `/Users/hidenari-yuda/hitoon-web/app/api/artists/` - Needs route.ts
 - `/Users/hidenari-yuda/hitoon-web/app/api/artists/[id]/` - Needs route.ts
 - `/Users/hidenari-yuda/hitoon-web/app/api/cards/` - Needs route.ts
@@ -96,9 +109,11 @@
 - `/Users/hidenari-yuda/hitoon-web/app/api/webhooks/stripe/` - Needs route.ts
 
 ### Not Yet Implemented
+
 - `/Users/hidenari-yuda/hitoon-web/app/(admin)/` - Entire admin dashboard missing
 
 ### Empty Component Directories
+
 - `/Users/hidenari-yuda/hitoon-web/components/features/` - For future feature-specific components
 - `/Users/hidenari-yuda/hitoon-web/components/forms/` - Will contain auth/checkout forms
 - `/Users/hidenari-yuda/hitoon-web/hooks/` - Empty directory (ready for custom hooks)

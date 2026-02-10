@@ -54,10 +54,7 @@ export async function POST(request: Request) {
     }
   } catch (error) {
     console.error('Checkout error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create checkout session' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create checkout session' }, { status: 500 });
   }
 }
 
@@ -67,7 +64,7 @@ export async function POST(request: Request) {
 async function handleSingleCardCheckout(
   supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>,
   user: { id: string; email?: string | null },
-  { cardId, quantity = 1 }: { cardId?: string; quantity?: number }
+  { cardId, quantity = 1 }: { cardId?: string; quantity?: number },
 ) {
   if (!cardId) {
     return NextResponse.json({ error: 'Card ID is required' }, { status: 400 });
@@ -79,7 +76,8 @@ async function handleSingleCardCheckout(
   // Get card with artist info
   const { data: card, error: cardError } = await supabase
     .from('cards')
-    .select(`
+    .select(
+      `
       *,
       artist:artists (
         id,
@@ -90,7 +88,8 @@ async function handleSingleCardCheckout(
         name,
         artist_image_url
       )
-    `)
+    `,
+    )
     .eq('id', cardId)
     .eq('is_active', true)
     .single();
@@ -110,7 +109,7 @@ async function handleSingleCardCheckout(
     if (qty > remainingSupply) {
       return NextResponse.json(
         { error: `Only ${remainingSupply} cards remaining` },
-        { status: 400 }
+        { status: 400 },
       );
     }
   }
@@ -130,13 +129,15 @@ async function handleSingleCardCheckout(
     if (remainingAllowance <= 0) {
       return NextResponse.json(
         { error: `購入上限に達しています（1人あたり${cardData.max_purchase_per_user}枚まで）` },
-        { status: 400 }
+        { status: 400 },
       );
     }
     if (qty > remainingAllowance) {
       return NextResponse.json(
-        { error: `あと${remainingAllowance}枚まで購入可能です（1人あたり${cardData.max_purchase_per_user}枚まで）` },
-        { status: 400 }
+        {
+          error: `あと${remainingAllowance}枚まで購入可能です（1人あたり${cardData.max_purchase_per_user}枚まで）`,
+        },
+        { status: 400 },
       );
     }
   }
@@ -168,7 +169,7 @@ async function handleSingleCardCheckout(
 async function handleCartCheckout(
   supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>,
   user: { id: string; email?: string | null },
-  items: CartItem[]
+  items: CartItem[],
 ) {
   if (!items || items.length === 0) {
     return NextResponse.json({ error: 'Cart is empty' }, { status: 400 });
@@ -184,7 +185,8 @@ async function handleCartCheckout(
   const cardIds = validatedItems.map((item) => item.cardId);
   const { data: cardsData, error: cardsError } = await supabase
     .from('cards')
-    .select(`
+    .select(
+      `
       id,
       name,
       price,
@@ -200,7 +202,8 @@ async function handleCartCheckout(
         name,
         artist_image_url
       )
-    `)
+    `,
+    )
     .in('id', cardIds)
     .eq('is_active', true);
 
@@ -262,11 +265,15 @@ async function handleCartCheckout(
       const remainingAllowance = cardData.max_purchase_per_user - currentOwned;
 
       if (remainingAllowance <= 0) {
-        errors.push(`${cardData.name}: 購入上限に達しています（1人あたり${cardData.max_purchase_per_user}枚まで）`);
+        errors.push(
+          `${cardData.name}: 購入上限に達しています（1人あたり${cardData.max_purchase_per_user}枚まで）`,
+        );
         continue;
       }
       if (item.quantity > remainingAllowance) {
-        errors.push(`${cardData.name}: あと${remainingAllowance}枚まで購入可能（1人あたり${cardData.max_purchase_per_user}枚まで）`);
+        errors.push(
+          `${cardData.name}: あと${remainingAllowance}枚まで購入可能（1人あたり${cardData.max_purchase_per_user}枚まで）`,
+        );
         continue;
       }
     }
@@ -282,17 +289,11 @@ async function handleCartCheckout(
   }
 
   if (errors.length > 0) {
-    return NextResponse.json(
-      { error: errors.join(', ') },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: errors.join(', ') }, { status: 400 });
   }
 
   if (checkoutItems.length === 0) {
-    return NextResponse.json(
-      { error: 'No valid items to checkout' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'No valid items to checkout' }, { status: 400 });
   }
 
   // Get or create Stripe customer

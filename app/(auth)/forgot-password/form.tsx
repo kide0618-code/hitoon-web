@@ -29,11 +29,7 @@ export function ForgotPasswordForm() {
 
       setIsSuccess(true);
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : 'パスワードリセットメールの送信に失敗しました'
-      );
+      setError(err instanceof Error ? err.message : 'パスワードリセットメールの送信に失敗しました');
     } finally {
       setIsLoading(false);
     }
@@ -41,15 +37,13 @@ export function ForgotPasswordForm() {
 
   if (isSuccess) {
     return (
-      <div className="w-full max-w-md mx-auto text-center">
-        <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+      <div className="mx-auto w-full max-w-md text-center">
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/20">
           <CheckCircle size={32} className="text-green-400" />
         </div>
-        <h1 className="text-2xl font-bold text-white mb-4">
-          メールを送信しました
-        </h1>
-        <p className="text-gray-400 mb-8">
-          <span className="text-white font-medium">{email}</span>
+        <h1 className="mb-4 text-2xl font-bold text-white">メールを送信しました</h1>
+        <p className="mb-8 text-gray-400">
+          <span className="font-medium text-white">{email}</span>
           <br />
           宛にパスワードリセット用のリンクを送信しました。
           <br />
@@ -72,12 +66,10 @@ export function ForgotPasswordForm() {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="mx-auto w-full max-w-md">
       {/* Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold text-white mb-2">
-          パスワードをお忘れの方
-        </h1>
+      <div className="mb-8 text-center">
+        <h1 className="mb-2 text-2xl font-bold text-white">パスワードをお忘れの方</h1>
         <p className="text-gray-400">
           登録したメールアドレスを入力してください。
           <br />
@@ -87,7 +79,7 @@ export function ForgotPasswordForm() {
 
       {/* Error Display */}
       {error && (
-        <div className="mb-4 p-4 bg-red-500/10 border border-red-500/50 rounded-xl text-red-400 text-sm">
+        <div className="mb-4 rounded-xl border border-red-500/50 bg-red-500/10 p-4 text-sm text-red-400">
           {error}
         </div>
       )}
@@ -95,15 +87,12 @@ export function ForgotPasswordForm() {
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-gray-300 mb-2"
-          >
+          <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-300">
             メールアドレス
           </label>
           <div className="relative flex items-center">
-            <span className="absolute left-4 flex items-center pointer-events-none">
-              <Mail className="w-5 h-5 text-gray-400" />
+            <span className="pointer-events-none absolute left-4 flex items-center">
+              <Mail className="h-5 w-5 text-gray-400" />
             </span>
             <input
               id="email"
@@ -113,18 +102,12 @@ export function ForgotPasswordForm() {
               required
               placeholder="you@example.com"
               autoComplete="email"
-              className="w-full bg-gray-800/50 border border-gray-700 rounded-xl py-3.5 pl-12 pr-4 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+              className="w-full rounded-xl border border-gray-700 bg-gray-800/50 py-3.5 pl-12 pr-4 text-white transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
             />
           </div>
         </div>
 
-        <Button
-          type="submit"
-          variant="primary"
-          size="lg"
-          isLoading={isLoading}
-          className="w-full"
-        >
+        <Button type="submit" variant="primary" size="lg" isLoading={isLoading} className="w-full">
           リセットメールを送信
         </Button>
       </form>
@@ -133,7 +116,7 @@ export function ForgotPasswordForm() {
       <p className="mt-6 text-center">
         <Link
           href={ROUTES.LOGIN}
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+          className="inline-flex items-center gap-2 text-gray-400 transition-colors hover:text-white"
         >
           <ArrowLeft size={16} />
           ログインに戻る

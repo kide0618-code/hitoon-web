@@ -43,14 +43,10 @@ export const viewport: Viewport = {
   themeColor: '#000000',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja" className={inter.variable}>
-      <body className="font-sans antialiased bg-black text-white">
+      <body className="bg-black font-sans text-white antialiased">
         <CartProvider>{children}</CartProvider>
       </body>
     </html>

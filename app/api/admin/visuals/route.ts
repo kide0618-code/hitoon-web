@@ -25,10 +25,7 @@ export async function POST(request: Request) {
       return Response.json({ error: 'Name is required' }, { status: 400 });
     }
     if (!body.artist_image_url) {
-      return Response.json(
-        { error: 'Artist image URL is required' },
-        { status: 400 }
-      );
+      return Response.json({ error: 'Artist image URL is required' }, { status: 400 });
     }
 
     const supabaseAdmin = createAdminClient();

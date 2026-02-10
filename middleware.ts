@@ -18,18 +18,16 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          );
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
           supabaseResponse = NextResponse.next({
             request,
           });
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
+            supabaseResponse.cookies.set(name, value, options),
           );
         },
       },
-    }
+    },
   );
 
   // Refresh session if expired
@@ -39,9 +37,7 @@ export async function middleware(request: NextRequest) {
 
   // Protected routes - require authentication
   const protectedPaths = ['/collection', '/activity', '/api/checkout', '/api/purchases'];
-  const isProtectedPath = protectedPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path)
-  );
+  const isProtectedPath = protectedPaths.some((path) => request.nextUrl.pathname.startsWith(path));
 
   if (isProtectedPath && !user) {
     // API routes should return JSON 401, not redirect to HTML login page
@@ -73,9 +69,7 @@ export async function middleware(request: NextRequest) {
 
   // Redirect logged-in users away from auth pages
   const authPaths = ['/login', '/signup'];
-  const isAuthPath = authPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path)
-  );
+  const isAuthPath = authPaths.some((path) => request.nextUrl.pathname.startsWith(path));
 
   if (isAuthPath && user) {
     return NextResponse.redirect(new URL('/', request.url));

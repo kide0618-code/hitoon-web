@@ -15,10 +15,7 @@ export async function GET() {
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get profile
@@ -58,10 +55,7 @@ export async function GET() {
     });
   } catch (error) {
     console.error('Unexpected error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -79,10 +73,7 @@ export async function DELETE() {
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Use admin client to delete user
@@ -90,29 +81,19 @@ export async function DELETE() {
 
     // Anonymize purchases (keep for records, remove user_id)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (adminClient.from('purchases') as any)
-      .update({ user_id: null })
-      .eq('user_id', user.id);
+    await (adminClient.from('purchases') as any).update({ user_id: null }).eq('user_id', user.id);
 
     // Delete user (cascades to profile)
-    const { error: deleteError } = await adminClient.auth.admin.deleteUser(
-      user.id
-    );
+    const { error: deleteError } = await adminClient.auth.admin.deleteUser(user.id);
 
     if (deleteError) {
       console.error('Error deleting user:', deleteError);
-      return NextResponse.json(
-        { error: 'Failed to delete account' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to delete account' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Unexpected error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

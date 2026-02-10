@@ -21,7 +21,7 @@ export async function GET(request: Request, { params }: RouteParams) {
         visual:card_visuals (*),
         artist:artists (id, name),
         exclusive_contents (*)
-      `
+      `,
       )
       .eq('id', id)
       .single();
@@ -54,7 +54,8 @@ export async function PUT(request: Request, { params }: RouteParams) {
     if (body.description !== undefined) updateData.description = body.description;
     if (body.price !== undefined) updateData.price = body.price;
     if (body.total_supply !== undefined) updateData.total_supply = body.total_supply;
-    if (body.max_purchase_per_user !== undefined) updateData.max_purchase_per_user = body.max_purchase_per_user;
+    if (body.max_purchase_per_user !== undefined)
+      updateData.max_purchase_per_user = body.max_purchase_per_user;
     if (body.is_active !== undefined) updateData.is_active = body.is_active;
     // Note: rarity should not be changed after creation
 
@@ -92,17 +93,14 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     if (purchases && purchases.length > 0) {
       return Response.json(
         {
-          error:
-            'Cannot delete card with existing purchases. Deactivate it instead.',
+          error: 'Cannot delete card with existing purchases. Deactivate it instead.',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabaseAdmin.from('cards') as any)
-      .delete()
-      .eq('id', id);
+    const { error } = await (supabaseAdmin.from('cards') as any).delete().eq('id', id);
 
     if (error) {
       return Response.json({ error: error.message }, { status: 500 });

@@ -27,16 +27,14 @@ export function UserMenu() {
   };
 
   if (isLoading) {
-    return (
-      <div className="w-8 h-8 rounded-full bg-gray-800 animate-pulse" />
-    );
+    return <div className="h-8 w-8 animate-pulse rounded-full bg-gray-800" />;
   }
 
   if (!isAuthenticated) {
     return (
       <Link
         href="/login"
-        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-full hover:bg-blue-500 transition-colors"
+        className="flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-500"
       >
         <User size={16} />
         ログイン
@@ -48,7 +46,7 @@ export function UserMenu() {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-800 transition-colors"
+        className="flex items-center gap-2 rounded-full p-1 transition-colors hover:bg-gray-800"
       >
         {user?.user_metadata?.avatar_url ? (
           <Image
@@ -56,12 +54,12 @@ export function UserMenu() {
             alt="Avatar"
             width={32}
             height={32}
-            className="w-8 h-8 rounded-full object-cover"
+            className="h-8 w-8 rounded-full object-cover"
             unoptimized
           />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-            <span className="text-white text-sm font-medium">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600">
+            <span className="text-sm font-medium text-white">
               {user?.email?.charAt(0).toUpperCase()}
             </span>
           </div>
@@ -71,19 +69,16 @@ export function UserMenu() {
       {isOpen && (
         <>
           {/* Backdrop */}
-          <div
-            className="fixed inset-0 z-40"
-            onClick={() => setIsOpen(false)}
-          />
+          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
 
           {/* Dropdown */}
-          <div className="absolute right-0 mt-2 w-56 py-2 bg-gray-900 border border-gray-800 rounded-xl shadow-xl z-50">
+          <div className="absolute right-0 z-50 mt-2 w-56 rounded-xl border border-gray-800 bg-gray-900 py-2 shadow-xl">
             {/* User info */}
-            <div className="px-4 py-2 border-b border-gray-800">
-              <p className="text-sm font-medium text-white truncate">
+            <div className="border-b border-gray-800 px-4 py-2">
+              <p className="truncate text-sm font-medium text-white">
                 {user?.user_metadata?.full_name || user?.email}
               </p>
-              <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+              <p className="truncate text-xs text-gray-500">{user?.email}</p>
             </div>
 
             {/* Menu items */}
@@ -92,7 +87,7 @@ export function UserMenu() {
                 <Link
                   href="/admin"
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 transition-colors"
+                  className="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 transition-colors hover:bg-gray-800"
                 >
                   <Shield size={16} />
                   管理画面
@@ -101,14 +96,14 @@ export function UserMenu() {
               <Link
                 href="/settings"
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 transition-colors"
+                className="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 transition-colors hover:bg-gray-800"
               >
                 <Settings size={16} />
                 設定
               </Link>
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-3 w-full px-4 py-2 text-sm text-red-400 hover:bg-gray-800 transition-colors"
+                className="flex w-full items-center gap-3 px-4 py-2 text-sm text-red-400 transition-colors hover:bg-gray-800"
               >
                 <LogOut size={16} />
                 ログアウト

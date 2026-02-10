@@ -15,10 +15,7 @@ export async function GET(request: Request) {
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -29,7 +26,8 @@ export async function GET(request: Request) {
     // Get purchases with card and artist info
     let query = supabase
       .from('purchases')
-      .select(`
+      .select(
+        `
         *,
         card:cards (
           id,
@@ -49,7 +47,8 @@ export async function GET(request: Request) {
             image_url
           )
         )
-      `)
+      `,
+      )
       .eq('user_id', user.id)
       .order('purchased_at', { ascending: false })
       .range(offset, offset + limit - 1);
@@ -62,10 +61,7 @@ export async function GET(request: Request) {
 
     if (purchasesError) {
       console.error('Error fetching purchases:', purchasesError);
-      return NextResponse.json(
-        { error: 'Failed to fetch purchases' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to fetch purchases' }, { status: 500 });
     }
 
     // Get total count for pagination
@@ -81,14 +77,11 @@ export async function GET(request: Request) {
         total: count || 0,
         limit,
         offset,
-        hasMore: (offset + limit) < (count || 0),
+        hasMore: offset + limit < (count || 0),
       },
     });
   } catch (error) {
     console.error('Unexpected error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

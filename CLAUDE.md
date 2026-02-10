@@ -22,12 +22,12 @@ pnpm tsc --noEmit
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS |
-| Backend/DB | Supabase (PostgreSQL, Auth, Storage) |
-| Payments | Stripe (Checkout, Payment Links, Saved Cards) |
-| Hosting | Vercel |
+| Layer      | Technology                                     |
+| ---------- | ---------------------------------------------- |
+| Frontend   | Next.js 16, React 19, TypeScript, Tailwind CSS |
+| Backend/DB | Supabase (PostgreSQL, Auth, Storage)           |
+| Payments   | Stripe (Checkout, Payment Links, Saved Cards)  |
+| Hosting    | Vercel                                         |
 
 ## Directory Structure
 
@@ -116,12 +116,14 @@ hitoon-web/
 ## Core Concepts
 
 ### Business Model
+
 1. **B2C Sales**: 管理者がアーティストのデジタルカードを出品
 2. **Single Purchase**: Stripeでの都度課金（サブスク無し）
 3. **Exclusive Content**: 購入者のみアクセス可能なコンテンツ
 4. **Future C2C**: 将来的に2次流通マーケットを検討
 
 ### User Flow
+
 ```
 [Browse] → [Artist Detail] → [Select Card] → [Purchase] → [Stripe Checkout]
                                                               ↓
@@ -131,15 +133,16 @@ hitoon-web/
 ```
 
 ### Key Entities
-| Entity | Description |
-|--------|-------------|
-| Artist | アーティスト情報（名前、説明、画像） |
-| CardVisual | カードビジュアル（アーティスト画像、楽曲名）- DB管理 |
-| FrameTemplate | フレームテンプレート（枠・エフェクト）- TypeScript Config管理 |
-| Card | デジタルトレカ（価格、レアリティ、限定数） |
-| ExclusiveContent | 購入者限定コンテンツ（動画、音楽、画像） |
-| User | 購入者（Email/Password, Google OAuth） |
-| Purchase | 購入履歴（Stripe連携） |
+
+| Entity           | Description                                                   |
+| ---------------- | ------------------------------------------------------------- |
+| Artist           | アーティスト情報（名前、説明、画像）                          |
+| CardVisual       | カードビジュアル（アーティスト画像、楽曲名）- DB管理          |
+| FrameTemplate    | フレームテンプレート（枠・エフェクト）- TypeScript Config管理 |
+| Card             | デジタルトレカ（価格、レアリティ、限定数）                    |
+| ExclusiveContent | 購入者限定コンテンツ（動画、音楽、画像）                      |
+| User             | 購入者（Email/Password, Google OAuth）                        |
+| Purchase         | 購入履歴（Stripe連携）                                        |
 
 ### Card Visual & Frame System
 
@@ -166,11 +169,11 @@ hitoon-web/
 
 管理画面からビジュアルを作成し、1ビジュアルにつき3つのレアリティカードを自動生成。
 
-| レアリティ | Code | 価格帯 | 発行上限 |
-|-----------|------|-------|---------|
-| NORMAL | N | ¥800〜¥1,500 | 無制限 |
-| RARE | R | ¥1,500〜¥3,000 | 100〜300枚 |
-| SUPER_RARE | SR | ¥3,000〜¥10,000 | 10〜50枚 |
+| レアリティ | Code | 価格帯          | 発行上限   |
+| ---------- | ---- | --------------- | ---------- |
+| NORMAL     | N    | ¥800〜¥1,500    | 無制限     |
+| RARE       | R    | ¥1,500〜¥3,000  | 100〜300枚 |
+| SUPER_RARE | SR   | ¥3,000〜¥10,000 | 10〜50枚   |
 
 ## Development Guidelines
 
@@ -182,21 +185,25 @@ hitoon-web/
 ## Coding Principles
 
 ### 1. Think Before Coding
+
 - State assumptions explicitly. If uncertain, ask.
 - If multiple interpretations exist, present them - don't pick silently.
 - If something is unclear, stop. Name what's confusing. Ask.
 
 ### 2. Simplicity First
+
 - No features beyond what was asked.
 - No abstractions for single-use code.
 - If you write 200 lines and it could be 50, rewrite it.
 
 ### 3. Surgical Changes
+
 - Don't "improve" adjacent code, comments, or formatting.
 - Match existing style, even if you'd do it differently.
 - Remove only orphaned code that YOUR changes created.
 
 ### 4. Goal-Driven Execution
+
 - "Add validation" → "Write tests for invalid inputs, then make them pass"
 - "Fix the bug" → "Write a test that reproduces it, then make it pass"
 
@@ -221,9 +228,9 @@ import type { Rarity } from '@/types/card';
 
 詳細なドメイン知識は `.claude/rules/` を参照:
 
-| File | Description |
-|------|-------------|
-| `frontend.md` | Next.js/React/TypeScript patterns |
-| `database.md` | Supabase schema & queries |
-| `payments.md` | Stripe integration guidelines |
-| `ui-design.md` | Design system & card styling |
+| File           | Description                       |
+| -------------- | --------------------------------- |
+| `frontend.md`  | Next.js/React/TypeScript patterns |
+| `database.md`  | Supabase schema & queries         |
+| `payments.md`  | Stripe integration guidelines     |
+| `ui-design.md` | Design system & card styling      |
