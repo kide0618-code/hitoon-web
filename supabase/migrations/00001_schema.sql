@@ -88,8 +88,6 @@ CREATE TABLE public.artists (
 -- ============================================
 -- CARD VISUALS
 -- ============================================
-COMMENT ON TABLE public.card_visuals IS 'Card visual content (artist image, song title) - managed via admin. Frame templates are defined in TypeScript config.';
-
 CREATE TABLE public.card_visuals (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   artist_id UUID NOT NULL REFERENCES public.artists(id) ON DELETE CASCADE,
@@ -101,6 +99,8 @@ CREATE TABLE public.card_visuals (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+COMMENT ON TABLE public.card_visuals IS 'Card visual content (artist image, song title) - managed via admin. Frame templates are defined in TypeScript config.';
 
 -- ============================================
 -- CARDS (3 per visual: NORMAL, RARE, SUPER_RARE)
