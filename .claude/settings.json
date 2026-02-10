@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash",
+      "Read",
+      "Write",
+      "WebSearch",
+      "WebFetch(domain:*)",
+      "mcp__serena__*",
+      "mcp__context7__*"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": ["serena", "context7"],
+  "autoApproval": {
+    "enabled": true,
+    "scope": "current_project"
+  }
+}

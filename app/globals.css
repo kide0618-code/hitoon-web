@@ -5,6 +5,20 @@
 :root {
   --bg-dark: #0f172a;
   --text-main: #f8fafc;
+  --surface-base: #0a0a0f;
+  --surface-raised: #111118;
+  --ease-premium: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Reduced motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 body {
@@ -13,26 +27,54 @@ body {
   min-height: 100vh;
 }
 
+@layer base {
+  /* Autofill styling for dark theme */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #1f2937 inset !important;
+    -webkit-text-fill-color: #ffffff !important;
+    caret-color: #ffffff !important;
+    border-color: #374151 !important;
+  }
+}
+
+@layer utilities {
+  /* Animated gradient for hero backgrounds */
+  .animate-gradient-slow {
+    background-size: 200% 200%;
+    animation: gradient-shift 8s ease-in-out infinite;
+  }
+
+  @keyframes gradient-shift {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+}
+
 @layer components {
   /* HITOON共通カードデザイン */
   .hitoon-card {
-    /* 普通のCSSで書くことでエラーを回避します */
-    border: 1px solid #334155; /* slate-700 */
-    border-radius: 1rem;       /* rounded-2xl */
-    padding: 1.5rem;           /* p-6 */
-    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); /* shadow-xl */
-    
+    border: 1px solid #334155;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
     background-color: rgba(30, 41, 59, 0.8);
     backdrop-filter: blur(4px);
   }
 
   /* HITOON共通ボタン */
   .btn-primary {
-    background-color: #2563eb; /* blue-600 */
+    background-color: #2563eb;
     color: white;
     font-weight: 700;
     padding: 0.75rem 1.5rem;
-    border-radius: 9999px;     /* rounded-full */
+    border-radius: 9999px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -42,14 +84,245 @@ body {
   }
 
   .btn-primary:hover {
-    background-color: #3b82f6; /* blue-500 */
+    background-color: #3b82f6;
   }
 
   .btn-primary:active {
     transform: scale(0.95);
   }
-  
+
   .btn-primary:disabled {
     opacity: 0.5;
+  }
+
+  /* =====================================================
+     TRADING CARD STYLES - Pokemon-inspired design
+     ===================================================== */
+
+  /* Base card frame */
+  .trading-card {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    border-radius: 12px;
+    overflow: hidden;
+    background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .trading-card:hover {
+    transform: scale(1.02) translateY(-2px);
+  }
+
+  /* Card inner frame */
+  .trading-card-inner {
+    position: absolute;
+    inset: 3px;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ===== NORMAL (N) Card ===== */
+  .card-normal {
+    border: 3px solid #4b5563;
+    background: linear-gradient(180deg, #374151 0%, #1f2937 100%);
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .card-normal .trading-card-inner {
+    background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+    border: 1px solid #374151;
+  }
+
+  /* ===== RARE (R) Card - Silver glow effect ===== */
+  .card-rare {
+    border: 3px solid transparent;
+    background: linear-gradient(135deg, #60a5fa, #3b82f6, #1d4ed8, #3b82f6, #60a5fa) border-box;
+    box-shadow:
+      0 0 20px rgba(59, 130, 246, 0.4),
+      0 0 40px rgba(59, 130, 246, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    animation: rare-glow 3s ease-in-out infinite;
+  }
+
+  .card-rare .trading-card-inner {
+    background: linear-gradient(180deg, #1e3a5f 0%, #1e1b4b 50%, #172554 100%);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+  }
+
+  @keyframes rare-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.4), 0 0 40px rgba(59, 130, 246, 0.2); }
+    50% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.6), 0 0 60px rgba(59, 130, 246, 0.3); }
+  }
+
+  /* Silver shine effect for Rare */
+  .card-rare::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.1) 35%,
+      rgba(255, 255, 255, 0.2) 40%,
+      rgba(255, 255, 255, 0.1) 45%,
+      transparent 60%
+    );
+    background-size: 200% 100%;
+    animation: silver-shine 4s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 10;
+    border-radius: 12px;
+  }
+
+  @keyframes silver-shine {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* ===== SUPER RARE (SR) Card - Holographic rainbow effect ===== */
+  .card-super-rare {
+    border: 4px solid transparent;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706, #f59e0b, #fbbf24) border-box;
+    box-shadow:
+      0 0 30px rgba(251, 191, 36, 0.5),
+      0 0 60px rgba(251, 191, 36, 0.3),
+      0 0 90px rgba(251, 191, 36, 0.1),
+      inset 0 2px 0 rgba(255, 255, 255, 0.3);
+    animation: sr-glow 2s ease-in-out infinite;
+  }
+
+  .card-super-rare .trading-card-inner {
+    background: linear-gradient(180deg, #44337a 0%, #831843 30%, #701a75 60%, #1e3a5f 100%);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+  }
+
+  @keyframes sr-glow {
+    0%, 100% {
+      box-shadow:
+        0 0 30px rgba(251, 191, 36, 0.5),
+        0 0 60px rgba(251, 191, 36, 0.3),
+        0 0 90px rgba(251, 191, 36, 0.1);
+    }
+    50% {
+      box-shadow:
+        0 0 40px rgba(251, 191, 36, 0.7),
+        0 0 80px rgba(251, 191, 36, 0.4),
+        0 0 120px rgba(251, 191, 36, 0.2);
+    }
+  }
+
+  /* Holographic rainbow effect for Super Rare */
+  .card-super-rare::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      125deg,
+      transparent 0%,
+      rgba(255, 0, 0, 0.1) 10%,
+      rgba(255, 127, 0, 0.1) 20%,
+      rgba(255, 255, 0, 0.1) 30%,
+      rgba(0, 255, 0, 0.1) 40%,
+      rgba(0, 127, 255, 0.15) 50%,
+      rgba(75, 0, 130, 0.1) 60%,
+      rgba(148, 0, 211, 0.1) 70%,
+      transparent 80%
+    );
+    background-size: 300% 300%;
+    animation: holographic 6s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 10;
+    border-radius: 12px;
+    mix-blend-mode: overlay;
+  }
+
+  @keyframes holographic {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  /* Sparkle effect for Super Rare - optimized to 4 sparkles for performance */
+  .card-super-rare::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 25%, rgba(255, 255, 255, 0.8) 0%, transparent 2%),
+      radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.7) 0%, transparent 2%),
+      radial-gradient(circle at 35% 75%, rgba(255, 255, 255, 0.75) 0%, transparent 2%),
+      radial-gradient(circle at 75% 70%, rgba(255, 255, 255, 0.65) 0%, transparent 2%);
+    animation: sparkle 2s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 11;
+    border-radius: 12px;
+  }
+
+  @keyframes sparkle {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  /* Card image area */
+  .trading-card-image {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .trading-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Image overlay gradient */
+  .trading-card-image::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+    pointer-events: none;
+  }
+
+  /* Card info section */
+  .trading-card-info {
+    padding: 8px 10px;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Rarity badge styles */
+  .rarity-badge-n {
+    background: linear-gradient(135deg, #6b7280, #4b5563);
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  .rarity-badge-r {
+    background: linear-gradient(135deg, #60a5fa, #3b82f6);
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+  }
+
+  .rarity-badge-sr {
+    background: linear-gradient(135deg, #fcd34d, #f59e0b, #d97706);
+    color: #1a1a1a;
+    font-weight: 800;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
+    animation: badge-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes badge-pulse {
+    0%, 100% { box-shadow: 0 0 12px rgba(251, 191, 36, 0.6); }
+    50% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.9); }
   }
 }

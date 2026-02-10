@@ -1,36 +1,180 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# HITOON
+
+**音楽を、一生モノにする。**
+
+Artist Digital Content Marketplace - アーティストのデジタルトレカを購入・コレクションできるプラットフォーム
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS |
+| Backend/DB | Supabase (PostgreSQL, Auth, Storage, RLS) |
+| Payments | Stripe (Checkout, Webhooks) |
+| Hosting | Vercel |
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- pnpm
+- Supabase account
+- Stripe account
+
+### 1. Install Dependencies
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Environment Variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create `.env.local` file:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-## Learn More
+# Stripe
+STRIPE_SECRET_KEY=sk_test_xxx
+STRIPE_WEBHOOK_SECRET=whsec_xxx
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 3. Database Setup
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# Apply migrations
+supabase db push
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# (Optional) Seed sample data
+supabase db seed
+```
 
-## Deploy on Vercel
+### 4. Run Development Server
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+pnpm dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Open [http://localhost:3000](http://localhost:3000)
+
+### 5. Stripe Webhook (Local)
+
+```bash
+stripe listen --forward-to localhost:3000/api/webhooks/stripe
+```
+
+## Architecture
+
+```
+hitoon-web/
+├── app/                          # Next.js App Router
+│   ├── (main)/                   # Public pages (home, market, artists)
+│   ├── (auth)/                   # Auth pages (login, signup)
+│   ├── (legal)/                  # Legal pages (terms, privacy)
+│   ├── (admin)/                  # Admin dashboard
+│   │   └── admin/
+│   │       ├── page.tsx          # Dashboard
+│   │       ├── artists/          # Artist management
+│   │       ├── templates/        # Template management
+│   │       ├── cards/            # Card management
+│   │       └── purchases/        # Purchase history
+│   ├── api/                      # API Routes
+│   │   ├── artists/              # GET /api/artists, /api/artists/:id
+│   │   ├── cards/                # GET /api/cards, /api/cards/:id
+│   │   ├── purchases/            # GET /api/purchases, /api/purchases/:id
+│   │   ├── checkout/             # POST /api/checkout
+│   │   ├── webhooks/stripe/      # POST /api/webhooks/stripe
+│   │   └── me/                   # GET/DELETE /api/me
+│   └── auth/callback/            # OAuth callback
+├── components/                   # React components
+│   ├── ui/                       # Primitive components
+│   ├── cards/                    # Card components
+│   ├── layout/                   # Layout components
+│   └── auth/                     # Auth components
+├── lib/                          # Utilities
+│   ├── supabase/                 # Supabase clients
+│   └── stripe/                   # Stripe client
+├── types/                        # TypeScript types
+│   └── database.ts               # Database types
+├── hooks/                        # React hooks
+├── supabase/                     # Supabase config
+│   ├── migrations/               # Database migrations
+│   └── seed.sql                  # Sample data
+└── docs/                         # Documentation
+    └── definition.md             # Requirements
+```
+
+## Database Schema
+
+```
+artists
+  └── card_templates (1:N)
+        └── cards (1:3 per template: NORMAL, RARE, SUPER_RARE)
+              └── exclusive_contents (1:N)
+              └── purchases (1:N)
+
+profiles (extends auth.users)
+operators (admin roles)
+```
+
+### Key Features
+
+- **Card Template System**: 1 artist → N templates → 3 cards per template (by rarity)
+- **Atomic Serial Numbers**: Race condition prevention via PostgreSQL function
+- **Idempotent Webhooks**: Unique constraints prevent duplicate purchases
+- **RLS Policies**: Row-level security for all tables
+
+## Scripts
+
+```bash
+pnpm dev          # Development server
+pnpm build        # Production build
+pnpm lint         # ESLint
+pnpm type-check   # TypeScript check
+```
+
+## API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/artists` | List artists |
+| GET | `/api/artists/:id` | Artist detail with templates |
+| GET | `/api/cards` | List cards (filterable) |
+| GET | `/api/cards/:id` | Card detail with exclusive content |
+| GET | `/api/purchases` | User's purchase history |
+| GET | `/api/purchases/:id` | Purchase detail |
+| POST | `/api/checkout` | Create Stripe checkout |
+| POST | `/api/webhooks/stripe` | Stripe webhook handler |
+| GET | `/api/me` | Current user info |
+| DELETE | `/api/me` | Delete account |
+
+## Admin Access
+
+1. Add user to `operators` table:
+```sql
+INSERT INTO operators (user_id, role)
+VALUES ('user-uuid', 'admin');
+```
+
+2. Access `/admin` dashboard
+
+## Deploy
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-repo/hitoon-web)
+
+Required environment variables:
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+- `NEXT_PUBLIC_APP_URL`
+
+## License
+
+Private - All rights reserved
