@@ -44,6 +44,10 @@ export async function middleware(request: NextRequest) {
   );
 
   if (isProtectedPath && !user) {
+    // API routes should return JSON 401, not redirect to HTML login page
+    if (request.nextUrl.pathname.startsWith('/api/')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const redirectUrl = new URL('/login', request.url);
     redirectUrl.searchParams.set('redirect', request.nextUrl.pathname);
     return NextResponse.redirect(redirectUrl);

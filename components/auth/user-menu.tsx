@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { User, LogOut, Settings, Shield } from 'lucide-react';
@@ -50,10 +51,13 @@ export function UserMenu() {
         className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-800 transition-colors"
       >
         {user?.user_metadata?.avatar_url ? (
-          <img
+          <Image
             src={user.user_metadata.avatar_url}
             alt="Avatar"
+            width={32}
+            height={32}
             className="w-8 h-8 rounded-full object-cover"
+            unoptimized
           />
         ) : (
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">

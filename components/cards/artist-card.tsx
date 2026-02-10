@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { cn } from '@/lib/utils/cn';
 import { type Rarity } from '@/types/card';
 import { getDefaultFrameForRarity } from '@/config/frame-templates';
@@ -57,10 +58,12 @@ export function ArtistCard({
       <div className="trading-card-inner">
         {/* Main Visual */}
         <div className="trading-card-image">
-          <img
+          <Image
             src={artistImageUrl}
             alt={artistName}
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
+            unoptimized
           />
 
           {/* Top corner decoration for SR */}

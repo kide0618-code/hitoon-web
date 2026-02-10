@@ -12,10 +12,39 @@ interface AuthFormProps {
   mode: 'login' | 'signup';
 }
 
+const REDIRECT_STORAGE_KEY = 'hitoon_auth_redirect';
+
+function getStoredRedirect(): string {
+  if (typeof window === 'undefined') return '/';
+  try {
+    return sessionStorage.getItem(REDIRECT_STORAGE_KEY) || '/';
+  } catch {
+    return '/';
+  }
+}
+
+function storeRedirect(path: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    sessionStorage.setItem(REDIRECT_STORAGE_KEY, path);
+  } catch {
+    // sessionStorage disabled
+  }
+}
+
+function clearStoredRedirect(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    sessionStorage.removeItem(REDIRECT_STORAGE_KEY);
+  } catch {
+    // Ignore
+  }
+}
+
 export function AuthForm({ mode }: AuthFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get('redirect') || '/';
+  const redirectTo = searchParams.get('redirect') || getStoredRedirect();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -37,11 +66,12 @@ export function AuthForm({ mode }: AuthFormProps) {
 
     try {
       if (mode === 'signup') {
+        storeRedirect(redirectTo);
         const { error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback?next=${redirectTo}`,
+            emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`,
           },
         });
 
@@ -58,6 +88,7 @@ export function AuthForm({ mode }: AuthFormProps) {
 
         if (error) throw error;
 
+        clearStoredRedirect();
         router.push(redirectTo);
         router.refresh();
       }
@@ -79,10 +110,11 @@ export function AuthForm({ mode }: AuthFormProps) {
     setError(null);
 
     try {
+      storeRedirect(redirectTo);
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=${redirectTo}`,
+          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`,
         },
       });
 

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { Layers, ShieldCheck, ArrowRight } from 'lucide-react';
@@ -160,10 +161,13 @@ export default async function CollectionPage() {
               <div className={`bg-surface-raised rounded-xl p-4 flex items-center gap-4 border border-gray-800 border-l-4 ${rarityAccent} group-hover:border-blue-500/50 group-hover:border-l-blue-500 transition-all shadow-card active:scale-[0.98]`}>
                 {/* Artist Image */}
                 <div className="relative flex-shrink-0">
-                  <img
+                  <Image
                     src={item.artistImageUrl}
                     alt={item.artistName}
+                    width={64}
+                    height={64}
                     className="w-16 h-16 rounded-full object-cover border-2 border-blue-500/30 group-hover:border-blue-500/60 transition-colors"
+                    unoptimized
                   />
                   <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-0.5 border border-black">
                     <ShieldCheck size={12} className="text-white" />

@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 export default async function AdminVisualsPage() {
@@ -47,10 +48,12 @@ export default async function AdminVisualsPage() {
             className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-gray-700 transition-colors"
           >
             <div className="aspect-[3/4] relative">
-              <img
+              <Image
                 src={visual.artist_image_url}
                 alt={visual.name}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                unoptimized
               />
               {!visual.is_active && (
                 <div className="absolute inset-0 bg-black/60 flex items-center justify-center">

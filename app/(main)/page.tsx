@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { Sparkles } from 'lucide-react';
 import { PageContainer } from '@/components/layout/page-container';
@@ -95,10 +96,13 @@ export default async function HomePage() {
                 className="block group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-xl"
               >
                 <div className="flex items-center gap-4 bg-surface-raised p-4 rounded-xl border border-gray-800 hover:border-blue-500/50 transition-all group-hover:shadow-glow-blue/20">
-                  <img
+                  <Image
                     src={artist.imageUrl || 'https://placehold.co/600x600/1e293b/60a5fa?text=Artist'}
                     alt={artist.name}
+                    width={80}
+                    height={80}
                     className="w-20 h-20 rounded-full object-cover border-2 border-gray-700 group-hover:border-blue-500/50 transition-colors"
+                    unoptimized
                   />
                   <div className="flex-1 min-w-0">
                     <h3 className="font-bold text-base truncate">{artist.name}</h3>

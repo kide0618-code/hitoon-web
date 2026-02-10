@@ -141,13 +141,24 @@ async function handleSingleCardCheckoutCompleted(
     });
   }
 
-  // Insert purchases (idempotent via unique constraint)
+  // Idempotency check: skip if already processed
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: existingPurchases } = await (supabaseAdmin.from('purchases') as any)
+    .select('id')
+    .eq('stripe_checkout_session_id', session.id)
+    .eq('card_id', cardId)
+    .eq('status', 'completed')
+    .limit(1) as { data: { id: string }[] | null };
+
+  if (existingPurchases && existingPurchases.length > 0) {
+    console.log(`Already processed session ${session.id}, skipping`);
+    return;
+  }
+
+  // Insert purchase records
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error: purchaseError } = await (supabaseAdmin.from('purchases') as any)
-    .upsert(purchases, {
-      onConflict: 'stripe_checkout_session_id,card_id,serial_number',
-      ignoreDuplicates: true,
-    });
+    .insert(purchases);
 
   if (purchaseError) {
     console.error('Error creating purchase records:', purchaseError);
@@ -218,13 +229,24 @@ async function handleCartCheckoutCompleted(
         });
       }
 
-      // Insert purchases (idempotent via unique constraint)
+      // Idempotency check: skip if already processed for this card
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: existingPurchases } = await (supabaseAdmin.from('purchases') as any)
+        .select('id')
+        .eq('stripe_checkout_session_id', session.id)
+        .eq('card_id', cardId)
+        .eq('status', 'completed')
+        .limit(1) as { data: { id: string }[] | null };
+
+      if (existingPurchases && existingPurchases.length > 0) {
+        console.log(`Already processed card ${cardId} for session ${session.id}, skipping`);
+        continue;
+      }
+
+      // Insert purchase records
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error: purchaseError } = await (supabaseAdmin.from('purchases') as any)
-        .upsert(purchases, {
-          onConflict: 'stripe_checkout_session_id,card_id,serial_number',
-          ignoreDuplicates: true,
-        });
+        .insert(purchases);
 
       if (purchaseError) {
         console.error(`Error creating purchases for card ${cardId}:`, purchaseError);

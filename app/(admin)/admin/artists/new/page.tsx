@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 export default function NewArtistPage() {
@@ -216,10 +217,13 @@ export default function NewArtistPage() {
                   </div>
                 ) : formData.image_url ? (
                   <div>
-                    <img
+                    <Image
                       src={formData.image_url}
                       alt="Preview"
+                      width={96}
+                      height={96}
                       className="w-24 h-24 rounded-full object-cover mx-auto mb-2"
+                      unoptimized
                     />
                     <p className="text-sm text-gray-400">
                       Click or drag to replace
@@ -261,10 +265,13 @@ export default function NewArtistPage() {
 
             {imageInputMode === 'url' && formData.image_url && (
               <div className="mt-3">
-                <img
+                <Image
                   src={formData.image_url}
                   alt="Preview"
+                  width={96}
+                  height={96}
                   className="w-24 h-24 rounded-full object-cover"
+                  unoptimized
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = 'none';
                   }}

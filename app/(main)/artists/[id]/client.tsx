@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Users, Check, ShoppingCart } from 'lucide-react';
+import { ArrowLeft, Users } from 'lucide-react';
 import { PageContainer } from '@/components/layout/page-container';
 import { ArtistCard } from '@/components/cards/artist-card';
 import { CardGrid } from '@/components/cards/card-grid';
@@ -43,24 +44,13 @@ export function ArtistDetailClient({ artist, isAuthenticated }: Props) {
   const router = useRouter();
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { addItem, removeItem, updateQuantity, isInCart, getItemQuantity, totalItems } = useCart();
+  const { addItem, removeItem, updateQuantity, isInCart, getItemQuantity } = useCart();
 
   const selectedCard = artist.cards.find((c) => c.id === selectedCardId);
 
   const handleCardClick = (cardId: string) => {
     setSelectedCardId(cardId);
     setIsDialogOpen(true);
-  };
-
-  const handleToggleCart = async (cardId: string, e?: React.MouseEvent) => {
-    if (e) {
-      e.stopPropagation();
-    }
-    if (isInCart(cardId)) {
-      await removeItem(cardId);
-    } else {
-      await addItem(cardId, 1);
-    }
   };
 
   const handleUpdateCart = async (cardId: string, quantity: number) => {
@@ -99,23 +89,14 @@ export function ArtistDetailClient({ artist, isAuthenticated }: Props) {
         <ArrowLeft size={24} />
       </Link>
 
-      {/* Cart Button */}
-      {totalItems > 0 && (
-        <Link
-          href={ROUTES.CART}
-          className="fixed top-4 right-4 z-20 bg-blue-600 p-2 rounded-full hover:bg-blue-500 transition-colors flex items-center gap-1"
-        >
-          <ShoppingCart size={20} />
-          <span className="text-sm font-bold pr-1">{totalItems}</span>
-        </Link>
-      )}
-
       {/* Artist Header */}
       <div className="relative h-64 overflow-hidden">
-        <img
+        <Image
           src={artist.imageUrl || 'https://placehold.co/600x800/1e293b/60a5fa?text=Artist'}
           alt={artist.name}
-          className="w-full h-full object-cover"
+          fill
+          className="object-cover"
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
         <div className="absolute bottom-4 left-4 right-4">
@@ -135,32 +116,16 @@ export function ArtistDetailClient({ artist, isAuthenticated }: Props) {
       {/* Card Selection */}
       <div className="px-3 sm:px-4 py-4 pb-24">
         <h2 className="text-base sm:text-lg font-bold mb-3 sm:mb-4">Select Card</h2>
-        <CardGrid columns={2}>
+        <CardGrid columns={4}>
           {artist.cards.map((card) => {
             const isSoldOut =
               card.totalSupply !== null &&
               card.currentSupply >= card.totalSupply;
-            const cardInCart = isInCart(card.id);
-
             return (
               <div
                 key={card.id}
                 className={`relative ${isSoldOut ? 'opacity-50' : ''}`}
               >
-                {/* Cart Toggle Checkbox - Top Right */}
-                <button
-                  onClick={(e) => !isSoldOut && handleToggleCart(card.id, e)}
-                  disabled={isSoldOut}
-                  className={`absolute -top-1 -right-1 z-10 w-7 h-7 rounded-full flex items-center justify-center transition-all shadow-lg ${
-                    cardInCart
-                      ? 'bg-green-500 text-white'
-                      : 'bg-gray-800 border-2 border-gray-600 text-gray-400 hover:border-green-500 hover:text-green-500'
-                  } ${isSoldOut ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                  aria-label={cardInCart ? 'カートから削除' : 'カートに追加'}
-                >
-                  {cardInCart && <Check size={16} strokeWidth={3} />}
-                </button>
-
                 <ArtistCard
                   artistName={artist.name}
                   artistImageUrl={card.visual.artistImageUrl}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 interface Artist {
@@ -152,10 +153,13 @@ export default function NewVisualPage() {
             />
             {formData.artist_image_url && (
               <div className="mt-3">
-                <img
+                <Image
                   src={formData.artist_image_url}
                   alt="Preview"
+                  width={128}
+                  height={171}
                   className="w-32 h-auto aspect-[3/4] rounded-lg object-cover"
+                  unoptimized
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = 'none';
                   }}

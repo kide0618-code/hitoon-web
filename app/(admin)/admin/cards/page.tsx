@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 export default async function AdminCardsPage() {
@@ -69,10 +70,13 @@ export default async function AdminCardsPage() {
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     {card.template?.artist_image_url && (
-                      <img
+                      <Image
                         src={card.template.artist_image_url}
                         alt={card.name}
+                        width={48}
+                        height={64}
                         className="w-12 h-16 rounded object-cover"
+                        unoptimized
                       />
                     )}
                     <div>

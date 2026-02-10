@@ -1,7 +1,9 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef, use } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useRef, use } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface Artist {
   id: string;
@@ -28,12 +30,14 @@ export default function EditArtistPage({ params }: PageProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [artist, setArtist] = useState<Artist | null>(null);
-  const [imageInputMode, setImageInputMode] = useState<'upload' | 'url'>('upload');
+  const [imageInputMode, setImageInputMode] = useState<"upload" | "url">(
+    "upload",
+  );
 
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    image_url: '',
+    name: "",
+    description: "",
+    image_url: "",
     is_featured: false,
     display_order: 0,
   });
@@ -45,19 +49,19 @@ export default function EditArtistPage({ params }: PageProps) {
         const data = await res.json();
 
         if (!res.ok) {
-          throw new Error(data.error || 'Failed to fetch artist');
+          throw new Error(data.error || "Failed to fetch artist");
         }
 
         setArtist(data.artist);
         setFormData({
           name: data.artist.name,
-          description: data.artist.description || '',
-          image_url: data.artist.image_url || '',
+          description: data.artist.description || "",
+          image_url: data.artist.image_url || "",
           is_featured: data.artist.is_featured,
           display_order: data.artist.display_order,
         });
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
+        setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
         setIsLoading(false);
       }
@@ -72,23 +76,23 @@ export default function EditArtistPage({ params }: PageProps) {
 
     try {
       const uploadData = new FormData();
-      uploadData.append('file', file);
-      uploadData.append('folder', 'artists');
+      uploadData.append("file", file);
+      uploadData.append("folder", "artists");
 
-      const res = await fetch('/api/admin/upload', {
-        method: 'POST',
+      const res = await fetch("/api/admin/upload", {
+        method: "POST",
         body: uploadData,
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || 'Upload failed');
+        throw new Error(data.error || "Upload failed");
       }
 
       setFormData({ ...formData, image_url: data.url });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Upload failed');
+      setError(err instanceof Error ? err.message : "Upload failed");
     } finally {
       setIsUploading(false);
     }
@@ -104,7 +108,7 @@ export default function EditArtistPage({ params }: PageProps) {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const file = e.dataTransfer.files?.[0];
-    if (file && file.type.startsWith('image/')) {
+    if (file && file.type.startsWith("image/")) {
       handleFileUpload(file);
     }
   };
@@ -116,20 +120,20 @@ export default function EditArtistPage({ params }: PageProps) {
 
     try {
       const res = await fetch(`/api/admin/artists/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to update artist');
+        throw new Error(data.error || "Failed to update artist");
       }
 
-      router.push('/admin/artists');
+      router.push("/admin/artists");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsSaving(false);
     }
@@ -138,7 +142,7 @@ export default function EditArtistPage({ params }: PageProps) {
   const handleDelete = async () => {
     if (
       !confirm(
-        'Are you sure you want to delete this artist? This will also delete all associated templates and cards.'
+        "Are you sure you want to delete this artist? This will also delete all associated templates and cards.",
       )
     ) {
       return;
@@ -149,18 +153,18 @@ export default function EditArtistPage({ params }: PageProps) {
 
     try {
       const res = await fetch(`/api/admin/artists/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to delete artist');
+        throw new Error(data.error || "Failed to delete artist");
       }
 
-      router.push('/admin/artists');
+      router.push("/admin/artists");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsDeleting(false);
     }
@@ -194,12 +198,12 @@ export default function EditArtistPage({ params }: PageProps) {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="flex items-center gap-4 mb-8">
-        <a
+        <Link
           href="/admin/artists"
           className="text-gray-500 hover:text-white transition-colors"
         >
           ← Back
-        </a>
+        </Link>
         <h1 className="text-2xl font-bold text-white">Edit Artist</h1>
       </div>
 
@@ -253,22 +257,22 @@ export default function EditArtistPage({ params }: PageProps) {
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => setImageInputMode('upload')}
+                  onClick={() => setImageInputMode("upload")}
                   className={`text-xs px-3 py-1 rounded transition-colors ${
-                    imageInputMode === 'upload'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-800 text-gray-400 hover:text-white'
+                    imageInputMode === "upload"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-800 text-gray-400 hover:text-white"
                   }`}
                 >
                   Upload
                 </button>
                 <button
                   type="button"
-                  onClick={() => setImageInputMode('url')}
+                  onClick={() => setImageInputMode("url")}
                   className={`text-xs px-3 py-1 rounded transition-colors ${
-                    imageInputMode === 'url'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-800 text-gray-400 hover:text-white'
+                    imageInputMode === "url"
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-800 text-gray-400 hover:text-white"
                   }`}
                 >
                   URL
@@ -276,15 +280,15 @@ export default function EditArtistPage({ params }: PageProps) {
               </div>
             </div>
 
-            {imageInputMode === 'upload' ? (
+            {imageInputMode === "upload" ? (
               <div
                 onDrop={handleDrop}
                 onDragOver={(e) => e.preventDefault()}
                 onClick={() => fileInputRef.current?.click()}
                 className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
                   isUploading
-                    ? 'border-blue-500 bg-blue-900/20'
-                    : 'border-gray-700 hover:border-gray-600'
+                    ? "border-blue-500 bg-blue-900/20"
+                    : "border-gray-700 hover:border-gray-600"
                 }`}
               >
                 <input
@@ -319,10 +323,13 @@ export default function EditArtistPage({ params }: PageProps) {
                   </div>
                 ) : formData.image_url ? (
                   <div>
-                    <img
+                    <Image
                       src={formData.image_url}
                       alt="Preview"
+                      width={96}
+                      height={96}
                       className="w-24 h-24 rounded-full object-cover mx-auto mb-2"
+                      unoptimized
                     />
                     <p className="text-sm text-gray-400">
                       Click or drag to replace
@@ -362,14 +369,17 @@ export default function EditArtistPage({ params }: PageProps) {
               />
             )}
 
-            {imageInputMode === 'url' && formData.image_url && (
+            {imageInputMode === "url" && formData.image_url && (
               <div className="mt-3">
-                <img
+                <Image
                   src={formData.image_url}
                   alt="Preview"
+                  width={96}
+                  height={96}
                   className="w-24 h-24 rounded-full object-cover"
+                  unoptimized
                   onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none';
+                    (e.target as HTMLImageElement).style.display = "none";
                   }}
                 />
               </div>
@@ -426,7 +436,7 @@ export default function EditArtistPage({ params }: PageProps) {
               <div>
                 <span className="text-gray-500">Created:</span>
                 <span className="text-white ml-2">
-                  {new Date(artist.created_at).toLocaleDateString('ja-JP')}
+                  {new Date(artist.created_at).toLocaleDateString("ja-JP")}
                 </span>
               </div>
             </div>
@@ -441,14 +451,14 @@ export default function EditArtistPage({ params }: PageProps) {
               disabled={isSaving || isUploading}
               className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed text-white font-medium px-6 py-3 rounded-lg transition-colors"
             >
-              {isSaving ? 'Saving...' : 'Save Changes'}
+              {isSaving ? "Saving..." : "Save Changes"}
             </button>
-            <a
+            <Link
               href="/admin/artists"
               className="text-gray-400 hover:text-white transition-colors"
             >
               Cancel
-            </a>
+            </Link>
           </div>
 
           <button
@@ -457,7 +467,7 @@ export default function EditArtistPage({ params }: PageProps) {
             disabled={isDeleting}
             className="bg-red-900/50 hover:bg-red-900 disabled:opacity-50 text-red-400 font-medium px-4 py-2 rounded-lg transition-colors"
           >
-            {isDeleting ? 'Deleting...' : 'Delete Artist'}
+            {isDeleting ? "Deleting..." : "Delete Artist"}
           </button>
         </div>
       </form>

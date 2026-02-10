@@ -13,12 +13,15 @@ export async function GET(request: Request) {
   const error = requestUrl.searchParams.get('error');
   const errorDescription = requestUrl.searchParams.get('error_description');
 
-  // Handle OAuth errors
+  // Handle OAuth errors — preserve redirect so user can retry
   if (error) {
     console.error('OAuth error:', error, errorDescription);
-    return NextResponse.redirect(
-      new URL(`/login?error=${encodeURIComponent(errorDescription || error)}`, requestUrl.origin)
-    );
+    const loginUrl = new URL('/login', requestUrl.origin);
+    loginUrl.searchParams.set('error', errorDescription || error);
+    if (next !== '/') {
+      loginUrl.searchParams.set('redirect', next);
+    }
+    return NextResponse.redirect(loginUrl);
   }
 
   if (code) {
@@ -27,9 +30,12 @@ export async function GET(request: Request) {
 
     if (exchangeError) {
       console.error('Code exchange error:', exchangeError);
-      return NextResponse.redirect(
-        new URL(`/login?error=${encodeURIComponent(exchangeError.message)}`, requestUrl.origin)
-      );
+      const loginUrl = new URL('/login', requestUrl.origin);
+      loginUrl.searchParams.set('error', exchangeError.message);
+      if (next !== '/') {
+        loginUrl.searchParams.set('redirect', next);
+      }
+      return NextResponse.redirect(loginUrl);
     }
 
     // Successful login - redirect to intended destination

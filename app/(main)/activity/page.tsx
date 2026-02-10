@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { CheckCircle2, Layers, Clock, ArrowRight } from 'lucide-react';
 import { PageContainer } from '@/components/layout/page-container';
@@ -151,10 +152,13 @@ export default async function ActivityPage({ searchParams }: PageProps) {
               className="block group"
             >
               <div className="bg-gray-900/50 rounded-xl p-4 flex items-center gap-4 border border-gray-800 group-hover:border-blue-500/50 transition-all">
-                <img
+                <Image
                   src={purchase.artistImageUrl}
                   alt={purchase.artistName}
+                  width={48}
+                  height={48}
                   className="w-12 h-12 rounded-full object-cover"
+                  unoptimized
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">

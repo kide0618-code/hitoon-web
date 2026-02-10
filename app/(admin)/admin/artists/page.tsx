@@ -1,12 +1,14 @@
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import Image from "next/image";
+import Link from "next/link";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export default async function AdminArtistsPage() {
   const supabase = await createServerSupabaseClient();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: artists } = (await (supabase.from('artists') as any)
-    .select('*')
-    .order('display_order', { ascending: true })) as {
+  const { data: artists } = (await (supabase.from("artists") as any)
+    .select("*")
+    .order("display_order", { ascending: true })) as {
     data:
       | {
           id: string;
@@ -25,12 +27,12 @@ export default async function AdminArtistsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-white">Artists</h1>
-        <a
+        <Link
           href="/admin/artists/new"
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
         >
           + Add Artist
-        </a>
+        </Link>
       </div>
 
       <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
@@ -54,10 +56,13 @@ export default async function AdminArtistsPage() {
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     {artist.image_url && (
-                      <img
+                      <Image
                         src={artist.image_url}
                         alt={artist.name}
+                        width={40}
+                        height={40}
                         className="w-10 h-10 rounded-full object-cover"
+                        unoptimized
                       />
                     )}
                     <div>
@@ -86,16 +91,16 @@ export default async function AdminArtistsPage() {
                   {artist.display_order}
                 </td>
                 <td className="px-6 py-4 text-gray-500 text-sm">
-                  {new Date(artist.created_at).toLocaleDateString('ja-JP')}
+                  {new Date(artist.created_at).toLocaleDateString("ja-JP")}
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2">
-                    <a
+                    <Link
                       href={`/admin/artists/${artist.id}`}
                       className="text-blue-400 hover:text-blue-300 text-sm"
                     >
                       Edit
-                    </a>
+                    </Link>
                     <span className="text-gray-700">|</span>
                     <a
                       href={`/artists/${artist.id}`}
@@ -110,7 +115,10 @@ export default async function AdminArtistsPage() {
               </tr>
             )) || (
               <tr>
-                <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                <td
+                  colSpan={6}
+                  className="px-6 py-12 text-center text-gray-500"
+                >
                   No artists yet. Create your first artist.
                 </td>
               </tr>

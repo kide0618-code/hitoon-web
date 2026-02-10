@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Users } from 'lucide-react';
 import { PageContainer } from '@/components/layout/page-container';
@@ -82,11 +83,13 @@ export default async function MarketPage() {
                 className="block group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-xl"
               >
                 <div className="bg-surface-raised rounded-xl border border-gray-800 p-4 flex items-center gap-4 hover:border-blue-500/50 transition-all group-hover:shadow-card">
-                  <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gray-700 flex-shrink-0 group-hover:border-blue-500/50 transition-colors">
-                    <img
+                  <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-gray-700 flex-shrink-0 group-hover:border-blue-500/50 transition-colors relative">
+                    <Image
                       src={artist.imageUrl || 'https://placehold.co/600x600/1e293b/60a5fa?text=Artist'}
                       alt={artist.name}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
+                      unoptimized
                     />
                   </div>
                   <div className="flex-1 min-w-0">

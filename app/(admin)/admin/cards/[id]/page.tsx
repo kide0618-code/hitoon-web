@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, use } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 interface ExclusiveContent {
@@ -204,11 +205,13 @@ export default function EditCardPage({ params }: PageProps) {
         {/* Card Preview */}
         <div className="lg:col-span-1">
           <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 sticky top-4">
-            <div className="aspect-[3/4] rounded-lg overflow-hidden mb-4">
-              <img
+            <div className="aspect-[3/4] rounded-lg overflow-hidden mb-4 relative">
+              <Image
                 src={card.template.artist_image_url}
                 alt={card.name}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                unoptimized
               />
             </div>
             <div className="space-y-2 text-sm">

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -245,10 +246,13 @@ export function SettingsClient({ user, providers }: SettingsClientProps) {
             <div className="flex items-center gap-4">
               <div className="relative">
                 {displayAvatar ? (
-                  <img
+                  <Image
                     src={displayAvatar}
                     alt="Avatar"
+                    width={80}
+                    height={80}
                     className="w-20 h-20 rounded-full object-cover border-2 border-gray-700"
+                    unoptimized
                   />
                 ) : (
                   <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-2xl font-bold text-white">
