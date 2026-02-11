@@ -54,11 +54,13 @@ export function RotatableCard({ children, className, innerClassName }: Rotatable
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault();
     const touch = e.touches[0];
     handleStart(touch.clientX, touch.clientY);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
+    e.preventDefault();
     const touch = e.touches[0];
     handleMove(touch.clientX, touch.clientY);
   };
@@ -66,7 +68,7 @@ export function RotatableCard({ children, className, innerClassName }: Rotatable
   return (
     <div
       className={className}
-      style={{ perspective: '1000px' }}
+      style={{ perspective: '1000px', touchAction: 'none' }}
       onMouseDown={handleMouseDown}
       onMouseMove={(e) => handleMove(e.clientX, e.clientY)}
       onMouseUp={handleEnd}
@@ -81,6 +83,7 @@ export function RotatableCard({ children, className, innerClassName }: Rotatable
         style={{
           transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
           transformStyle: 'preserve-3d',
+          willChange: isDragging ? 'transform' : 'auto',
           transition: isDragging ? 'none' : 'transform 0.3s ease-out',
         }}
       >
