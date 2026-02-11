@@ -9,7 +9,7 @@ INSERT INTO public.artists (id, name, description, image_url, member_count, is_f
   ('a1000000-0000-0000-0000-000000000002', 'Stellar Echo', 'ボーカルユニット。透明感のある歌声とエモーショナルな楽曲で若い世代を中心に人気急上昇中。', 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400', 890, true, 2),
   ('a1000000-0000-0000-0000-000000000003', 'Neon Pulse', 'サイバーパンクをテーマにしたビジュアル系ロックバンド。激しいサウンドと独特の世界観が魅力。', 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400', 2100, true, 3),
   ('a1000000-0000-0000-0000-000000000004', 'Sakura Dreams', 'アコースティックを基調とした女性シンガーソングライター。心に染みるメロディと詩的な歌詞が特徴。', 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400', 650, false, 0),
-  ('a1000000-0000-0000-0000-000000000005', 'Digital Horizon', 'プログレッシブハウスとテクノを融合させたDJデュオ。クラブシーンで絶大な支持を得ている。', 'https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400', 1800, true, 4);
+  ('a1000000-0000-0000-0000-000000000005', 'Digital Horizon', 'プログレッシブハウスとテクノを融合させたDJデュオ。クラブシーンで絶大な支持を得ている。', 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400', 1800, true, 4);
 
 -- ============================================
 -- SAMPLE CARD VISUALS
@@ -23,7 +23,7 @@ INSERT INTO public.card_visuals (id, artist_id, name, artist_image_url, song_tit
   -- Neon Pulse
   ('e1000000-0000-0000-0000-000000000004', 'a1000000-0000-0000-0000-000000000003', 'Live Tour 2026', 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=600', 'Cyber Rebellion', 'Tour Memorial Card', true),
   -- Digital Horizon
-  ('e1000000-0000-0000-0000-000000000005', 'a1000000-0000-0000-0000-000000000005', 'Club Edition', 'https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=600', 'Future Bass', 'DJ Set Collection', true);
+  ('e1000000-0000-0000-0000-000000000005', 'a1000000-0000-0000-0000-000000000005', 'Club Edition', 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600', 'Future Bass', 'DJ Set Collection', true);
 
 -- ============================================
 -- SAMPLE CARDS (3 per visual)

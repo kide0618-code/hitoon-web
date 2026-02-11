@@ -99,7 +99,10 @@ export function CardDetailDialog({
       {/* Scrollable Content Area */}
       <div className="relative z-10 flex-1 overflow-y-auto overflow-x-hidden">
         {/* 3D Card Container */}
-        <RotatableCard className="flex min-h-[340px] items-center justify-center px-6 py-6">
+        <RotatableCard
+          className="flex min-h-[340px] items-center justify-center px-6 py-6"
+          innerClassName="w-full max-w-[260px] sm:max-w-sm"
+        >
           <ArtistCard
             artistName={card.artistName}
             artistImageUrl={card.artistImageUrl}

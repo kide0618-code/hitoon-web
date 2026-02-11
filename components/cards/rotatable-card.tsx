@@ -5,9 +5,10 @@ import { useState, useRef, useCallback, type ReactNode } from 'react';
 interface RotatableCardProps {
   children: ReactNode;
   className?: string;
+  innerClassName?: string;
 }
 
-export function RotatableCard({ children, className }: RotatableCardProps) {
+export function RotatableCard({ children, className, innerClassName }: RotatableCardProps) {
   const [rotation, setRotation] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -76,7 +77,7 @@ export function RotatableCard({ children, className }: RotatableCardProps) {
     >
       <div
         ref={cardRef}
-        className="cursor-grab select-none active:cursor-grabbing"
+        className={`cursor-grab select-none active:cursor-grabbing ${innerClassName || ''}`}
         style={{
           transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
           transformStyle: 'preserve-3d',
