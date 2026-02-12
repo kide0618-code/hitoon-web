@@ -7,7 +7,7 @@ interface RouteContext {
 
 /**
  * GET /api/artists/:id
- * Get artist details with their card visuals and cards
+ * Get artist details with their cards
  */
 export async function GET(request: Request, context: RouteContext) {
   try {
@@ -17,7 +17,9 @@ export async function GET(request: Request, context: RouteContext) {
     // Get artist
     const { data: artist, error: artistError } = await supabase
       .from('artists')
-      .select('*')
+      .select(
+        'id, name, description, image_url, member_count, is_featured, display_order, created_at, updated_at',
+      )
       .eq('id', id)
       .single();
 
@@ -29,36 +31,37 @@ export async function GET(request: Request, context: RouteContext) {
       return NextResponse.json({ error: 'Failed to fetch artist' }, { status: 500 });
     }
 
-    // Get visuals with cards
-    const { data: visuals, error: visualsError } = await supabase
-      .from('card_visuals')
+    // Get cards directly (no more card_visuals join)
+    const { data: cards, error: cardsError } = await supabase
+      .from('cards')
       .select(
         `
-        *,
-        cards (
-          id,
-          name,
-          description,
-          rarity,
-          price,
-          total_supply,
-          current_supply,
-          is_active
-        )
+        id,
+        name,
+        description,
+        rarity,
+        price,
+        total_supply,
+        current_supply,
+        card_image_url,
+        song_title,
+        subtitle,
+        frame_template_id,
+        is_active
       `,
       )
       .eq('artist_id', id)
       .eq('is_active', true)
-      .order('created_at', { ascending: false });
+      .order('price', { ascending: true });
 
-    if (visualsError) {
-      console.error('Error fetching visuals:', visualsError);
-      return NextResponse.json({ error: 'Failed to fetch visuals' }, { status: 500 });
+    if (cardsError) {
+      console.error('Error fetching cards:', cardsError);
+      return NextResponse.json({ error: 'Failed to fetch cards' }, { status: 500 });
     }
 
     return NextResponse.json({
       ...(artist as Record<string, unknown>),
-      visuals: visuals || [],
+      cards: cards || [],
     });
   } catch (error) {
     console.error('Unexpected error:', error);

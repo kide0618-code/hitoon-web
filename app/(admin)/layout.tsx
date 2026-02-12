@@ -48,12 +48,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             >
               Artists
             </Link>
-            <Link
-              href="/admin/visuals"
-              className="text-gray-400 transition-colors hover:text-white"
-            >
-              Card Visuals
-            </Link>
             <Link href="/admin/cards" className="text-gray-400 transition-colors hover:text-white">
               Cards
             </Link>

@@ -9,10 +9,12 @@ import { PageContainer } from '@/components/layout/page-container';
 import { ArtistCard } from '@/components/cards/artist-card';
 import { CardGrid } from '@/components/cards/card-grid';
 import { CardDetailDialog } from '@/components/cards/card-detail-dialog';
+import { SocialLinks } from '@/components/features/social-links';
 import { useCart } from '@/contexts/cart-context';
 import { ROUTES } from '@/constants/routes';
 import { formatPrice } from '@/lib/utils/format';
 import type { Rarity } from '@/types/card';
+import type { SocialLink } from '@/types/artist';
 
 interface CardData {
   id: string;
@@ -20,10 +22,9 @@ interface CardData {
   price: number;
   totalSupply: number | null;
   currentSupply: number;
-  visual: {
-    artistImageUrl: string;
-    songTitle: string | null;
-  };
+  cardImageUrl: string;
+  songTitle: string | null;
+  frameTemplateId: string;
 }
 
 interface ArtistData {
@@ -33,6 +34,7 @@ interface ArtistData {
   imageUrl: string | null;
   memberCount: number;
   cards: CardData[];
+  socialLinks: SocialLink[];
 }
 
 interface Props {
@@ -111,6 +113,11 @@ export function ArtistDetailClient({ artist, isAuthenticated }: Props) {
       {/* Description */}
       <div className="p-4">
         <p className="text-sm text-gray-400">{artist.description}</p>
+        {artist.socialLinks.length > 0 && (
+          <div className="mt-3">
+            <SocialLinks links={artist.socialLinks} />
+          </div>
+        )}
       </div>
 
       {/* Card Selection */}
@@ -123,9 +130,10 @@ export function ArtistDetailClient({ artist, isAuthenticated }: Props) {
               <div key={card.id} className={`relative ${isSoldOut ? 'opacity-50' : ''}`}>
                 <ArtistCard
                   artistName={artist.name}
-                  artistImageUrl={card.visual.artistImageUrl}
-                  songTitle={card.visual.songTitle}
+                  artistImageUrl={card.cardImageUrl}
+                  songTitle={card.songTitle}
                   rarity={card.rarity}
+                  frameTemplateId={card.frameTemplateId}
                   onClick={() => !isSoldOut && handleCardClick(card.id)}
                 />
                 <div className="mt-1.5 text-center sm:mt-2">
@@ -153,8 +161,8 @@ export function ArtistDetailClient({ artist, isAuthenticated }: Props) {
           card={{
             id: selectedCard.id,
             artistName: artist.name,
-            artistImageUrl: selectedCard.visual.artistImageUrl,
-            songTitle: selectedCard.visual.songTitle,
+            artistImageUrl: selectedCard.cardImageUrl,
+            songTitle: selectedCard.songTitle,
             rarity: selectedCard.rarity,
             price: selectedCard.price,
             totalSupply: selectedCard.totalSupply,

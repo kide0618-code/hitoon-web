@@ -37,35 +37,32 @@
 
 **デザイン例**: `/docs/card-image.png`
 
-### ビジュアル & フレームシステム概要
+### カード & フレームシステム概要
 
-カードは「ビジュアル（コンテンツ）」と「フレーム（装飾）」の2層構造：
+カードは「コンテンツ（DB: cards）」と「フレーム（装飾）」の2層構造：
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  CardVisual (DB: card_visuals)                          │
-│  - アーティスト画像                                       │
-│  - 楽曲名・サブタイトル                                   │
-│  - 管理画面から登録                                      │
+│  Card (DB: cards)                                       │
+│  - card_image_url: アーティスト画像                       │
+│  - song_title: 楽曲名                                    │
+│  - subtitle: サブタイトル                                 │
+│  - frame_template_id: フレームテンプレートID               │
+│  - 管理画面から個別に登録                                 │
 └─────────────────────────────────────────────────────────┘
                             +
 ┌─────────────────────────────────────────────────────────┐
 │  FrameTemplate (TypeScript: config/frame-templates.ts)  │
 │  - フレーム画像/CSS                                      │
 │  - エフェクト（ホログラム、スパークル等）                   │
-│  - レアリティごとに定義                                   │
+│  - レアリティごとに3テンプレート（計9種）                   │
 │  - エンジニアが管理                                      │
-└─────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────┐
-│  Card (表示時に合成)                                     │
-│  - CardVisual（中身） + FrameTemplate（装飾）             │
 └─────────────────────────────────────────────────────────┘
 ```
 
-### 1ビジュアル = 3レアリティ構成
+### レアリティ構成
 
-同じビジュアル（画像データ）で、フレームテンプレートが異なる3パターンを提供:
+各カードは個別に作成し、レアリティ・フレームテンプレートを選択:
 
 | レアリティ      | 価格帯          | フレーム特徴              | 発行上限       |
 | --------------- | --------------- | ------------------------- | -------------- |
@@ -104,58 +101,78 @@
 ```
 Layer 1: Background (レアリティ別グラデーション) ← FrameTemplate
 Layer 2: Frame (レアリティ別デザイン) ← FrameTemplate
-Layer 3: Artist Image (アップロード画像) ← CardVisual (DB)
-Layer 4: Text Overlay (名前、楽曲名) ← CardVisual (DB)
+Layer 3: Artist Image (アップロード画像) ← Card (DB: card_image_url)
+Layer 4: Text Overlay (名前、楽曲名) ← Card (DB: song_title, subtitle)
 Layer 5: Metadata (シリアル、レアリティバッジ) ← 自動生成
 Layer 6: Effects (ホログラム、パーティクル) ← FrameTemplate
 ```
 
 ### Frame Template Styles (config/frame-templates.ts)
 
-| Rarity     | Frame Color            | Background           | Effect             | CSS Class         |
-| ---------- | ---------------------- | -------------------- | ------------------ | ----------------- |
-| NORMAL     | `#4b5563` (gray-600)   | Dark gradient        | なし               | `card-normal`     |
-| RARE       | `#3b82f6` (blue-500)   | Blue-purple gradient | Glow               | `card-rare`       |
-| SUPER_RARE | `#fbbf24` (yellow-400) | Gold-pink gradient   | Hologram + Sparkle | `card-super-rare` |
+9種類のフレームテンプレート（レアリティ別に3種ずつ）：
+
+| ID                     | Rarity     | Name              | CSS Class         | Effect                     |
+| ---------------------- | ---------- | ----------------- | ----------------- | -------------------------- |
+| `classic-normal`       | NORMAL     | Classic Silver    | `card-normal`     | Metallic sheen             |
+| `carbon-normal`        | NORMAL     | Carbon Fiber      | `card-carbon`     | Carbon weave texture       |
+| `minimal-normal`       | NORMAL     | Clean Minimal     | `card-minimal`    | Thin white border          |
+| `classic-rare`         | RARE       | Electric Blue     | `card-rare`       | Blue/purple energy glow    |
+| `cosmic-rare`          | RARE       | Cosmic Purple     | `card-cosmic`     | Purple/pink nebula + stars |
+| `emerald-rare`         | RARE       | Emerald Glow      | `card-emerald`    | Green energy + particles   |
+| `classic-super-rare`   | SUPER_RARE | Golden Hologram   | `card-super-rare` | Gold rainbow hologram      |
+| `prismatic-super-rare` | SUPER_RARE | Rainbow Prismatic | `card-prismatic`  | Full spectrum prismatic    |
+| `diamond-super-rare`   | SUPER_RARE | Diamond Frost     | `card-diamond`    | Ice crystal + frost        |
 
 ```typescript
 // config/frame-templates.ts
-export type FrameTemplateId = 'classic-normal' | 'classic-rare' | 'classic-super-rare';
+export type FrameTemplateId =
+  | 'classic-normal'
+  | 'carbon-normal'
+  | 'minimal-normal'
+  | 'classic-rare'
+  | 'cosmic-rare'
+  | 'emerald-rare'
+  | 'classic-super-rare'
+  | 'prismatic-super-rare'
+  | 'diamond-super-rare';
 
 export interface FrameTemplate {
   id: FrameTemplateId;
   name: string;
+  nameJa: string;
   rarity: Rarity;
   cssClass: string;
   effects: string[];
   borderColor: string;
   glowColor?: string;
+  previewGradient: string;
 }
 
 // レアリティからデフォルトフレームを取得
 export function getDefaultFrameForRarity(rarity: Rarity): FrameTemplate;
+// IDからフレームを取得
+export function getFrameTemplate(id: string): FrameTemplate | undefined;
+// レアリティ別フレーム一覧
+export function getFrameTemplatesByRarity(rarity: Rarity): FrameTemplate[];
 ```
 
-### 管理画面での入力項目 (CardVisual)
+### 管理画面での入力項目 (Card)
 
 ```typescript
-interface CardVisualInput {
+interface CardInput {
   // 必須
   artistId: string;
-  name: string; // ビジュアル名（管理用: "1st Album"等）
-  artistImage: File; // アップロード画像
+  name: string; // カード名
+  cardImageUrl: string; // アーティスト画像URL
+  rarity: 'NORMAL' | 'RARE' | 'SUPER_RARE';
+  price: number;
+  frameTemplateId: string; // フレームテンプレートID
 
   // 任意
   songTitle?: string; // 楽曲名
   subtitle?: string; // サブタイトル
-
-  // レアリティ別設定（3パターン）
-  variants: {
-    rarity: 'NORMAL' | 'RARE' | 'SUPER_RARE';
-    price: number;
-    totalSupply: number | null; // null = 無制限
-    isActive: boolean;
-  }[];
+  totalSupply?: number | null; // null = 無制限
+  description?: string;
 }
 ```
 
@@ -458,6 +475,14 @@ function ArtistCard({
 
 ## References
 
-- **カードデザイン例**: `/docs/card-image.png`
-- [ポケモンカード レアリティ一覧](https://www.sangatuusagi.com/pokeking/card/rarity.html)
+- **カードデザインイメージ**:
+
+/docs/assets/poke-1.png
+/docs/assets/poke-2.png
+/docs/assets/poke-3.png
+
+/docs/assets/card-song.png
+
+https://pokemon-tcg-pocket.wiki/ja/pokemon-card-maker-for-tcgp
+
 - MVP: https://hitoon-music.vercel.app/

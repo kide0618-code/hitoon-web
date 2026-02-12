@@ -9,8 +9,7 @@ export default async function AdminCardsPage() {
     .select(
       `
       *,
-      artist:artists (id, name),
-      template:card_templates (id, name, artist_image_url)
+      artist:artists (id, name)
     `,
     )
     .order('created_at', { ascending: false })) as {
@@ -22,10 +21,11 @@ export default async function AdminCardsPage() {
           price: number;
           total_supply: number | null;
           current_supply: number;
+          card_image_url: string;
+          song_title: string | null;
           is_active: boolean;
           created_at: string;
           artist: { id: string; name: string };
-          template: { id: string; name: string; artist_image_url: string };
         }[]
       | null;
   };
@@ -69,9 +69,9 @@ export default async function AdminCardsPage() {
               >
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    {card.template?.artist_image_url && (
+                    {card.card_image_url && (
                       <Image
-                        src={card.template.artist_image_url}
+                        src={card.card_image_url}
                         alt={card.name}
                         width={48}
                         height={64}
@@ -81,7 +81,9 @@ export default async function AdminCardsPage() {
                     )}
                     <div>
                       <p className="font-medium text-white">{card.name}</p>
-                      <p className="text-xs text-gray-500">{card.template?.name}</p>
+                      {card.song_title && (
+                        <p className="text-xs text-gray-500">{card.song_title}</p>
+                      )}
                     </div>
                   </div>
                 </td>
@@ -132,7 +134,7 @@ export default async function AdminCardsPage() {
             )) || (
               <tr>
                 <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
-                  No cards yet. Create templates first, then add cards.
+                  No cards yet. Click &quot;+ Add Card&quot; to create one.
                 </td>
               </tr>
             )}

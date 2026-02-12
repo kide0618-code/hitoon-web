@@ -97,200 +97,1074 @@ body {
   }
 
   /* =====================================================
-     TRADING CARD STYLES - Pokemon-inspired design
+     TRADING CARD STYLES - Pokemon Pocket-inspired design
+     Premium frame/effects system
      ===================================================== */
 
   /* Base card frame */
   .trading-card {
     position: relative;
     aspect-ratio: 3 / 4;
-    border-radius: 12px;
-    overflow: hidden;
+    border-radius: 16px;
+    overflow: visible;
     background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
     transition:
-      transform 0.3s ease,
-      box-shadow 0.3s ease;
+      transform 0.4s var(--ease-premium),
+      box-shadow 0.4s var(--ease-premium);
+    transform-style: preserve-3d;
+    perspective: 800px;
   }
 
   .trading-card:hover {
-    transform: scale(1.02) translateY(-2px);
+    transform: scale(1.03) translateY(-4px);
   }
 
-  /* Card inner frame */
+  /* Card inner frame - generous padding to show frame */
   .trading-card-inner {
     position: absolute;
-    inset: 3px;
-    border-radius: 10px;
+    border-radius: 8px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    z-index: 1;
   }
 
-  /* ===== NORMAL (N) Card ===== */
+  /* ===== NORMAL (N) Card - Clean metallic silver frame ===== */
   .card-normal {
-    border: 3px solid #4b5563;
-    background: linear-gradient(180deg, #374151 0%, #1f2937 100%);
+    border: 4px solid #6b7280;
+    background: linear-gradient(
+      160deg,
+      #9ca3af 0%,
+      #6b7280 15%,
+      #7c8594 30%,
+      #6b7280 50%,
+      #7c8594 70%,
+      #6b7280 85%,
+      #9ca3af 100%
+    );
     box-shadow:
-      0 4px 6px -1px rgba(0, 0, 0, 0.3),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      0 4px 16px rgba(0, 0, 0, 0.5),
+      0 0 8px rgba(156, 163, 175, 0.2);
+    overflow: hidden;
   }
 
   .card-normal .trading-card-inner {
+    inset: 6px;
     background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
-    border: 1px solid #374151;
+    border: 1px solid #4b5563;
   }
 
-  /* ===== RARE (R) Card - Silver glow effect ===== */
+  /* Metallic sheen sweep for Normal */
+  .card-normal::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 25%,
+      rgba(255, 255, 255, 0.1) 40%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(255, 255, 255, 0.1) 60%,
+      transparent 75%
+    );
+    background-size: 250% 100%;
+    animation: normal-sheen 6s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 10;
+    border-radius: 16px;
+  }
+
+  @keyframes normal-sheen {
+    0%,
+    100% {
+      background-position: 200% 0;
+    }
+    50% {
+      background-position: -100% 0;
+    }
+  }
+
+  /* ===== RARE (R) Card - Animated blue/purple energy frame ===== */
   .card-rare {
-    border: 3px solid transparent;
-    background: linear-gradient(135deg, #60a5fa, #3b82f6, #1d4ed8, #3b82f6, #60a5fa) border-box;
+    border: 5px solid transparent;
+    background:
+      linear-gradient(#0f172a, #0f172a) padding-box,
+      linear-gradient(
+          var(--rare-angle, 135deg),
+          #60a5fa,
+          #818cf8,
+          #3b82f6,
+          #a78bfa,
+          #6366f1,
+          #60a5fa,
+          #818cf8
+        )
+        border-box;
+    background-size:
+      100% 100%,
+      300% 300%;
     box-shadow:
-      0 0 20px rgba(59, 130, 246, 0.4),
-      0 0 40px rgba(59, 130, 246, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    animation: rare-glow 3s ease-in-out infinite;
+      0 0 20px rgba(59, 130, 246, 0.5),
+      0 0 40px rgba(99, 102, 241, 0.3),
+      0 0 60px rgba(59, 130, 246, 0.15);
+    animation:
+      rare-border-flow 4s linear infinite,
+      rare-glow 3s ease-in-out infinite;
+    overflow: hidden;
   }
 
   .card-rare .trading-card-inner {
-    background: linear-gradient(180deg, #1e3a5f 0%, #1e1b4b 50%, #172554 100%);
-    border: 1px solid rgba(59, 130, 246, 0.3);
+    inset: 8px;
+    background: linear-gradient(180deg, #1e293b 0%, #1e1b4b 50%, #172554 100%);
+    border: 1px solid rgba(96, 165, 250, 0.3);
+  }
+
+  @keyframes rare-border-flow {
+    0% {
+      background-position:
+        100% 100%,
+        0% 0%;
+    }
+    100% {
+      background-position:
+        100% 100%,
+        100% 100%;
+    }
   }
 
   @keyframes rare-glow {
     0%,
     100% {
       box-shadow:
-        0 0 20px rgba(59, 130, 246, 0.4),
-        0 0 40px rgba(59, 130, 246, 0.2);
+        0 0 20px rgba(59, 130, 246, 0.5),
+        0 0 40px rgba(99, 102, 241, 0.3),
+        0 0 60px rgba(59, 130, 246, 0.15);
     }
     50% {
       box-shadow:
-        0 0 30px rgba(59, 130, 246, 0.6),
-        0 0 60px rgba(59, 130, 246, 0.3);
+        0 0 35px rgba(59, 130, 246, 0.7),
+        0 0 70px rgba(99, 102, 241, 0.4),
+        0 0 100px rgba(59, 130, 246, 0.2);
     }
   }
 
-  /* Silver shine effect for Rare */
+  /* Bright shine sweep for Rare */
   .card-rare::before {
     content: '';
     position: absolute;
-    inset: 0;
+    inset: -2px;
     background: linear-gradient(
       105deg,
-      transparent 20%,
-      rgba(255, 255, 255, 0.1) 35%,
-      rgba(255, 255, 255, 0.2) 40%,
-      rgba(255, 255, 255, 0.1) 45%,
-      transparent 60%
+      transparent 0%,
+      transparent 30%,
+      rgba(255, 255, 255, 0.15) 40%,
+      rgba(192, 219, 255, 0.35) 48%,
+      rgba(255, 255, 255, 0.4) 50%,
+      rgba(192, 219, 255, 0.35) 52%,
+      rgba(255, 255, 255, 0.15) 60%,
+      transparent 70%,
+      transparent 100%
     );
-    background-size: 200% 100%;
-    animation: silver-shine 4s ease-in-out infinite;
+    background-size: 250% 100%;
+    animation: rare-shine 4s ease-in-out infinite;
     pointer-events: none;
     z-index: 10;
-    border-radius: 12px;
+    border-radius: 16px;
   }
 
-  @keyframes silver-shine {
-    0% {
+  @keyframes rare-shine {
+    0%,
+    15% {
       background-position: 200% 0;
     }
+    55%,
     100% {
-      background-position: -200% 0;
+      background-position: -100% 0;
     }
   }
 
-  /* ===== SUPER RARE (SR) Card - Holographic rainbow effect ===== */
+  /* Energy particles for Rare */
+  .card-rare .trading-card-inner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(96, 165, 250, 0.9) 0%, transparent 3%),
+      radial-gradient(circle at 85% 15%, rgba(129, 140, 248, 0.8) 0%, transparent 2.5%),
+      radial-gradient(circle at 50% 80%, rgba(96, 165, 250, 0.7) 0%, transparent 3%),
+      radial-gradient(circle at 75% 60%, rgba(167, 139, 250, 0.8) 0%, transparent 2%),
+      radial-gradient(circle at 30% 45%, rgba(96, 165, 250, 0.6) 0%, transparent 2%);
+    animation: rare-particles 3s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 12;
+  }
+
+  @keyframes rare-particles {
+    0%,
+    100% {
+      opacity: 0.4;
+    }
+    30% {
+      opacity: 1;
+    }
+    70% {
+      opacity: 0.6;
+    }
+  }
+
+  /* ===== SUPER RARE (SR) Card - Full holographic rainbow + gold frame ===== */
   .card-super-rare {
-    border: 4px solid transparent;
-    background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706, #f59e0b, #fbbf24) border-box;
+    border: 6px solid transparent;
+    background:
+      linear-gradient(#0f0a1e, #0f0a1e) padding-box,
+      linear-gradient(
+          var(--sr-angle, 135deg),
+          #fbbf24,
+          #f472b6,
+          #a78bfa,
+          #60a5fa,
+          #34d399,
+          #fbbf24,
+          #f472b6
+        )
+        border-box;
+    background-size:
+      100% 100%,
+      400% 400%;
     box-shadow:
-      0 0 30px rgba(251, 191, 36, 0.5),
-      0 0 60px rgba(251, 191, 36, 0.3),
-      0 0 90px rgba(251, 191, 36, 0.1),
-      inset 0 2px 0 rgba(255, 255, 255, 0.3);
-    animation: sr-glow 2s ease-in-out infinite;
+      0 0 25px rgba(251, 191, 36, 0.6),
+      0 0 50px rgba(244, 114, 182, 0.35),
+      0 0 80px rgba(167, 139, 250, 0.25),
+      0 0 120px rgba(251, 191, 36, 0.15);
+    animation:
+      sr-border-flow 6s linear infinite,
+      sr-glow 3s ease-in-out infinite;
+    overflow: hidden;
   }
 
   .card-super-rare .trading-card-inner {
-    background: linear-gradient(180deg, #44337a 0%, #831843 30%, #701a75 60%, #1e3a5f 100%);
+    inset: 10px;
+    background: linear-gradient(
+      180deg,
+      #1a0a2e 0%,
+      #2d1045 25%,
+      #1a1040 50%,
+      #0f1a3a 75%,
+      #0a0f2e 100%
+    );
     border: 1px solid rgba(251, 191, 36, 0.3);
+  }
+
+  @keyframes sr-border-flow {
+    0% {
+      background-position:
+        100% 100%,
+        0% 0%;
+    }
+    100% {
+      background-position:
+        100% 100%,
+        100% 100%;
+    }
   }
 
   @keyframes sr-glow {
     0%,
     100% {
       box-shadow:
-        0 0 30px rgba(251, 191, 36, 0.5),
-        0 0 60px rgba(251, 191, 36, 0.3),
-        0 0 90px rgba(251, 191, 36, 0.1);
+        0 0 25px rgba(251, 191, 36, 0.6),
+        0 0 50px rgba(244, 114, 182, 0.35),
+        0 0 80px rgba(167, 139, 250, 0.25);
     }
-    50% {
+    33% {
       box-shadow:
-        0 0 40px rgba(251, 191, 36, 0.7),
-        0 0 80px rgba(251, 191, 36, 0.4),
-        0 0 120px rgba(251, 191, 36, 0.2);
+        0 0 40px rgba(244, 114, 182, 0.7),
+        0 0 80px rgba(167, 139, 250, 0.45),
+        0 0 120px rgba(96, 163, 250, 0.25);
+    }
+    66% {
+      box-shadow:
+        0 0 40px rgba(167, 139, 250, 0.7),
+        0 0 80px rgba(251, 191, 36, 0.45),
+        0 0 120px rgba(244, 114, 182, 0.25);
     }
   }
 
-  /* Holographic rainbow effect for Super Rare */
+  /* Holographic rainbow sweep for Super Rare */
   .card-super-rare::before {
     content: '';
     position: absolute;
-    inset: 0;
+    inset: -2px;
     background: linear-gradient(
-      125deg,
+      var(--holo-angle, 125deg),
       transparent 0%,
-      rgba(255, 0, 0, 0.1) 10%,
-      rgba(255, 127, 0, 0.1) 20%,
-      rgba(255, 255, 0, 0.1) 30%,
-      rgba(0, 255, 0, 0.1) 40%,
-      rgba(0, 127, 255, 0.15) 50%,
-      rgba(75, 0, 130, 0.1) 60%,
-      rgba(148, 0, 211, 0.1) 70%,
-      transparent 80%
+      rgba(255, 0, 0, 0.25) 8%,
+      rgba(255, 154, 0, 0.25) 16%,
+      rgba(255, 255, 0, 0.25) 24%,
+      rgba(0, 255, 0, 0.25) 32%,
+      rgba(0, 170, 255, 0.3) 40%,
+      rgba(128, 0, 255, 0.25) 48%,
+      rgba(255, 0, 128, 0.25) 56%,
+      rgba(255, 0, 0, 0.25) 64%,
+      rgba(255, 154, 0, 0.25) 72%,
+      rgba(255, 255, 0, 0.2) 80%,
+      transparent 88%
     );
     background-size: 300% 300%;
-    animation: holographic 6s ease-in-out infinite;
+    animation: holographic-sweep 4s ease-in-out infinite;
     pointer-events: none;
     z-index: 10;
-    border-radius: 12px;
-    mix-blend-mode: overlay;
+    border-radius: 16px;
+    mix-blend-mode: screen;
   }
 
-  @keyframes holographic {
-    0%,
-    100% {
-      background-position: 0% 50%;
+  @keyframes holographic-sweep {
+    0% {
+      background-position: 0% 0%;
     }
     50% {
-      background-position: 100% 50%;
+      background-position: 100% 100%;
+    }
+    100% {
+      background-position: 0% 0%;
     }
   }
 
-  /* Sparkle effect for Super Rare - optimized to 4 sparkles for performance */
+  /* Sparkle particles for Super Rare - bigger and brighter */
   .card-super-rare::after {
     content: '';
     position: absolute;
     inset: 0;
     background-image:
-      radial-gradient(circle at 20% 25%, rgba(255, 255, 255, 0.8) 0%, transparent 2%),
-      radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.7) 0%, transparent 2%),
-      radial-gradient(circle at 35% 75%, rgba(255, 255, 255, 0.75) 0%, transparent 2%),
-      radial-gradient(circle at 75% 70%, rgba(255, 255, 255, 0.65) 0%, transparent 2%);
-    animation: sparkle 2s ease-in-out infinite;
+      radial-gradient(circle at 12% 18%, #fff 0%, transparent 3%),
+      radial-gradient(circle at 88% 12%, #fef08a 0%, transparent 2.5%),
+      radial-gradient(circle at 25% 55%, #fef08a 0%, transparent 2.5%),
+      radial-gradient(circle at 72% 42%, #fff 0%, transparent 3%),
+      radial-gradient(circle at 45% 88%, #fff 0%, transparent 2.5%),
+      radial-gradient(circle at 92% 78%, #fef08a 0%, transparent 3%),
+      radial-gradient(circle at 8% 82%, #fff 0%, transparent 2%),
+      radial-gradient(circle at 58% 22%, #fef08a 0%, transparent 2%),
+      radial-gradient(circle at 35% 35%, #fff 0%, transparent 2.5%),
+      radial-gradient(circle at 65% 75%, #fef08a 0%, transparent 2%);
+    animation: sr-sparkle 2.5s ease-in-out infinite;
     pointer-events: none;
     z-index: 11;
-    border-radius: 12px;
+    border-radius: 16px;
   }
 
-  @keyframes sparkle {
+  @keyframes sr-sparkle {
+    0%,
+    100% {
+      opacity: 0.5;
+    }
+    25% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
+    75% {
+      opacity: 0.9;
+    }
+  }
+
+  /* Foil texture overlay for SR inner */
+  .card-super-rare .trading-card-inner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(251, 191, 36, 0.06) 2px,
+        rgba(251, 191, 36, 0.06) 4px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        rgba(167, 139, 250, 0.04) 2px,
+        rgba(167, 139, 250, 0.04) 4px
+      );
+    pointer-events: none;
+    z-index: 12;
+    mix-blend-mode: overlay;
+  }
+
+  /* Gold dust particles floating on SR inner */
+  .card-super-rare .trading-card-inner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(251, 191, 36, 0.8) 0%, transparent 3%),
+      radial-gradient(circle at 80% 20%, rgba(244, 114, 182, 0.7) 0%, transparent 2.5%),
+      radial-gradient(circle at 40% 70%, rgba(167, 139, 250, 0.7) 0%, transparent 3%),
+      radial-gradient(circle at 65% 50%, rgba(251, 191, 36, 0.6) 0%, transparent 2%),
+      radial-gradient(circle at 10% 90%, rgba(96, 163, 250, 0.6) 0%, transparent 2.5%),
+      radial-gradient(circle at 90% 80%, rgba(251, 191, 36, 0.7) 0%, transparent 2.5%);
+    animation: gold-dust 4s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 12;
+  }
+
+  @keyframes gold-dust {
+    0%,
+    100% {
+      opacity: 0.5;
+    }
+    30% {
+      opacity: 1;
+    }
+    60% {
+      opacity: 0.6;
+    }
+    80% {
+      opacity: 0.8;
+    }
+  }
+
+  /* ===== CARBON (N) Card - Dark carbon fiber weave ===== */
+  .card-carbon {
+    border: 4px solid #374151;
+    background:
+      repeating-linear-gradient(45deg, #1f2937 0px, #1f2937 2px, #111827 2px, #111827 4px),
+      repeating-linear-gradient(-45deg, #1f2937 0px, #1f2937 2px, #111827 2px, #111827 4px);
+    box-shadow:
+      0 4px 16px rgba(0, 0, 0, 0.6),
+      0 0 6px rgba(55, 65, 81, 0.3);
+    overflow: hidden;
+  }
+
+  .card-carbon .trading-card-inner {
+    inset: 6px;
+    background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%);
+    border: 1px solid #374151;
+  }
+
+  .card-carbon::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.05) 45%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0.05) 55%,
+      transparent 70%
+    );
+    background-size: 250% 100%;
+    animation: carbon-sheen 8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 10;
+    border-radius: 16px;
+  }
+
+  @keyframes carbon-sheen {
+    0%,
+    100% {
+      background-position: 200% 0;
+    }
+    50% {
+      background-position: -100% 0;
+    }
+  }
+
+  /* ===== MINIMAL (N) Card - Clean white border, no animation ===== */
+  .card-minimal {
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+  }
+
+  .card-minimal .trading-card-inner {
+    inset: 4px;
+    background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  /* ===== COSMIC (R) Card - Purple/pink nebula + star particles ===== */
+  .card-cosmic {
+    border: 5px solid transparent;
+    background:
+      linear-gradient(#0f0a1e, #0f0a1e) padding-box,
+      linear-gradient(var(--cosmic-angle, 135deg), #c084fc, #a855f7, #ec4899, #c084fc, #a855f7)
+        border-box;
+    background-size:
+      100% 100%,
+      300% 300%;
+    box-shadow:
+      0 0 20px rgba(168, 85, 247, 0.5),
+      0 0 40px rgba(236, 72, 153, 0.3),
+      0 0 60px rgba(168, 85, 247, 0.15);
+    animation:
+      cosmic-border-flow 5s linear infinite,
+      cosmic-glow 3s ease-in-out infinite;
+    overflow: hidden;
+  }
+
+  .card-cosmic .trading-card-inner {
+    inset: 8px;
+    background: linear-gradient(180deg, #1a0a2e 0%, #2d0a3e 50%, #1a0a2e 100%);
+    border: 1px solid rgba(192, 132, 252, 0.3);
+  }
+
+  @keyframes cosmic-border-flow {
+    0% {
+      background-position:
+        100% 100%,
+        0% 0%;
+    }
+    100% {
+      background-position:
+        100% 100%,
+        100% 100%;
+    }
+  }
+
+  @keyframes cosmic-glow {
+    0%,
+    100% {
+      box-shadow:
+        0 0 20px rgba(168, 85, 247, 0.5),
+        0 0 40px rgba(236, 72, 153, 0.3);
+    }
+    50% {
+      box-shadow:
+        0 0 35px rgba(168, 85, 247, 0.7),
+        0 0 70px rgba(236, 72, 153, 0.4);
+    }
+  }
+
+  .card-cosmic::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(
+      105deg,
+      transparent 0%,
+      transparent 30%,
+      rgba(192, 132, 252, 0.2) 40%,
+      rgba(236, 72, 153, 0.35) 50%,
+      rgba(192, 132, 252, 0.2) 60%,
+      transparent 70%,
+      transparent 100%
+    );
+    background-size: 250% 100%;
+    animation: cosmic-shine 4.5s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 10;
+    border-radius: 16px;
+  }
+
+  @keyframes cosmic-shine {
+    0%,
+    15% {
+      background-position: 200% 0;
+    }
+    55%,
+    100% {
+      background-position: -100% 0;
+    }
+  }
+
+  /* Star particles for Cosmic */
+  .card-cosmic .trading-card-inner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 10% 15%, rgba(192, 132, 252, 0.9) 0%, transparent 2%),
+      radial-gradient(circle at 90% 20%, rgba(236, 72, 153, 0.8) 0%, transparent 1.5%),
+      radial-gradient(circle at 30% 70%, rgba(192, 132, 252, 0.7) 0%, transparent 2%),
+      radial-gradient(circle at 70% 50%, rgba(236, 72, 153, 0.6) 0%, transparent 1.5%),
+      radial-gradient(circle at 50% 90%, rgba(192, 132, 252, 0.8) 0%, transparent 2%),
+      radial-gradient(circle at 20% 40%, rgba(255, 255, 255, 0.9) 0%, transparent 1%),
+      radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.7) 0%, transparent 1%);
+    animation: cosmic-stars 3.5s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 12;
+  }
+
+  @keyframes cosmic-stars {
     0%,
     100% {
       opacity: 0.4;
     }
-    50% {
+    30% {
       opacity: 1;
     }
+    70% {
+      opacity: 0.5;
+    }
+  }
+
+  /* ===== EMERALD (R) Card - Green energy + nature particles ===== */
+  .card-emerald {
+    border: 5px solid transparent;
+    background:
+      linear-gradient(#0a1e0f, #0a1e0f) padding-box,
+      linear-gradient(var(--emerald-angle, 135deg), #34d399, #10b981, #059669, #34d399, #10b981)
+        border-box;
+    background-size:
+      100% 100%,
+      300% 300%;
+    box-shadow:
+      0 0 20px rgba(16, 185, 129, 0.5),
+      0 0 40px rgba(52, 211, 153, 0.3),
+      0 0 60px rgba(16, 185, 129, 0.15);
+    animation:
+      emerald-border-flow 4.5s linear infinite,
+      emerald-glow 3s ease-in-out infinite;
+    overflow: hidden;
+  }
+
+  .card-emerald .trading-card-inner {
+    inset: 8px;
+    background: linear-gradient(180deg, #0a1e15 0%, #0f2e1f 50%, #0a1e15 100%);
+    border: 1px solid rgba(52, 211, 153, 0.3);
+  }
+
+  @keyframes emerald-border-flow {
+    0% {
+      background-position:
+        100% 100%,
+        0% 0%;
+    }
+    100% {
+      background-position:
+        100% 100%,
+        100% 100%;
+    }
+  }
+
+  @keyframes emerald-glow {
+    0%,
+    100% {
+      box-shadow:
+        0 0 20px rgba(16, 185, 129, 0.5),
+        0 0 40px rgba(52, 211, 153, 0.3);
+    }
+    50% {
+      box-shadow:
+        0 0 35px rgba(16, 185, 129, 0.7),
+        0 0 70px rgba(52, 211, 153, 0.4);
+    }
+  }
+
+  .card-emerald::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(
+      105deg,
+      transparent 0%,
+      transparent 30%,
+      rgba(52, 211, 153, 0.15) 40%,
+      rgba(16, 185, 129, 0.35) 50%,
+      rgba(52, 211, 153, 0.15) 60%,
+      transparent 70%,
+      transparent 100%
+    );
+    background-size: 250% 100%;
+    animation: emerald-shine 4s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 10;
+    border-radius: 16px;
+  }
+
+  @keyframes emerald-shine {
+    0%,
+    15% {
+      background-position: 200% 0;
+    }
+    55%,
+    100% {
+      background-position: -100% 0;
+    }
+  }
+
+  /* Nature particles for Emerald */
+  .card-emerald .trading-card-inner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 15% 25%, rgba(52, 211, 153, 0.9) 0%, transparent 3%),
+      radial-gradient(circle at 85% 15%, rgba(16, 185, 129, 0.8) 0%, transparent 2.5%),
+      radial-gradient(circle at 45% 80%, rgba(52, 211, 153, 0.7) 0%, transparent 3%),
+      radial-gradient(circle at 75% 55%, rgba(5, 150, 105, 0.8) 0%, transparent 2%),
+      radial-gradient(circle at 25% 50%, rgba(52, 211, 153, 0.6) 0%, transparent 2%);
+    animation: emerald-particles 3s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 12;
+  }
+
+  @keyframes emerald-particles {
+    0%,
+    100% {
+      opacity: 0.4;
+    }
+    30% {
+      opacity: 1;
+    }
+    70% {
+      opacity: 0.6;
+    }
+  }
+
+  /* ===== PRISMATIC (SR) Card - Full spectrum rainbow prismatic shift ===== */
+  .card-prismatic {
+    border: 6px solid transparent;
+    background:
+      linear-gradient(#0f0a1e, #0f0a1e) padding-box,
+      linear-gradient(
+          var(--prismatic-angle, 135deg),
+          #f472b6,
+          #a78bfa,
+          #60a5fa,
+          #34d399,
+          #fbbf24,
+          #f472b6,
+          #a78bfa
+        )
+        border-box;
+    background-size:
+      100% 100%,
+      500% 500%;
+    box-shadow:
+      0 0 25px rgba(244, 114, 182, 0.6),
+      0 0 50px rgba(167, 139, 250, 0.35),
+      0 0 80px rgba(96, 165, 250, 0.25),
+      0 0 120px rgba(244, 114, 182, 0.15);
+    animation:
+      prismatic-border-flow 8s linear infinite,
+      prismatic-glow 4s ease-in-out infinite;
+    overflow: hidden;
+  }
+
+  .card-prismatic .trading-card-inner {
+    inset: 10px;
+    background: linear-gradient(
+      180deg,
+      #1a0a2e 0%,
+      #0f1a3a 25%,
+      #1a0a2e 50%,
+      #2d1045 75%,
+      #0f1a3a 100%
+    );
+    border: 1px solid rgba(244, 114, 182, 0.3);
+  }
+
+  @keyframes prismatic-border-flow {
+    0% {
+      background-position:
+        100% 100%,
+        0% 0%;
+    }
+    100% {
+      background-position:
+        100% 100%,
+        100% 100%;
+    }
+  }
+
+  @keyframes prismatic-glow {
+    0%,
+    100% {
+      box-shadow:
+        0 0 25px rgba(244, 114, 182, 0.6),
+        0 0 50px rgba(167, 139, 250, 0.35),
+        0 0 80px rgba(96, 165, 250, 0.25);
+    }
+    25% {
+      box-shadow:
+        0 0 35px rgba(96, 165, 250, 0.7),
+        0 0 70px rgba(52, 211, 153, 0.4),
+        0 0 100px rgba(251, 191, 36, 0.2);
+    }
+    50% {
+      box-shadow:
+        0 0 40px rgba(251, 191, 36, 0.7),
+        0 0 80px rgba(244, 114, 182, 0.45),
+        0 0 120px rgba(167, 139, 250, 0.25);
+    }
+    75% {
+      box-shadow:
+        0 0 35px rgba(167, 139, 250, 0.7),
+        0 0 70px rgba(96, 165, 250, 0.4),
+        0 0 100px rgba(244, 114, 182, 0.2);
+    }
+  }
+
+  /* Full-spectrum prismatic sweep */
+  .card-prismatic::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(
+      var(--holo-angle, 125deg),
+      transparent 0%,
+      rgba(244, 114, 182, 0.3) 10%,
+      rgba(167, 139, 250, 0.3) 20%,
+      rgba(96, 165, 250, 0.3) 30%,
+      rgba(52, 211, 153, 0.3) 40%,
+      rgba(251, 191, 36, 0.3) 50%,
+      rgba(244, 114, 182, 0.3) 60%,
+      rgba(167, 139, 250, 0.3) 70%,
+      rgba(96, 165, 250, 0.3) 80%,
+      transparent 90%
+    );
+    background-size: 300% 300%;
+    animation: prismatic-sweep 5s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 10;
+    border-radius: 16px;
+    mix-blend-mode: screen;
+  }
+
+  @keyframes prismatic-sweep {
+    0% {
+      background-position: 0% 0%;
+    }
+    50% {
+      background-position: 100% 100%;
+    }
+    100% {
+      background-position: 0% 0%;
+    }
+  }
+
+  /* Sparkle particles for Prismatic */
+  .card-prismatic::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 15% 20%, #f472b6 0%, transparent 2.5%),
+      radial-gradient(circle at 85% 10%, #a78bfa 0%, transparent 2%),
+      radial-gradient(circle at 30% 60%, #60a5fa 0%, transparent 2.5%),
+      radial-gradient(circle at 70% 40%, #34d399 0%, transparent 2%),
+      radial-gradient(circle at 50% 85%, #fbbf24 0%, transparent 2.5%),
+      radial-gradient(circle at 90% 75%, #f472b6 0%, transparent 2%),
+      radial-gradient(circle at 10% 80%, #a78bfa 0%, transparent 2%),
+      radial-gradient(circle at 60% 20%, #fff 0%, transparent 1.5%);
+    animation: prismatic-sparkle 3s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 11;
+    border-radius: 16px;
+  }
+
+  @keyframes prismatic-sparkle {
+    0%,
+    100% {
+      opacity: 0.4;
+    }
+    25% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.3;
+    }
+    75% {
+      opacity: 0.8;
+    }
+  }
+
+  /* Foil texture overlay for Prismatic inner */
+  .card-prismatic .trading-card-inner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(244, 114, 182, 0.04) 2px,
+        rgba(244, 114, 182, 0.04) 4px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        rgba(167, 139, 250, 0.04) 2px,
+        rgba(167, 139, 250, 0.04) 4px
+      );
+    pointer-events: none;
+    z-index: 12;
+    mix-blend-mode: overlay;
+  }
+
+  /* ===== DIAMOND (SR) Card - Ice crystal + frost shimmer ===== */
+  .card-diamond {
+    border: 6px solid transparent;
+    background:
+      linear-gradient(#0a1520, #0a1520) padding-box,
+      linear-gradient(
+          var(--diamond-angle, 135deg),
+          #67e8f9,
+          #a5f3fc,
+          #e0f2fe,
+          #67e8f9,
+          #a5f3fc,
+          #e0f2fe
+        )
+        border-box;
+    background-size:
+      100% 100%,
+      400% 400%;
+    box-shadow:
+      0 0 25px rgba(103, 232, 249, 0.6),
+      0 0 50px rgba(165, 243, 252, 0.35),
+      0 0 80px rgba(103, 232, 249, 0.2),
+      0 0 120px rgba(224, 242, 254, 0.1);
+    animation:
+      diamond-border-flow 5s linear infinite,
+      diamond-glow 3s ease-in-out infinite;
+    overflow: hidden;
+  }
+
+  .card-diamond .trading-card-inner {
+    inset: 10px;
+    background: linear-gradient(
+      180deg,
+      #0c1929 0%,
+      #0a1520 25%,
+      #0f1d2e 50%,
+      #0a1520 75%,
+      #0c1929 100%
+    );
+    border: 1px solid rgba(103, 232, 249, 0.3);
+  }
+
+  @keyframes diamond-border-flow {
+    0% {
+      background-position:
+        100% 100%,
+        0% 0%;
+    }
+    100% {
+      background-position:
+        100% 100%,
+        100% 100%;
+    }
+  }
+
+  @keyframes diamond-glow {
+    0%,
+    100% {
+      box-shadow:
+        0 0 25px rgba(103, 232, 249, 0.6),
+        0 0 50px rgba(165, 243, 252, 0.35),
+        0 0 80px rgba(103, 232, 249, 0.2);
+    }
+    50% {
+      box-shadow:
+        0 0 40px rgba(103, 232, 249, 0.8),
+        0 0 80px rgba(165, 243, 252, 0.5),
+        0 0 120px rgba(224, 242, 254, 0.3);
+    }
+  }
+
+  /* Frost shimmer sweep for Diamond */
+  .card-diamond::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(
+      125deg,
+      transparent 0%,
+      rgba(224, 242, 254, 0.15) 20%,
+      rgba(165, 243, 252, 0.3) 35%,
+      rgba(255, 255, 255, 0.4) 50%,
+      rgba(165, 243, 252, 0.3) 65%,
+      rgba(224, 242, 254, 0.15) 80%,
+      transparent 100%
+    );
+    background-size: 300% 300%;
+    animation: diamond-frost 4s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 10;
+    border-radius: 16px;
+    mix-blend-mode: screen;
+  }
+
+  @keyframes diamond-frost {
+    0% {
+      background-position: 0% 0%;
+    }
+    50% {
+      background-position: 100% 100%;
+    }
+    100% {
+      background-position: 0% 0%;
+    }
+  }
+
+  /* Ice crystal sparkles for Diamond */
+  .card-diamond::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 15% 15%, #fff 0%, transparent 3%),
+      radial-gradient(circle at 85% 10%, #e0f2fe 0%, transparent 2.5%),
+      radial-gradient(circle at 25% 55%, #a5f3fc 0%, transparent 2.5%),
+      radial-gradient(circle at 75% 40%, #fff 0%, transparent 3%),
+      radial-gradient(circle at 45% 85%, #e0f2fe 0%, transparent 2.5%),
+      radial-gradient(circle at 90% 75%, #fff 0%, transparent 2%),
+      radial-gradient(circle at 10% 85%, #a5f3fc 0%, transparent 2%),
+      radial-gradient(circle at 55% 25%, #fff 0%, transparent 2%);
+    animation: diamond-sparkle 2.5s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 11;
+    border-radius: 16px;
+  }
+
+  @keyframes diamond-sparkle {
+    0%,
+    100% {
+      opacity: 0.5;
+    }
+    25% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
+    75% {
+      opacity: 0.9;
+    }
+  }
+
+  /* Frost texture overlay for Diamond inner */
+  .card-diamond .trading-card-inner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        60deg,
+        transparent,
+        transparent 3px,
+        rgba(103, 232, 249, 0.03) 3px,
+        rgba(103, 232, 249, 0.03) 5px
+      ),
+      repeating-linear-gradient(
+        120deg,
+        transparent,
+        transparent 3px,
+        rgba(165, 243, 252, 0.03) 3px,
+        rgba(165, 243, 252, 0.03) 5px
+      );
+    pointer-events: none;
+    z-index: 12;
+    mix-blend-mode: overlay;
   }
 
   /* Card image area */
@@ -333,28 +1207,37 @@ body {
   }
 
   .rarity-badge-r {
-    background: linear-gradient(135deg, #60a5fa, #3b82f6);
+    background: linear-gradient(135deg, #818cf8, #60a5fa, #6366f1);
     color: white;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.6);
   }
 
   .rarity-badge-sr {
-    background: linear-gradient(135deg, #fcd34d, #f59e0b, #d97706);
+    background: linear-gradient(135deg, #fde68a, #fbbf24, #f59e0b, #fbbf24);
+    background-size: 200% 100%;
     color: #1a1a1a;
     font-weight: 800;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
-    box-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
-    animation: badge-pulse 2s ease-in-out infinite;
+    box-shadow:
+      0 0 16px rgba(251, 191, 36, 0.7),
+      0 0 6px rgba(251, 191, 36, 0.9) inset;
+    animation: badge-sr-shimmer 3s ease-in-out infinite;
   }
 
-  @keyframes badge-pulse {
+  @keyframes badge-sr-shimmer {
     0%,
     100% {
-      box-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
+      background-position: 0% 0%;
+      box-shadow:
+        0 0 16px rgba(251, 191, 36, 0.7),
+        0 0 6px rgba(251, 191, 36, 0.9) inset;
     }
     50% {
-      box-shadow: 0 0 20px rgba(251, 191, 36, 0.9);
+      background-position: 100% 0%;
+      box-shadow:
+        0 0 28px rgba(251, 191, 36, 1),
+        0 0 8px rgba(251, 191, 36, 1) inset;
     }
   }
 }

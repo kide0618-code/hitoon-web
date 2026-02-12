@@ -18,7 +18,6 @@ export async function GET(request: Request, { params }: RouteParams) {
       .select(
         `
         *,
-        visual:card_visuals (*),
         artist:artists (id, name),
         exclusive_contents (*)
       `,
@@ -57,6 +56,10 @@ export async function PUT(request: Request, { params }: RouteParams) {
     if (body.max_purchase_per_user !== undefined)
       updateData.max_purchase_per_user = body.max_purchase_per_user;
     if (body.is_active !== undefined) updateData.is_active = body.is_active;
+    if (body.card_image_url !== undefined) updateData.card_image_url = body.card_image_url;
+    if (body.song_title !== undefined) updateData.song_title = body.song_title;
+    if (body.subtitle !== undefined) updateData.subtitle = body.subtitle;
+    if (body.frame_template_id !== undefined) updateData.frame_template_id = body.frame_template_id;
     // Note: rarity should not be changed after creation
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

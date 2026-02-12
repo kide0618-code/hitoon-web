@@ -22,10 +22,8 @@ export interface CartItemWithCard extends CartItem {
     rarity: Rarity;
     totalSupply: number | null;
     currentSupply: number;
-    visual: {
-      artistImageUrl: string;
-      songTitle: string | null;
-    };
+    cardImageUrl: string;
+    songTitle: string | null;
     artist: {
       id: string;
       name: string;

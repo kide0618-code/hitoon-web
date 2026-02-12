@@ -31,32 +31,10 @@ export const RARITY_CONFIG = {
 } as const;
 
 /**
- * Card visual content (multiple per artist possible - album, single, etc.)
- * Contains the visual content (image, song title) that is combined with a FrameTemplate.
- *
- * Note: FrameTemplate (frame/effects) is defined in config/frame-templates.ts
- */
-export interface CardVisual {
-  id: string;
-  artistId: string;
-  name: string; // Visual identifier for admin (e.g., "1st Album", "Summer Single")
-  artistImageUrl: string;
-  songTitle: string | null;
-  subtitle: string | null;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-/** @deprecated Use CardVisual instead */
-export type CardTemplate = CardVisual;
-
-/**
- * Card entity (3 per visual: NORMAL, RARE, SUPER_RARE)
+ * Card entity - each card owns its own image/song content and frame template
  */
 export interface Card {
   id: string;
-  visualId: string;
   artistId: string;
   name: string;
   description: string | null;
@@ -65,20 +43,14 @@ export interface Card {
   totalSupply: number | null;
   currentSupply: number;
   maxPurchasePerUser: number | null;
+  cardImageUrl: string;
+  songTitle: string | null;
+  subtitle: string | null;
+  frameTemplateId: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
 }
-
-/**
- * Card with visual content for display
- */
-export interface CardWithVisual extends Card {
-  visual: CardVisual;
-}
-
-/** @deprecated Use CardWithVisual instead */
-export type CardWithTemplate = CardWithVisual;
 
 /**
  * Exclusive content for card owners (per rarity)

@@ -3,6 +3,8 @@
 import { useState, useEffect, use } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { getFrameTemplate, getFrameTemplatesByRarity } from '@/config/frame-templates';
+import type { Rarity } from '@/types/card';
 
 interface ExclusiveContent {
   id: string;
@@ -15,22 +17,20 @@ interface ExclusiveContent {
 
 interface Card {
   id: string;
-  template_id: string;
   artist_id: string;
   name: string;
   description: string | null;
-  rarity: 'NORMAL' | 'RARE' | 'SUPER_RARE';
+  rarity: Rarity;
   price: number;
   total_supply: number | null;
   current_supply: number;
   max_purchase_per_user: number | null;
   is_active: boolean;
+  card_image_url: string;
+  song_title: string | null;
+  subtitle: string | null;
+  frame_template_id: string;
   created_at: string;
-  template: {
-    id: string;
-    name: string;
-    artist_image_url: string;
-  };
   artist: {
     id: string;
     name: string;
@@ -58,6 +58,10 @@ export default function EditCardPage({ params }: PageProps) {
     total_supply: null as number | null,
     max_purchase_per_user: null as number | null,
     is_active: true,
+    card_image_url: '',
+    song_title: '',
+    subtitle: '',
+    frame_template_id: 'classic-normal',
   });
 
   useEffect(() => {
@@ -78,6 +82,10 @@ export default function EditCardPage({ params }: PageProps) {
           total_supply: data.card.total_supply,
           max_purchase_per_user: data.card.max_purchase_per_user,
           is_active: data.card.is_active,
+          card_image_url: data.card.card_image_url || '',
+          song_title: data.card.song_title || '',
+          subtitle: data.card.subtitle || '',
+          frame_template_id: data.card.frame_template_id || 'classic-normal',
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
@@ -179,6 +187,9 @@ export default function EditCardPage({ params }: PageProps) {
     );
   }
 
+  const frameTemplate = getFrameTemplate(card.frame_template_id);
+  const frameTemplatesForRarity = getFrameTemplatesByRarity(card.rarity);
+
   return (
     <div className="mx-auto max-w-3xl">
       <div className="mb-8 flex items-center gap-4">
@@ -200,7 +211,7 @@ export default function EditCardPage({ params }: PageProps) {
           <div className="sticky top-4 rounded-xl border border-gray-800 bg-gray-900 p-4">
             <div className="relative mb-4 aspect-[3/4] overflow-hidden rounded-lg">
               <Image
-                src={card.template.artist_image_url}
+                src={card.card_image_url}
                 alt={card.name}
                 fill
                 className="object-cover"
@@ -213,8 +224,8 @@ export default function EditCardPage({ params }: PageProps) {
                 <span className="text-white">{card.artist.name}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-500">Template</span>
-                <span className="text-white">{card.template.name}</span>
+                <span className="text-gray-500">Frame</span>
+                <span className="text-white">{frameTemplate?.name || card.frame_template_id}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-500">Rarity</span>
@@ -239,6 +250,73 @@ export default function EditCardPage({ params }: PageProps) {
         <div className="lg:col-span-2">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-6 rounded-xl border border-gray-800 bg-gray-900 p-6">
+              {/* Card Image URL */}
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-300">
+                  カード画像URL <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="url"
+                  required
+                  value={formData.card_image_url}
+                  onChange={(e) => setFormData({ ...formData, card_image_url: e.target.value })}
+                  className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
+                  placeholder="https://..."
+                />
+              </div>
+
+              {/* Song Title */}
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-300">楽曲名</label>
+                <input
+                  type="text"
+                  value={formData.song_title}
+                  onChange={(e) => setFormData({ ...formData, song_title: e.target.value })}
+                  className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
+                  placeholder="楽曲名（任意）"
+                />
+              </div>
+
+              {/* Subtitle */}
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-300">サブタイトル</label>
+                <input
+                  type="text"
+                  value={formData.subtitle}
+                  onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
+                  className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
+                  placeholder="サブタイトル（任意）"
+                />
+              </div>
+
+              {/* Frame Template Selection */}
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-300">
+                  フレームテンプレート
+                </label>
+                <div className="grid grid-cols-3 gap-3">
+                  {frameTemplatesForRarity.map((template) => (
+                    <button
+                      key={template.id}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, frame_template_id: template.id })}
+                      className={`rounded-lg border-2 p-3 transition-all ${
+                        formData.frame_template_id === template.id
+                          ? 'border-blue-500 bg-gray-800'
+                          : 'border-gray-800 bg-gray-900 hover:border-gray-700'
+                      }`}
+                    >
+                      <div
+                        className="mx-auto mb-2 h-8 w-full rounded"
+                        style={{ background: template.previewGradient }}
+                      />
+                      <p className="text-xs text-white">{template.name}</p>
+                      <p className="text-xs text-gray-500">{template.nameJa}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Name */}
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-300">

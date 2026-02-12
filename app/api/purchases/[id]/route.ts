@@ -23,7 +23,7 @@ export async function GET(request: Request, context: RouteContext) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get purchase with full card, visual, artist info
+    // Get purchase with full card and artist info
     const { data: purchase, error: purchaseError } = await supabase
       .from('purchases')
       .select(
@@ -31,13 +31,6 @@ export async function GET(request: Request, context: RouteContext) {
         *,
         card:cards (
           *,
-          visual:card_visuals (
-            id,
-            name,
-            artist_image_url,
-            song_title,
-            subtitle
-          ),
           artist:artists (
             id,
             name,

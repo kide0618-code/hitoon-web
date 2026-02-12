@@ -54,13 +54,11 @@ async function getCollection(): Promise<CollectionItem[]> {
         id,
         rarity,
         total_supply,
+        song_title,
         artists (
           id,
           name,
           image_url
-        ),
-        card_visuals (
-          song_title
         )
       )
     `,
@@ -84,8 +82,8 @@ async function getCollection(): Promise<CollectionItem[]> {
       id: string;
       rarity: string;
       total_supply: number | null;
+      song_title: string | null;
       artists: { id: string; name: string; image_url: string | null } | null;
-      card_visuals: { song_title: string | null } | null;
     } | null;
   };
   const purchases = purchasesData as PurchaseWithRelations[];
@@ -110,7 +108,6 @@ async function getCollection(): Promise<CollectionItem[]> {
     .map((purchase) => {
       const card = purchase.cards!;
       const artist = card.artists;
-      const visual = card.card_visuals;
 
       return {
         purchaseId: purchase.id,
@@ -119,7 +116,7 @@ async function getCollection(): Promise<CollectionItem[]> {
         artistName: artist?.name || 'Unknown Artist',
         artistImageUrl:
           artist?.image_url || 'https://placehold.co/600x600/1e293b/60a5fa?text=Artist',
-        songTitle: visual?.song_title || null,
+        songTitle: card.song_title || null,
         rarity: card.rarity as Rarity,
         serialNumber: purchase.serial_number,
         totalSupply: card.total_supply,

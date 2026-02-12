@@ -3,6 +3,12 @@
 import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import {
+  type SocialLinksFormData,
+  createEmptySocialLinksData,
+  buildSocialLinksPayload,
+  SocialLinksFormSection,
+} from '@/components/features/social-links-form';
 
 export default function NewArtistPage() {
   const router = useRouter();
@@ -16,9 +22,14 @@ export default function NewArtistPage() {
     name: '',
     description: '',
     image_url: '',
+    note: '',
     is_featured: false,
     display_order: 0,
   });
+
+  const [socialLinksData, setSocialLinksData] = useState<SocialLinksFormData>(
+    createEmptySocialLinksData(),
+  );
 
   const handleFileUpload = async (file: File) => {
     setIsUploading(true);
@@ -72,7 +83,10 @@ export default function NewArtistPage() {
       const res = await fetch('/api/admin/artists', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          social_links: buildSocialLinksPayload(socialLinksData),
+        }),
       });
 
       const data = await res.json();
@@ -130,6 +144,20 @@ export default function NewArtistPage() {
               rows={4}
               className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
               placeholder="Artist description"
+            />
+          </div>
+
+          {/* Note (operator only) */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-300">
+              メモ <span className="text-xs text-gray-500">（管理者のみ表示）</span>
+            </label>
+            <textarea
+              value={formData.note}
+              onChange={(e) => setFormData({ ...formData, note: e.target.value })}
+              rows={3}
+              className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
+              placeholder="管理用メモ（ユーザーには表示されません）"
             />
           </div>
 
@@ -273,12 +301,14 @@ export default function NewArtistPage() {
                   onChange={(e) => setFormData({ ...formData, is_featured: e.target.checked })}
                   className="h-5 w-5 rounded border border-gray-700 bg-gray-800 focus:ring-blue-500"
                 />
-                <span className="text-sm font-medium text-gray-300">Featured on Home</span>
+                <span className="text-sm font-medium text-gray-300">「Featured」に表示する</span>
               </label>
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-300">Display Order</label>
+              <label className="mb-2 block text-sm font-medium text-gray-300">
+                表示順 ※数字が小さいほど前に表示されます
+              </label>
               <input
                 type="number"
                 value={formData.display_order}
@@ -294,6 +324,9 @@ export default function NewArtistPage() {
             </div>
           </div>
         </div>
+
+        {/* Social Links */}
+        <SocialLinksFormSection value={socialLinksData} onChange={setSocialLinksData} />
 
         {/* Actions */}
         <div className="flex items-center gap-4">

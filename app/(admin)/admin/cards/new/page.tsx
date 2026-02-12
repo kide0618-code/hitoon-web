@@ -1,62 +1,45 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { FRAME_TEMPLATES, getFrameTemplatesByRarity } from '@/config/frame-templates';
+import type { Rarity } from '@/types/card';
 
 interface Artist {
   id: string;
   name: string;
 }
 
-interface Template {
-  id: string;
-  name: string;
-  artist_id: string;
-  artist: { id: string; name: string };
-}
-
 export default function NewCardPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [artists, setArtists] = useState<Artist[]>([]);
-  const [templates, setTemplates] = useState<Template[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
 
-  const preselectedTemplateId = searchParams.get('template_id');
-  const preselectedArtistId = searchParams.get('artist_id');
-
   const [formData, setFormData] = useState({
-    template_id: preselectedTemplateId || '',
-    artist_id: preselectedArtistId || '',
+    artist_id: '',
     name: '',
     description: '',
-    rarity: 'NORMAL' as 'NORMAL' | 'RARE' | 'SUPER_RARE',
+    rarity: 'NORMAL' as Rarity,
     price: 1500,
     total_supply: null as number | null,
     max_purchase_per_user: null as number | null,
     is_active: true,
+    card_image_url: '',
+    song_title: '',
+    subtitle: '',
+    frame_template_id: 'classic-normal',
   });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [artistsRes, templatesRes] = await Promise.all([
-          fetch('/api/artists'),
-          fetch('/api/admin/templates-list'),
-        ]);
-
-        const artistsData = await artistsRes.json();
-        setArtists(artistsData.artists || []);
-
-        // Templates list might not exist, handle gracefully
-        if (templatesRes.ok) {
-          const templatesData = await templatesRes.json();
-          setTemplates(templatesData.templates || []);
-        }
+        const res = await fetch('/api/artists');
+        const data = await res.json();
+        setArtists(data.artists || []);
       } catch (err) {
-        console.error('Failed to fetch data:', err);
+        console.error('Failed to fetch artists:', err);
       } finally {
         setIsLoadingData(false);
       }
@@ -64,19 +47,6 @@ export default function NewCardPage() {
 
     fetchData();
   }, []);
-
-  // Update artist_id when template changes
-  useEffect(() => {
-    if (formData.template_id) {
-      const selectedTemplate = templates.find((t) => t.id === formData.template_id);
-      if (selectedTemplate) {
-        setFormData((prev) => ({
-          ...prev,
-          artist_id: selectedTemplate.artist_id,
-        }));
-      }
-    }
-  }, [formData.template_id, templates]);
 
   // Update name when artist or rarity changes
   useEffect(() => {
@@ -90,22 +60,28 @@ export default function NewCardPage() {
     }
   }, [formData.artist_id, formData.rarity, artists]);
 
-  // Update default price based on rarity
+  // Update default price, supply, and frame template based on rarity
   useEffect(() => {
-    const defaultPrices = {
+    const defaultPrices: Record<Rarity, number> = {
       NORMAL: 1500,
       RARE: 3000,
       SUPER_RARE: 8000,
     };
-    const defaultSupply = {
+    const defaultSupply: Record<Rarity, number | null> = {
       NORMAL: null,
       RARE: 100,
       SUPER_RARE: 30,
+    };
+    const defaultFrame: Record<Rarity, string> = {
+      NORMAL: 'classic-normal',
+      RARE: 'classic-rare',
+      SUPER_RARE: 'classic-super-rare',
     };
     setFormData((prev) => ({
       ...prev,
       price: defaultPrices[formData.rarity],
       total_supply: defaultSupply[formData.rarity],
+      frame_template_id: defaultFrame[formData.rarity],
     }));
   }, [formData.rarity]);
 
@@ -135,15 +111,13 @@ export default function NewCardPage() {
     }
   };
 
-  const filteredTemplates = formData.artist_id
-    ? templates.filter((t) => t.artist_id === formData.artist_id)
-    : templates;
-
   const rarityStyles = {
     NORMAL: 'border-gray-700',
     RARE: 'border-blue-500',
     SUPER_RARE: 'border-yellow-400',
   };
+
+  const frameTemplatesForRarity = getFrameTemplatesByRarity(formData.rarity);
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -174,7 +148,6 @@ export default function NewCardPage() {
                 setFormData({
                   ...formData,
                   artist_id: e.target.value,
-                  template_id: '',
                 })
               }
               className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
@@ -189,27 +162,46 @@ export default function NewCardPage() {
             </select>
           </div>
 
-          {/* Template Selection */}
+          {/* Card Image URL */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-300">
-              Template <span className="text-red-400">*</span>
+              カード画像URL <span className="text-red-400">*</span>
             </label>
-            <select
+            <input
+              type="url"
               required
-              value={formData.template_id}
-              onChange={(e) => setFormData({ ...formData, template_id: e.target.value })}
+              value={formData.card_image_url}
+              onChange={(e) => setFormData({ ...formData, card_image_url: e.target.value })}
               className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
-              disabled={isLoadingData || !formData.artist_id}
-            >
-              <option value="">
-                {formData.artist_id ? 'Select a template' : 'Select an artist first'}
-              </option>
-              {filteredTemplates.map((template) => (
-                <option key={template.id} value={template.id}>
-                  {template.name}
-                </option>
-              ))}
-            </select>
+              placeholder="https://..."
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              アーティスト画像のURL（Supabase Storage等）
+            </p>
+          </div>
+
+          {/* Song Title */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-300">楽曲名</label>
+            <input
+              type="text"
+              value={formData.song_title}
+              onChange={(e) => setFormData({ ...formData, song_title: e.target.value })}
+              className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
+              placeholder="楽曲名（任意）"
+            />
+          </div>
+
+          {/* Subtitle */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-300">サブタイトル</label>
+            <input
+              type="text"
+              value={formData.subtitle}
+              onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
+              className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
+              placeholder="サブタイトル（任意）"
+            />
           </div>
 
           {/* Rarity Selection */}
@@ -243,6 +235,34 @@ export default function NewCardPage() {
                   <p className="mt-2 text-sm text-white">
                     {rarity === 'SUPER_RARE' ? 'Super Rare' : rarity}
                   </p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Frame Template Selection */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-300">
+              フレームテンプレート <span className="text-red-400">*</span>
+            </label>
+            <div className="grid grid-cols-3 gap-3">
+              {frameTemplatesForRarity.map((template) => (
+                <button
+                  key={template.id}
+                  type="button"
+                  onClick={() => setFormData({ ...formData, frame_template_id: template.id })}
+                  className={`rounded-lg border-2 p-3 transition-all ${
+                    formData.frame_template_id === template.id
+                      ? 'border-blue-500 bg-gray-800'
+                      : 'border-gray-800 bg-gray-900 hover:border-gray-700'
+                  }`}
+                >
+                  <div
+                    className="mx-auto mb-2 h-8 w-full rounded"
+                    style={{ background: template.previewGradient }}
+                  />
+                  <p className="text-xs text-white">{template.name}</p>
+                  <p className="text-xs text-gray-500">{template.nameJa}</p>
                 </button>
               ))}
             </div>

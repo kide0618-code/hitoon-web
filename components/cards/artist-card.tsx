@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { cn } from '@/lib/utils/cn';
 import { type Rarity } from '@/types/card';
-import { getDefaultFrameForRarity } from '@/config/frame-templates';
+import { getDefaultFrameForRarity, getFrameTemplate } from '@/config/frame-templates';
 import { RarityBadge } from './rarity-badge';
 import { formatSerialNumber } from '@/lib/utils/format';
 
@@ -12,6 +12,7 @@ interface ArtistCardProps {
   artistImageUrl: string;
   songTitle?: string | null;
   rarity: Rarity;
+  frameTemplateId?: string;
   serialNumber?: number;
   totalSupply?: number | null;
   owned?: number;
@@ -25,6 +26,7 @@ export function ArtistCard({
   artistImageUrl,
   songTitle,
   rarity,
+  frameTemplateId,
   serialNumber,
   totalSupply,
   owned,
@@ -32,7 +34,8 @@ export function ArtistCard({
   className,
   onClick,
 }: ArtistCardProps) {
-  const frame = getDefaultFrameForRarity(rarity);
+  const frame =
+    (frameTemplateId && getFrameTemplate(frameTemplateId)) || getDefaultFrameForRarity(rarity);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (onClick && (e.key === 'Enter' || e.key === ' ')) {

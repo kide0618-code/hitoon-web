@@ -12,7 +12,11 @@ export async function GET(request: Request) {
 
     const supabase = await createServerSupabaseClient();
 
-    let query = supabase.from('artists').select('*');
+    let query = supabase
+      .from('artists')
+      .select(
+        'id, name, description, image_url, member_count, is_featured, display_order, created_at, updated_at',
+      );
 
     if (featured === 'true') {
       query = query.eq('is_featured', true).order('display_order', { ascending: true });

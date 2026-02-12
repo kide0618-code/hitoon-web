@@ -19,8 +19,8 @@ interface CardData {
   total_supply: number | null;
   current_supply: number;
   max_purchase_per_user: number | null;
+  card_image_url: string;
   artist: { id: string; name: string } | null;
-  visual: { id: string; name: string; artist_image_url: string | null } | null;
 }
 
 /**
@@ -82,11 +82,6 @@ async function handleSingleCardCheckout(
       artist:artists (
         id,
         name
-      ),
-      visual:card_visuals (
-        id,
-        name,
-        artist_image_url
       )
     `,
     )
@@ -152,7 +147,7 @@ async function handleSingleCardCheckout(
     cardId,
     cardName: cardData.name,
     artistName: cardData.artist?.name || 'Unknown Artist',
-    imageUrl: cardData.visual?.artist_image_url || undefined,
+    imageUrl: cardData.card_image_url || undefined,
     price: cardData.price,
     quantity: qty,
     userId: user.id,
@@ -193,14 +188,10 @@ async function handleCartCheckout(
       total_supply,
       current_supply,
       max_purchase_per_user,
+      card_image_url,
       artist:artists (
         id,
         name
-      ),
-      visual:card_visuals (
-        id,
-        name,
-        artist_image_url
       )
     `,
     )
@@ -282,7 +273,7 @@ async function handleCartCheckout(
       cardId: item.cardId,
       cardName: cardData.name,
       artistName: cardData.artist?.name || 'Unknown Artist',
-      imageUrl: cardData.visual?.artist_image_url || undefined,
+      imageUrl: cardData.card_image_url || undefined,
       price: cardData.price,
       quantity: item.quantity,
     });

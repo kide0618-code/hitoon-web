@@ -40,11 +40,10 @@ function CartItem({
           <ArtistCard
             artistName={item.card.artist.name}
             artistImageUrl={
-              item.card.visual.artistImageUrl ||
-              'https://placehold.co/120x160/1e293b/60a5fa?text=Card'
+              item.card.cardImageUrl || 'https://placehold.co/120x160/1e293b/60a5fa?text=Card'
             }
             rarity={item.card.rarity}
-            songTitle={item.card.visual.songTitle}
+            songTitle={item.card.songTitle}
           />
         </Link>
 
@@ -53,8 +52,8 @@ function CartItem({
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
               <h3 className="truncate text-sm font-bold sm:text-base">{item.card.artist.name}</h3>
-              {item.card.visual.songTitle && (
-                <p className="truncate text-xs text-gray-500">{item.card.visual.songTitle}</p>
+              {item.card.songTitle && (
+                <p className="truncate text-xs text-gray-500">{item.card.songTitle}</p>
               )}
             </div>
             <button

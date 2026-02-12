@@ -3,7 +3,8 @@ import { notFound } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { ArtistDetailClient } from './client';
 import type { Rarity } from '@/types/card';
-import type { Artist, Card, CardVisual } from '@/types/database';
+import type { SocialLink } from '@/types/artist';
+import type { Artist, Card } from '@/types/database';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -15,10 +16,9 @@ interface CardData {
   price: number;
   totalSupply: number | null;
   currentSupply: number;
-  visual: {
-    artistImageUrl: string;
-    songTitle: string | null;
-  };
+  cardImageUrl: string;
+  songTitle: string | null;
+  frameTemplateId: string;
 }
 
 interface ArtistData {
@@ -28,6 +28,7 @@ interface ArtistData {
   imageUrl: string | null;
   memberCount: number;
   cards: CardData[];
+  socialLinks: SocialLink[];
 }
 
 async function getArtist(id: string): Promise<ArtistData | null> {
@@ -49,10 +50,12 @@ async function getArtist(id: string): Promise<ArtistData | null> {
     'id' | 'name' | 'description' | 'image_url' | 'member_count'
   >;
 
-  // Fetch cards for this artist
+  // Fetch cards for this artist (card_image_url, song_title, frame_template_id are now on cards)
   const { data: cardsData, error: cardsError } = await supabase
     .from('cards')
-    .select('id, rarity, price, total_supply, current_supply, visual_id')
+    .select(
+      'id, rarity, price, total_supply, current_supply, card_image_url, song_title, frame_template_id',
+    )
     .eq('artist_id', id)
     .eq('is_active', true)
     .order('price', { ascending: true });
@@ -63,17 +66,22 @@ async function getArtist(id: string): Promise<ArtistData | null> {
 
   const cards = cardsData as Pick<
     Card,
-    'id' | 'rarity' | 'price' | 'total_supply' | 'current_supply' | 'visual_id'
+    | 'id'
+    | 'rarity'
+    | 'price'
+    | 'total_supply'
+    | 'current_supply'
+    | 'card_image_url'
+    | 'song_title'
+    | 'frame_template_id'
   >[];
 
-  // Fetch visual for the first card (all cards share the same visual)
-  const { data: visualData } = await supabase
-    .from('card_visuals')
-    .select('artist_image_url, song_title')
-    .eq('id', cards[0].visual_id)
-    .single();
-
-  const visual = visualData as Pick<CardVisual, 'artist_image_url' | 'song_title'> | null;
+  // Fetch social links
+  const { data: socialLinksData } = await supabase
+    .from('artist_social_links')
+    .select('platform, url')
+    .eq('artist_id', id)
+    .order('display_order', { ascending: true });
 
   return {
     id: artist.id,
@@ -87,11 +95,11 @@ async function getArtist(id: string): Promise<ArtistData | null> {
       price: card.price,
       totalSupply: card.total_supply,
       currentSupply: card.current_supply,
-      visual: {
-        artistImageUrl: visual?.artist_image_url || artist.image_url || '',
-        songTitle: visual?.song_title || null,
-      },
+      cardImageUrl: card.card_image_url || artist.image_url || '',
+      songTitle: card.song_title || null,
+      frameTemplateId: card.frame_template_id,
     })),
+    socialLinks: (socialLinksData || []) as SocialLink[],
   };
 }
 

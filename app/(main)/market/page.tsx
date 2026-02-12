@@ -1,12 +1,8 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Users } from 'lucide-react';
 import { PageContainer } from '@/components/layout/page-container';
-import { ROUTES } from '@/constants/routes';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
-import { formatPrice } from '@/lib/utils/format';
 import type { Artist, Card } from '@/types/database';
+import { MarketClient } from './client';
 
 export const metadata: Metadata = {
   title: 'Store',
@@ -74,54 +70,7 @@ export default async function MarketPage() {
 
   return (
     <PageContainer>
-      <div className="p-4">
-        <h1 className="mb-6 text-2xl font-bold">Find Artists</h1>
-
-        <div className="grid grid-cols-1 gap-4">
-          {artists.length > 0 ? (
-            artists.map((artist) => (
-              <Link
-                key={artist.id}
-                href={ROUTES.ARTIST(artist.id)}
-                className="group block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-              >
-                <div className="flex items-center gap-4 rounded-xl border border-gray-800 bg-surface-raised p-4 transition-all hover:border-blue-500/50 group-hover:shadow-card">
-                  <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-full border-2 border-gray-700 transition-colors group-hover:border-blue-500/50">
-                    <Image
-                      src={
-                        artist.imageUrl || 'https://placehold.co/600x600/1e293b/60a5fa?text=Artist'
-                      }
-                      alt={artist.name}
-                      fill
-                      className="object-cover"
-                      unoptimized
-                    />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="truncate text-lg font-bold">{artist.name}</h3>
-                    <div className="mb-2 flex items-center text-xs text-gray-500">
-                      <Users size={12} className="mr-1" />
-                      {artist.memberCount} Members
-                    </div>
-                    <p className="text-lg font-bold text-blue-400">
-                      {formatPrice(artist.lowestPrice)}〜
-                    </p>
-                  </div>
-                  <div className="text-xl text-gray-600 transition-colors group-hover:text-blue-400">
-                    →
-                  </div>
-                </div>
-              </Link>
-            ))
-          ) : (
-            <div className="py-20 text-center">
-              <Users className="mx-auto mb-4 text-gray-600" size={48} />
-              <p className="mb-2 text-gray-500">アーティストがまだ登録されていません。</p>
-              <p className="text-xs text-gray-600">新しいアーティストを準備中です</p>
-            </div>
-          )}
-        </div>
-      </div>
+      <MarketClient artists={artists} />
     </PageContainer>
   );
 }

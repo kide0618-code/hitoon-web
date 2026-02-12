@@ -223,7 +223,7 @@ export function SettingsClient({ user, providers }: SettingsClientProps) {
   return (
     <div className="min-h-screen pb-24">
       {/* Header */}
-      <div className="sticky top-0 z-20 border-b border-gray-800 bg-black/90 backdrop-blur-md">
+      <div className="sticky top-0 z-20 border-b border-gray-800 bg-black">
         <div className="flex h-14 items-center px-4">
           <Link
             href={ROUTES.HOME}
