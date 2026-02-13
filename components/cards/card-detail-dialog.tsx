@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, ShoppingCart, Check, Wallet, Minus, Plus } from 'lucide-react';
 import { ArtistCard } from './artist-card';
-import { RotatableCard } from './rotatable-card';
 import { formatPrice } from '@/lib/utils/format';
 import type { Rarity } from '@/types/card';
 
@@ -99,17 +98,16 @@ export function CardDetailDialog({
       {/* Scrollable Content Area */}
       <div className="relative z-10 flex-1 overflow-y-auto overflow-x-hidden">
         {/* 3D Card Container */}
-        <RotatableCard
-          className="flex min-h-[340px] items-center justify-center px-6 py-6"
-          innerClassName="w-full max-w-[260px] sm:max-w-sm"
-        >
-          <ArtistCard
-            artistName={card.artistName}
-            artistImageUrl={card.artistImageUrl}
-            songTitle={card.songTitle}
-            rarity={card.rarity}
-          />
-        </RotatableCard>
+        <div className="flex min-h-[340px] items-center justify-center px-6 py-6">
+          <div className="w-full max-w-[260px] sm:max-w-sm">
+            <ArtistCard
+              artistName={card.artistName}
+              artistImageUrl={card.artistImageUrl}
+              songTitle={card.songTitle}
+              rarity={card.rarity}
+            />
+          </div>
+        </div>
 
         {/* Drag hint */}
         <div className="mb-4 text-center text-xs text-gray-500">スワイプでカードを回転</div>

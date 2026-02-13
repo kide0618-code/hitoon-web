@@ -12,7 +12,6 @@ import {
 } from 'lucide-react';
 import { PageContainer } from '@/components/layout/page-container';
 import { ArtistCard } from '@/components/cards/artist-card';
-import { RotatableCard } from '@/components/cards/rotatable-card';
 import { RarityBadge } from '@/components/cards/rarity-badge';
 import { ROUTES } from '@/constants/routes';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
@@ -201,19 +200,17 @@ export default async function CollectionDetailPage({ params }: PageProps) {
       {/* Card Display */}
       <div className="p-6 pt-16">
         <div className="mx-auto max-w-xs">
-          <RotatableCard>
-            <ArtistCard
-              artistName={purchase.artist.name}
-              artistImageUrl={purchase.card.cardImageUrl}
-              songTitle={purchase.card.songTitle}
-              rarity={purchase.card.rarity}
-              frameTemplateId={purchase.card.frameTemplateId}
-              serialNumber={purchase.serialNumber}
-              totalSupply={purchase.card.totalSupply}
-              owned={1}
-            />
-          </RotatableCard>
-          <p className="mt-2 text-center text-xs text-gray-500">スワイプでカードを回転</p>
+          <ArtistCard
+            artistName={purchase.artist.name}
+            artistImageUrl={purchase.card.cardImageUrl}
+            songTitle={purchase.card.songTitle}
+            rarity={purchase.card.rarity}
+            frameTemplateId={purchase.card.frameTemplateId}
+            serialNumber={purchase.serialNumber}
+            totalSupply={purchase.card.totalSupply}
+            owned={1}
+          />
+          <p className="mt-2 text-center text-xs text-gray-500">カードにマウスを乗せてホログラム効果を確認</p>
         </div>
       </div>
 
