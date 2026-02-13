@@ -111,9 +111,30 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return { title: 'Artist Not Found' };
   }
 
+  const description = artist.description || `${artist.name}のデジタルカードを購入`;
+  const firstCard = artist.cards[0];
+  const ogImageUrl = firstCard
+    ? `${process.env.NEXT_PUBLIC_APP_URL}/api/og/card?id=${firstCard.id}`
+    : undefined;
+
   return {
     title: artist.name,
-    description: artist.description || `${artist.name}のデジタルカードを購入`,
+    description,
+    openGraph: {
+      title: artist.name,
+      description,
+      ...(ogImageUrl && {
+        images: [{ url: ogImageUrl, width: 1200, height: 630 }],
+      }),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: artist.name,
+      description,
+      ...(ogImageUrl && {
+        images: [ogImageUrl],
+      }),
+    },
   };
 }
 
