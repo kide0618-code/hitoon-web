@@ -64,18 +64,6 @@ export function ArtistCard({
         <div className="trading-card-image">
           <Image src={artistImageUrl} alt={artistName} fill className="object-cover" unoptimized />
 
-          {/* Top corner decoration for SR */}
-          {rarity === 'SUPER_RARE' && (
-            <div className="absolute right-1 top-1 sm:right-2 sm:top-2">
-              <div className="relative h-4 w-4 sm:h-6 sm:w-6">
-                <div className="absolute inset-0 animate-pulse rounded-full bg-gradient-to-br from-yellow-300 to-amber-500" />
-                <div className="absolute inset-[2px] flex items-center justify-center rounded-full bg-gradient-to-br from-yellow-400 to-amber-600">
-                  <span className="text-[6px] font-black text-black sm:text-[8px]">★</span>
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* Overlay text on image */}
           <div className="absolute bottom-0 left-0 right-0 z-10 p-2 sm:p-3">
             <p className="truncate text-2xs font-medium uppercase tracking-widest text-gray-300 sm:text-xs">

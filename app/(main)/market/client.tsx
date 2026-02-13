@@ -25,7 +25,7 @@ export function MarketClient({ artists }: { artists: ArtistItem[] }) {
 
   return (
     <div className="p-4">
-      <h1 className="mb-4 text-2xl font-bold">Find Artists</h1>
+      <h1 className="mb-6 text-2xl font-bold">Find Artists</h1>
 
       {/* Spotify-style search bar */}
       <div className="relative mb-6">
