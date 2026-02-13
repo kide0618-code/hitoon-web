@@ -477,12 +477,9 @@ function ArtistCard({
 
 - **カードデザインイメージ**:
 
-/docs/assets/poke-1.png
-/docs/assets/poke-2.png
-/docs/assets/poke-3.png
-
-/docs/assets/card-song.png
+@/docs/assets/poke-1.png
+@/docs/assets/poke-2.png
+@/docs/assets/poke-3.png
+@/docs/assets/card-song.png
 
 https://pokemon-tcg-pocket.wiki/ja/pokemon-card-maker-for-tcgp
-
-- MVP: https://hitoon-music.vercel.app/
