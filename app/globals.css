@@ -660,14 +660,64 @@ body {
   mix-blend-mode: hard-light;
 }
 
-/* Normal frame/border */
+/* Normal: Silver Brushed Metal Frame */
 .card[data-rarity='normal'] .card__front::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: var(--card-radius);
-  border: 3px solid rgba(140, 160, 190, 0.5);
+  border: 5px solid transparent;
+  background:
+    /* Fine brushed grain texture */
+    repeating-linear-gradient(
+      105deg,
+      transparent 0px,
+      transparent 1px,
+      rgba(255, 255, 255, 0.04) 1px,
+      rgba(255, 255, 255, 0.04) 2px
+    ) border-box,
+    /* Silver metallic gradient */
+    linear-gradient(
+      160deg,
+      hsl(210, 8%, 78%) 0%,
+      hsl(210, 5%, 55%) 10%,
+      hsl(210, 10%, 82%) 20%,
+      hsl(210, 5%, 48%) 32%,
+      hsl(210, 8%, 75%) 44%,
+      hsl(210, 5%, 42%) 52%,
+      hsl(210, 10%, 80%) 63%,
+      hsl(210, 5%, 52%) 75%,
+      hsl(210, 8%, 72%) 87%,
+      hsl(210, 5%, 58%) 100%
+    ) border-box;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
   z-index: 5;
+  pointer-events: none;
+}
+
+/* Normal: 3D Bevel Shadows */
+.card[data-rarity='normal'] .card__front::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--card-radius);
+  box-shadow:
+    /* Outer top-left highlight */
+    inset 1px 1px 0 0 rgba(255, 255, 255, 0.35),
+    /* Outer bottom-right shadow */
+    inset -1px -1px 0 0 rgba(0, 0, 0, 0.5),
+    /* Inner edge shadow (top-left, undercut) */
+    inset 6px 6px 3px -4px rgba(0, 0, 0, 0.25),
+    /* Inner edge highlight (bottom-right, catch light) */
+    inset -6px -6px 3px -4px rgba(255, 255, 255, 0.15);
+  z-index: 6;
   pointer-events: none;
 }
 
@@ -819,15 +869,71 @@ body {
   opacity: calc(var(--card-opacity) * .75);
 }
 
-/* Rare frame/border */
+/* Rare: Blue-Chrome Metallic Frame */
 .card[data-rarity='rare'] .card__front::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: var(--card-radius);
-  border: 3px solid rgba(59, 130, 246, 0.6);
-  box-shadow: inset 0 0 15px rgba(59, 130, 246, 0.15);
+  border: 6px solid transparent;
+  background:
+    /* Fine grain texture */
+    repeating-linear-gradient(
+      115deg,
+      transparent 0px,
+      transparent 1px,
+      rgba(100, 160, 255, 0.03) 1px,
+      rgba(100, 160, 255, 0.03) 2px
+    ) border-box,
+    /* Blue-chrome metallic gradient */
+    linear-gradient(
+      160deg,
+      hsl(220, 50%, 75%) 0%,
+      hsl(230, 60%, 50%) 8%,
+      hsl(215, 55%, 78%) 16%,
+      hsl(240, 50%, 42%) 25%,
+      hsl(210, 60%, 72%) 33%,
+      hsl(225, 55%, 55%) 42%,
+      hsl(235, 50%, 80%) 50%,
+      hsl(220, 60%, 48%) 58%,
+      hsl(210, 55%, 75%) 67%,
+      hsl(230, 50%, 45%) 75%,
+      hsl(215, 60%, 70%) 83%,
+      hsl(240, 55%, 52%) 92%,
+      hsl(220, 50%, 76%) 100%
+    ) border-box;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
   z-index: 5;
+  pointer-events: none;
+}
+
+/* Rare: 3D Bevel + Blue Glow */
+.card[data-rarity='rare'] .card__front::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--card-radius);
+  box-shadow:
+    /* Outer top-left highlight */
+    inset 1px 1px 0 0 rgba(160, 200, 255, 0.5),
+    /* Outer bottom-right shadow */
+    inset -1px -1px 0 0 rgba(0, 0, 30, 0.6),
+    /* Inner edge shadow (top-left undercut) */
+    inset 7px 7px 3px -5px rgba(0, 0, 40, 0.35),
+    /* Inner edge highlight (bottom-right catch) */
+    inset -7px -7px 3px -5px rgba(140, 180, 255, 0.2),
+    /* Subtle blue inner glow */
+    inset 0 0 12px 0 rgba(59, 130, 246, 0.1),
+    /* Outer blue glow */
+    0 0 10px 1px rgba(59, 130, 246, 0.08);
+  z-index: 6;
   pointer-events: none;
 }
 
@@ -943,17 +1049,74 @@ body {
   mix-blend-mode: hard-light;
 }
 
-/* Super Rare: Gold frame/border */
+/* Super Rare: Gold Metallic Frame */
 .card[data-rarity='super_rare'] .card__front::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: var(--card-radius);
-  border: 4px solid rgba(251, 191, 36, 0.7);
-  box-shadow:
-    inset 0 0 20px rgba(251, 191, 36, 0.15),
-    inset 0 0 40px rgba(244, 114, 182, 0.05);
+  border: 7px solid transparent;
+  background:
+    /* Fine diagonal brushed-gold grain */
+    repeating-linear-gradient(
+      115deg,
+      transparent 0px,
+      transparent 1px,
+      rgba(255, 230, 140, 0.06) 1px,
+      rgba(255, 230, 140, 0.06) 2px
+    ) border-box,
+    /* Rich gold metallic gradient */
+    linear-gradient(
+      160deg,
+      hsl(43, 85%, 72%) 0%,
+      hsl(38, 90%, 52%) 7%,
+      hsl(46, 95%, 78%) 14%,
+      hsl(35, 85%, 45%) 22%,
+      hsl(42, 92%, 74%) 29%,
+      hsl(40, 88%, 56%) 36%,
+      hsl(48, 95%, 80%) 43%,
+      hsl(36, 85%, 48%) 50%,
+      hsl(44, 92%, 72%) 57%,
+      hsl(38, 90%, 54%) 64%,
+      hsl(46, 95%, 76%) 71%,
+      hsl(34, 85%, 46%) 79%,
+      hsl(42, 90%, 70%) 86%,
+      hsl(40, 88%, 55%) 93%,
+      hsl(45, 85%, 74%) 100%
+    ) border-box;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
   z-index: 5;
+  pointer-events: none;
+}
+
+/* Super Rare: 3D Gold Bevel + Warm Glow */
+.card[data-rarity='super_rare'] .card__front::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--card-radius);
+  box-shadow:
+    /* Outer top-left highlight (warm gold) */
+    inset 2px 2px 0 0 rgba(255, 248, 200, 0.6),
+    /* Outer bottom-right shadow (deep bronze) */
+    inset -2px -2px 0 0 rgba(60, 35, 0, 0.65),
+    /* Inner edge shadow (top-left undercut) */
+    inset 9px 9px 4px -6px rgba(60, 35, 0, 0.35),
+    /* Inner edge highlight (bottom-right catch light) */
+    inset -9px -9px 4px -6px rgba(255, 240, 170, 0.25),
+    /* Warm inner glow */
+    inset 0 0 18px 0 rgba(251, 191, 36, 0.12),
+    /* Outer golden glow */
+    0 0 15px 2px rgba(251, 191, 36, 0.15),
+    0 0 30px 0px rgba(251, 191, 36, 0.06);
+  z-index: 6;
   pointer-events: none;
 }
 
