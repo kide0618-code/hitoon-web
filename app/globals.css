@@ -140,7 +140,8 @@ body {
 }
 
 /* =====================================================
-   POKEMON-CARDS-CSS INSPIRED HOLOGRAPHIC CARD SYSTEM
+   POKEMON-CARDS-CSS HOLOGRAPHIC CARD SYSTEM
+   Full port of pokemon-cards-css effects for HITOON
    ===================================================== */
 
 /* --- CSS Variables --- */
@@ -159,7 +160,7 @@ body {
   --sunpillar-5: hsl(228, 100%, 74%);
   --sunpillar-6: hsl(283, 100%, 73%);
 
-  /* Shifted rainbow colors for ::before and ::after */
+  /* Shifted rainbow colors for pseudo-elements */
   --sunpillar-clr-1: var(--sunpillar-1);
   --sunpillar-clr-2: var(--sunpillar-2);
   --sunpillar-clr-3: var(--sunpillar-3);
@@ -176,6 +177,9 @@ body {
 
   /* Textures */
   --glitter: url('/img/glitter.png');
+  --grain: url('/img/grain.webp');
+  --foil: url('/img/illusion.png');
+  --geometric: url('/img/geometric.png');
   --glittersize: 25%;
 
   /* Default interaction state (overridden by JS) */
@@ -262,7 +266,7 @@ body {
   appearance: none;
 }
 
-/* Active/focus glow */
+/* Default shadow */
 .card__rotator {
   transition: box-shadow 0.4s ease, opacity 0.33s ease-out;
   box-shadow:
@@ -274,6 +278,7 @@ body {
     0 0 20px 0px transparent;
 }
 
+/* Active/hover glow */
 .card__rotator:hover,
 .card__rotator:focus-visible {
   box-shadow:
@@ -447,8 +452,14 @@ body {
 }
 
 /* =====================================================
-   SHINE & GLARE EFFECT LAYERS
+   SHINE & GLARE EFFECT LAYERS (Base)
    ===================================================== */
+
+.card__shine,
+.card__glare {
+  will-change: transform, opacity, background-image, background-size,
+    background-position, background-blend-mode, filter;
+}
 
 .card__shine {
   display: grid;
@@ -501,12 +512,13 @@ body {
 }
 
 /* =====================================================
-   RARITY: NORMAL — Subtle metallic with glare only
+   RARITY: NORMAL — Radiant Metallic Holo
+   Subtle crosshatch metallic sheen with sparkle
    ===================================================== */
 
 .card[data-rarity='normal'] {
-  --card-glow: hsl(220, 20%, 70%);
-  --card-edge: hsl(220, 15%, 60%);
+  --card-glow: hsl(200, 40%, 70%);
+  --card-edge: hsl(200, 30%, 60%);
 }
 
 .card[data-rarity='normal'] .card__rotator {
@@ -519,20 +531,133 @@ body {
 
 .card[data-rarity='normal'] .card__rotator:hover {
   box-shadow:
-    0 0 2px 0px rgba(255, 255, 255, 0.5),
-    0 0 6px 1px rgba(107, 114, 128, 0.5),
+    0 0 3px -1px white,
+    0 0 3px 1px rgba(140, 160, 190, 0.5),
+    0 0 15px 2px rgba(140, 160, 190, 0.3),
     0px 10px 20px -5px black,
-    0 0 30px -15px rgba(107, 114, 128, 0.4);
+    0 0 30px -10px var(--card-glow);
 }
 
-/* Normal: No shine effect, only simple glare */
+/* Normal: Radiant crosshatch metallic shine */
 .card[data-rarity='normal'] .card__shine {
-  display: none;
+  --barwidth: 1.2%;
+
+  background-image:
+    radial-gradient(
+      farthest-corner ellipse
+      at calc( ((var(--pointer-x)) * 0.5) + 25% ) calc( ((var(--pointer-y)) * 0.5) + 25% ),
+      hsl(0, 0%, 95%) 20%,
+      var(--card-glow) 130%
+    ),
+    repeating-linear-gradient(
+      45deg,
+      hsl(0,0%,10%) 0%,
+      hsl(0,0%,10%) var(--barwidth),
+      hsl(0,0%,20%) calc( var(--barwidth) + 0.01% ),
+      hsl(0,0%,20%) calc( var(--barwidth) * 2 ),
+      hsl(0,0%,35%) calc( var(--barwidth) * 2 + 0.01% ),
+      hsl(0,0%,35%) calc( var(--barwidth) * 3 ),
+      hsl(0,0%,42.5%) calc( var(--barwidth) * 3 + 0.01% ),
+      hsl(0,0%,42.5%) calc( var(--barwidth) * 4 ),
+      hsl(0,0%,50%) calc( var(--barwidth) * 4 + 0.01% ),
+      hsl(0,0%,50%) calc( var(--barwidth) * 5 ),
+      hsl(0,0%,42.5%) calc( var(--barwidth) * 5 + 0.01% ),
+      hsl(0,0%,42.5%) calc( var(--barwidth) * 6 ),
+      hsl(0,0%,35%) calc( var(--barwidth) * 6 + 0.01% ),
+      hsl(0,0%,35%) calc( var(--barwidth) * 7 ),
+      hsl(0,0%,20%) calc( var(--barwidth) * 7 + 0.01% ),
+      hsl(0,0%,20%) calc( var(--barwidth) * 8 ),
+      hsl(0,0%,10%) calc( var(--barwidth) * 8 + 0.01% ),
+      hsl(0,0%,10%) calc( var(--barwidth) * 9 ),
+      hsl(0,0%,0%) calc( var(--barwidth) * 9 + 0.01% ),
+      hsl(0,0%,0%) calc( var(--barwidth) * 10 )
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      hsl(0,0%,10%) 0%,
+      hsl(0,0%,10%) var(--barwidth),
+      hsl(0,0%,20%) calc( var(--barwidth) + 0.01% ),
+      hsl(0,0%,20%) calc( var(--barwidth) * 2 ),
+      hsl(0,0%,35%) calc( var(--barwidth) * 2 + 0.01% ),
+      hsl(0,0%,35%) calc( var(--barwidth) * 3 ),
+      hsl(0,0%,42.5%) calc( var(--barwidth) * 3 + 0.01% ),
+      hsl(0,0%,42.5%) calc( var(--barwidth) * 4 ),
+      hsl(0,0%,50%) calc( var(--barwidth) * 4 + 0.01% ),
+      hsl(0,0%,50%) calc( var(--barwidth) * 5 ),
+      hsl(0,0%,42.5%) calc( var(--barwidth) * 5 + 0.01% ),
+      hsl(0,0%,42.5%) calc( var(--barwidth) * 6 ),
+      hsl(0,0%,35%) calc( var(--barwidth) * 6 + 0.01% ),
+      hsl(0,0%,35%) calc( var(--barwidth) * 7 ),
+      hsl(0,0%,20%) calc( var(--barwidth) * 7 + 0.01% ),
+      hsl(0,0%,20%) calc( var(--barwidth) * 8 ),
+      hsl(0,0%,10%) calc( var(--barwidth) * 8 + 0.01% ),
+      hsl(0,0%,10%) calc( var(--barwidth) * 9 ),
+      hsl(0,0%,0%) calc( var(--barwidth) * 9 + 0.01% ),
+      hsl(0,0%,0%) calc( var(--barwidth) * 10 )
+    );
+
+  background-size: cover, 210% 210%, 210% 210%;
+  background-position:
+    center,
+    calc( ((var(--background-x) - 50%) * 1.5) + 50% ) calc( ((var(--background-y) - 50%) * 1.5) + 50% ),
+    calc( ((var(--background-x) - 50%) * 1.5) + 50% ) calc( ((var(--background-y) - 50%) * 1.5) + 50% );
+  background-blend-mode: exclusion, darken, color-dodge;
+  filter: brightness(.5) contrast(2) saturate(1.75);
+  mix-blend-mode: color-dodge;
 }
 
-.card[data-rarity='normal'] .card__glare {
-  filter: brightness(0.6) contrast(1.2);
+/* Normal: Glitter sparkle overlay */
+.card[data-rarity='normal'] .card__shine:before {
+  content: "";
+  z-index: 2;
+
+  background-image:
+    var(--glitter),
+    radial-gradient(
+      farthest-corner ellipse at calc( ((var(--pointer-x)) * 0.5) + 25% ) calc( ((var(--pointer-y)) * 0.5) + 25% ),
+      hsla(0, 0%, 58%, 0.8) 10%,
+      hsla(0, 0%, 20%, 0.9) 20%,
+      hsla(0, 0%, 20%, 0.5) 50%
+    );
+  background-position: center;
+  background-size: 15% 15%, 350% 350%;
+  background-blend-mode: color-dodge;
   mix-blend-mode: overlay;
+  filter: brightness(.66) contrast(2) saturate(.5);
+}
+
+/* Normal: Subtle rainbow shimmer overlay */
+.card[data-rarity='normal'] .card__shine:after {
+  content: "";
+
+  background-image:
+    var(--foil),
+    repeating-linear-gradient( 55deg,
+      hsl(3, 95%, 85%) 200px,
+      hsl(207, 100%, 84%) 400px,
+      hsl(29, 100%, 85%) 600px,
+      hsl(160, 100%, 86%) 800px,
+      hsl(309, 94%, 87%) 1000px,
+      hsl(188, 95%, 85%) 1200px,
+      hsl(3, 95%, 85%) 1400px
+    );
+  background-size: 33%, 400% 100%;
+  background-position: center, calc( ((var(--background-x) - 50%) * -2.5) + 50% ) calc( ((var(--background-y) - 50%) * -2.5) + 50% );
+  filter: brightness(.6) contrast(3) saturate(2);
+  mix-blend-mode: color-dodge;
+  background-blend-mode: hard-light;
+}
+
+/* Normal: Clean glare */
+.card[data-rarity='normal'] .card__glare {
+  background-image:
+    radial-gradient(
+      farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      hsla(0, 0%, 100%, 0.33) 0%,
+      hsl(0, 0%, 25%) 110%
+    );
+  filter: brightness(1) contrast(1.5);
+  mix-blend-mode: hard-light;
 }
 
 /* Normal frame/border */
@@ -541,18 +666,21 @@ body {
   position: absolute;
   inset: 0;
   border-radius: var(--card-radius);
-  border: 3px solid #4b5563;
+  border: 3px solid rgba(140, 160, 190, 0.5);
   z-index: 5;
   pointer-events: none;
 }
 
 /* =====================================================
-   RARITY: RARE — Rainbow holographic with scanlines
+   RARITY: RARE — V Full Art Rainbow Holographic
+   Sunpillar rainbow with repeating stripe overlays
    ===================================================== */
 
 .card[data-rarity='rare'] {
   --card-glow: hsl(220, 90%, 65%);
   --card-edge: hsl(220, 80%, 70%);
+  --space: 5%;
+  --angle: 133deg;
 }
 
 .card[data-rarity='rare'] .card__rotator {
@@ -573,101 +701,122 @@ body {
     0 0 50px -10px rgba(59, 130, 246, 0.3);
 }
 
-/* Rare: Rainbow holo gradient + scanlines */
+/* Rare: V Full Art sunpillar + stripe holographic */
 .card[data-rarity='rare'] .card__shine {
   background-image:
-    repeating-linear-gradient(
-      110deg,
-      var(--violet),
-      var(--blue),
-      var(--green),
-      var(--yellow),
-      var(--red),
-      var(--violet),
-      var(--blue),
-      var(--green),
-      var(--yellow),
-      var(--red),
-      var(--violet),
-      var(--blue),
-      var(--green),
-      var(--yellow),
-      var(--red)
+    var(--foil),
+    repeating-linear-gradient( 0deg,
+      var(--sunpillar-clr-1) calc(var(--space)*1),
+      var(--sunpillar-clr-2) calc(var(--space)*2),
+      var(--sunpillar-clr-3) calc(var(--space)*3),
+      var(--sunpillar-clr-4) calc(var(--space)*4),
+      var(--sunpillar-clr-5) calc(var(--space)*5),
+      var(--sunpillar-clr-6) calc(var(--space)*6),
+      var(--sunpillar-clr-1) calc(var(--space)*7)
     ),
     repeating-linear-gradient(
-      90deg,
-      black 0px,
-      black 1px,
-      #666 1px,
-      #666 2px
-    );
-  background-position:
-    calc(((50% - var(--background-x)) * 2.6) + 50%)
-      calc(((50% - var(--background-y)) * 3.5) + 50%),
-    center center;
-  background-size:
-    400% 400%,
-    cover;
-  background-blend-mode: overlay;
-  filter: brightness(1.1) contrast(1.1) saturate(1.2);
-  mix-blend-mode: color-dodge;
-}
-
-/* Rare: Vertical bars overlay */
-.card[data-rarity='rare'] .card__shine:before {
-  content: '';
-  background-image:
-    repeating-linear-gradient(
-      90deg,
-      hsla(0, 0%, 0%, 1) 6%,
-      hsla(0, 0%, 70%, 1) 9%,
-      hsla(0, 0%, 0%, 1) 10.5%,
-      hsla(0, 0%, 70%, 1) 12%,
-      hsla(0, 0%, 0%, 1) 15%,
-      hsla(0, 0%, 0%, 1) 42%
+      var(--angle),
+      #0e152e 0%,
+      hsl(180, 10%, 60%) 3.8%,
+      hsl(180, 29%, 66%) 4.5%,
+      hsl(180, 10%, 60%) 5.2%,
+      #0e152e 10%,
+      #0e152e 12%
     ),
-    repeating-linear-gradient(
-      90deg,
-      hsla(0, 0%, 0%, 1) 6%,
-      hsla(0, 0%, 70%, 1) 9%,
-      hsla(0, 0%, 0%, 1) 10.5%,
-      hsla(0, 0%, 70%, 1) 12%,
-      hsla(0, 0%, 0%, 1) 15%,
-      hsla(0, 0%, 0%, 1) 30%
+    radial-gradient(
+      farthest-corner circle
+      at var(--pointer-x) var(--pointer-y),
+      hsla(0, 0%, 0%, 0.1) 12%,
+      hsla(0, 0%, 0%, 0.15) 20%,
+      hsla(0, 0%, 0%, 0.25) 120%
     );
+
   background-position:
-    calc(((50% - var(--background-x)) * 1.65) + 50% + (var(--background-y) * 0.5))
-      var(--background-x),
-    calc(((50% - var(--background-x)) * -0.9) + 50% - (var(--background-y) * 0.75))
-      var(--background-y);
-  background-size:
-    200% 200%,
-    200% 200%;
-  background-blend-mode: screen;
-  filter: brightness(1.15) contrast(1.1);
-  mix-blend-mode: hard-light;
+    center center,
+    0% var(--background-y),
+    calc( var(--background-x) + (var(--background-y)*0.2) ) var(--background-y),
+    var(--background-x) var(--background-y);
+  background-blend-mode: soft-light, hue, hard-light;
+  background-size: 33%, 200% 700%, 300% 100%, 200% 100%;
+  filter: brightness(calc((var(--pointer-from-center)*0.3) + .35)) contrast(2) saturate(1.5);
 }
 
-/* Rare: Radial luminosity layer */
+/* Rare: Exclusion counter-stripe layer */
 .card[data-rarity='rare'] .card__shine:after {
-  content: '';
-  background-image: radial-gradient(
-    farthest-corner circle at var(--pointer-x) var(--pointer-y),
-    hsla(0, 0%, 90%, 0.8) 0%,
-    hsla(0, 0%, 78%, 0.1) 25%,
-    hsl(0, 0%, 0%) 90%
-  );
-  background-position: center center;
+  content: "";
+
+  background-image:
+    var(--foil),
+    repeating-linear-gradient( 0deg,
+      var(--sunpillar-clr-1) calc(var(--space)*1),
+      var(--sunpillar-clr-2) calc(var(--space)*2),
+      var(--sunpillar-clr-3) calc(var(--space)*3),
+      var(--sunpillar-clr-4) calc(var(--space)*4),
+      var(--sunpillar-clr-5) calc(var(--space)*5),
+      var(--sunpillar-clr-6) calc(var(--space)*6),
+      var(--sunpillar-clr-1) calc(var(--space)*7)
+    ),
+    repeating-linear-gradient(
+      var(--angle),
+      #0e152e 0%,
+      hsl(180, 10%, 60%) 3.8%,
+      hsl(180, 29%, 66%) 4.5%,
+      hsl(180, 10%, 60%) 5.2%,
+      #0e152e 10%,
+      #0e152e 12%
+    ),
+    radial-gradient(
+      farthest-corner circle
+      at var(--pointer-x) var(--pointer-y),
+      hsla(0, 0%, 0%, 0.1) 12%,
+      hsla(0, 0%, 0%, 0.15) 20%,
+      hsla(0, 0%, 0%, 0.25) 120%
+    );
+
+  background-position:
+    center center,
+    0% var(--background-y),
+    calc( (var(--background-x) + (var(--background-y)*0.2)) * -1) calc( var(--background-y) * -1),
+    var(--background-x) var(--background-y);
+  background-size: 33%, 200% 400%, 195% 100%, 200% 100%;
+  background-blend-mode: exclusion, hue, hard-light;
+  filter: brightness(calc((var(--pointer-from-center)*.5) + .8)) contrast(1.6) saturate(1.4);
+  mix-blend-mode: exclusion;
+}
+
+/* Rare: Radial light spot overlay */
+.card[data-rarity='rare'] .card__shine:before {
+  content: "";
+  -webkit-mask-image: none;
+  mask-image: none;
+
+  background-image:
+    radial-gradient(
+      farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      hsl(0, 0%, 100%) 0%,
+      hsla(0, 0%, 0%, 0) 40%
+    );
+  background-position: center;
   background-size: cover;
-  mix-blend-mode: luminosity;
-  filter: brightness(0.6) contrast(4);
+  mix-blend-mode: overlay;
+  opacity: 0.75;
+  z-index: 1;
 }
 
 /* Rare: Enhanced glare */
 .card[data-rarity='rare'] .card__glare {
-  opacity: calc(var(--card-opacity) * 0.8);
-  filter: brightness(0.8) contrast(1.5);
-  mix-blend-mode: overlay;
+  background-image:
+    radial-gradient(
+      farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      hsl(0, 0%, 75%) 5%,
+      hsl(200, 5%, 35%) 60%,
+      hsl(320, 40%, 10%) 150%
+    );
+  background-size: 120% 150%;
+  background-position: center center;
+  mix-blend-mode: hard-light;
+  filter: brightness(1) contrast(1.2) saturate(1);
+  opacity: calc(var(--card-opacity) * .75);
 }
 
 /* Rare frame/border */
@@ -682,21 +831,16 @@ body {
   pointer-events: none;
 }
 
-@media screen and (max-width: 900px) {
-  .card[data-rarity='rare'] .card__shine {
-    background-size:
-      400% 400%,
-      100% 100%;
-  }
-}
-
 /* =====================================================
    RARITY: SUPER_RARE — Secret Rare Gold Hologram
+   Exact port of pokemon-cards-css secret-rare effect
+   Matches reference images (poke-1, poke-2, poke-3)
    ===================================================== */
 
 .card[data-rarity='super_rare'] {
   --card-glow: hsl(45, 100%, 65%);
   --card-edge: hsl(45, 100%, 75%);
+  --shift: 1px;
 }
 
 .card[data-rarity='super_rare'] .card__rotator {
@@ -718,7 +862,7 @@ body {
     0 0 80px -15px rgba(244, 114, 182, 0.2);
 }
 
-/* Super Rare: Conic gradient + double glitter */
+/* Super Rare: Conic rainbow + double glitter (secret-rare main layer) */
 .card[data-rarity='super_rare'] .card__shine {
   background-image:
     var(--glitter),
@@ -747,21 +891,18 @@ body {
     center center;
   background-blend-mode: soft-light, hard-light, overlay;
   mix-blend-mode: color-dodge;
-  filter: brightness(calc(0.4 + (var(--pointer-from-center) * 0.2))) contrast(1) saturate(2.7);
+  filter: brightness(calc( (var(--pointer-from-center) * 0.3) + 0.2 )) contrast(2) saturate(0.75);
 }
 
-/* Super Rare: Gold foil underlay */
+/* Super Rare: Gold foil underlay with geometric pattern (secret-rare :before) */
 .card[data-rarity='super_rare'] .card__shine:before {
   content: '';
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+
   background-image:
-    repeating-linear-gradient(
-      45deg,
-      transparent 0%,
-      transparent 8%,
-      rgba(251, 191, 36, 0.03) 8%,
-      rgba(251, 191, 36, 0.03) 16%
-    ),
-    linear-gradient(45deg, hsl(46, 95%, 50%), hsl(52, 100%, 69%)),
+    var(--geometric),
+    linear-gradient( 45deg, hsl(46, 95%, 50%), hsl(52, 100%, 69%) ),
     radial-gradient(
       farthest-corner circle at var(--pointer-x) var(--pointer-y),
       hsla(10, 20%, 90%, 0.95) 10%,
@@ -775,26 +916,29 @@ body {
   opacity: 0.8;
 }
 
-/* Super Rare: Glitter top layer */
+/* Super Rare: Glitter top layer with parallax shift (secret-rare :after) */
 .card[data-rarity='super_rare'] .card__shine:after {
   content: '';
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+
   background-image: var(--glitter);
   background-size: var(--glittersize) var(--glittersize);
-  background-position: calc(
-      50% - (2px * var(--pointer-from-left)) + 1px
-    )
-    calc(50% - (2px * var(--pointer-from-top)) + 1px);
-  filter: brightness(calc((var(--pointer-from-center) * 0.6) + 0.6)) contrast(1.5);
+  background-position:
+    calc(50% - ((var(--shift)*2) * var(--pointer-from-left)) + var(--shift))
+    calc(50% - ((var(--shift)*2) * var(--pointer-from-top)) + var(--shift));
+  filter: brightness(calc((var(--pointer-from-center)*0.6) + 0.6)) contrast(1.5);
   mix-blend-mode: overlay;
 }
 
-/* Super Rare: Enhanced glare with gold tint */
+/* Super Rare: Gold-tinted glare (secret-rare glare) */
 .card[data-rarity='super_rare'] .card__glare {
-  background-image: radial-gradient(
-    farthest-corner circle at var(--pointer-x) var(--pointer-y),
-    hsla(45, 8%, 80%, 0.3) 0%,
-    hsl(22, 15%, 12%) 180%
-  );
+  background-image:
+    radial-gradient(
+      farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      hsla(45, 8%, 80%, 0.3) 0%,
+      hsl(22, 15%, 12%) 180%
+    );
   filter: brightness(1.3) contrast(1.5);
   mix-blend-mode: hard-light;
 }
