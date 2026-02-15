@@ -538,6 +538,43 @@ body {
     0 0 30px -10px var(--card-glow);
 }
 
+/* Normal: Machined channel — image recessed into frame */
+.card[data-rarity='normal'] .card__front {
+  padding: 8px;
+  background:
+    /* Inner lip - thin bright edge at image boundary */
+    linear-gradient(
+      160deg,
+      rgba(180, 185, 195, 0.12) 0%,
+      rgba(120, 125, 135, 0.06) 50%,
+      rgba(180, 185, 195, 0.1) 100%
+    ),
+    /* Channel base - dark brushed recess */
+    repeating-linear-gradient(
+      160deg,
+      #0a0a0c 0px,
+      #0a0a0c 1px,
+      #08080a 1px,
+      #08080a 2px
+    );
+}
+
+.card[data-rarity='normal'] .card__image {
+  border-radius: 2.5% / 1.8%;
+  border: 1px solid rgba(160, 170, 185, 0.18);
+  box-shadow:
+    /* Channel fill — dark ambient shadow around image */
+    0 0 4px 1px rgba(0, 0, 0, 0.8),
+    /* Channel depth — top-left shadow (frame casts shadow into channel) */
+    -2px -2px 5px 0 rgba(0, 0, 0, 0.5),
+    /* Channel depth — bottom-right catch light */
+    2px 2px 4px 0 rgba(160, 170, 190, 0.04),
+    /* Recessed image — inner shadow at image top edge */
+    inset 0 2px 6px rgba(0, 0, 0, 0.3),
+    /* Inner lip highlight — bottom edge of image catches light */
+    inset 0 -1px 3px rgba(180, 190, 200, 0.06);
+}
+
 /* Normal: Radiant crosshatch metallic shine */
 .card[data-rarity='normal'] .card__shine {
   --barwidth: 1.2%;
@@ -702,7 +739,7 @@ body {
   pointer-events: none;
 }
 
-/* Normal: 3D Bevel Shadows */
+/* Normal: 3D Bevel + Channel Depth Shadows */
 .card[data-rarity='normal'] .card__front::after {
   content: '';
   position: absolute;
@@ -713,10 +750,12 @@ body {
     inset 1px 1px 0 0 rgba(255, 255, 255, 0.35),
     /* Outer bottom-right shadow */
     inset -1px -1px 0 0 rgba(0, 0, 0, 0.5),
-    /* Inner edge shadow (top-left, undercut) */
-    inset 6px 6px 3px -4px rgba(0, 0, 0, 0.25),
-    /* Inner edge highlight (bottom-right, catch light) */
-    inset -6px -6px 3px -4px rgba(255, 255, 255, 0.15);
+    /* Frame inner bevel — shadow side (top-left undercut into channel) */
+    inset 6px 6px 4px -3px rgba(0, 0, 0, 0.35),
+    /* Frame inner bevel — light side (bottom-right catch) */
+    inset -6px -6px 4px -3px rgba(255, 255, 255, 0.12),
+    /* Channel depth — deep inner shadow ring */
+    inset 0 0 8px 2px rgba(0, 0, 0, 0.2);
   z-index: 6;
   pointer-events: none;
 }
@@ -749,6 +788,43 @@ body {
     0 0 20px 4px rgba(99, 102, 241, 0.4),
     0px 10px 20px -5px black,
     0 0 50px -10px rgba(59, 130, 246, 0.3);
+}
+
+/* Rare: Machined channel — image recessed into chrome frame */
+.card[data-rarity='rare'] .card__front {
+  padding: 10px;
+  background:
+    /* Inner lip — faint blue-metallic edge */
+    linear-gradient(
+      160deg,
+      rgba(80, 120, 220, 0.08) 0%,
+      rgba(60, 80, 160, 0.04) 50%,
+      rgba(100, 140, 240, 0.07) 100%
+    ),
+    /* Channel base — deep dark blue-black recess */
+    repeating-linear-gradient(
+      160deg,
+      #060610 0px,
+      #060610 1px,
+      #05050e 1px,
+      #05050e 2px
+    );
+}
+
+.card[data-rarity='rare'] .card__image {
+  border-radius: 2.2% / 1.6%;
+  border: 1px solid rgba(80, 130, 240, 0.15);
+  box-shadow:
+    /* Channel fill — dark shadow around image */
+    0 0 5px 2px rgba(0, 0, 10, 0.85),
+    /* Channel depth — top-left deep shadow */
+    -2px -2px 6px 0 rgba(0, 0, 20, 0.6),
+    /* Channel depth — bottom-right blue catch light */
+    2px 2px 4px 0 rgba(60, 100, 200, 0.04),
+    /* Recessed image — inner shadow at image top */
+    inset 0 2px 8px rgba(0, 0, 20, 0.35),
+    /* Inner lip glow — faint blue edge light */
+    inset 0 -1px 3px rgba(80, 130, 240, 0.06);
 }
 
 /* Rare: V Full Art sunpillar + stripe holographic */
@@ -914,7 +990,7 @@ body {
   pointer-events: none;
 }
 
-/* Rare: 3D Bevel + Blue Glow */
+/* Rare: 3D Bevel + Channel Depth + Blue Glow */
 .card[data-rarity='rare'] .card__front::after {
   content: '';
   position: absolute;
@@ -925,12 +1001,14 @@ body {
     inset 1px 1px 0 0 rgba(160, 200, 255, 0.5),
     /* Outer bottom-right shadow */
     inset -1px -1px 0 0 rgba(0, 0, 30, 0.6),
-    /* Inner edge shadow (top-left undercut) */
-    inset 7px 7px 3px -5px rgba(0, 0, 40, 0.35),
-    /* Inner edge highlight (bottom-right catch) */
-    inset -7px -7px 3px -5px rgba(140, 180, 255, 0.2),
-    /* Subtle blue inner glow */
-    inset 0 0 12px 0 rgba(59, 130, 246, 0.1),
+    /* Frame inner bevel — shadow side (top-left undercut into channel) */
+    inset 8px 8px 5px -4px rgba(0, 0, 40, 0.4),
+    /* Frame inner bevel — light side (bottom-right catch) */
+    inset -8px -8px 5px -4px rgba(140, 180, 255, 0.15),
+    /* Channel depth — deep shadow ring around image recess */
+    inset 0 0 12px 3px rgba(0, 0, 20, 0.25),
+    /* Blue inner glow from frame into channel */
+    inset 0 0 18px 0 rgba(59, 130, 246, 0.06),
     /* Outer blue glow */
     0 0 10px 1px rgba(59, 130, 246, 0.08);
   z-index: 6;
@@ -966,6 +1044,48 @@ body {
     0px 10px 20px -5px black,
     0 0 60px -10px rgba(251, 191, 36, 0.4),
     0 0 80px -15px rgba(244, 114, 182, 0.2);
+}
+
+/* Super Rare: Machined channel — image recessed into gold frame */
+.card[data-rarity='super_rare'] .card__front {
+  padding: 13px;
+  background:
+    /* Inner lip — warm gold metallic edge reflection */
+    linear-gradient(
+      160deg,
+      rgba(200, 170, 80, 0.1) 0%,
+      rgba(140, 110, 40, 0.05) 30%,
+      rgba(200, 170, 80, 0.08) 60%,
+      rgba(160, 130, 50, 0.06) 100%
+    ),
+    /* Channel base — deep dark warm-black recess with grain */
+    repeating-linear-gradient(
+      160deg,
+      #0a0804 0px,
+      #0a0804 1px,
+      #080602 1px,
+      #080602 2px
+    );
+}
+
+.card[data-rarity='super_rare'] .card__image {
+  border-radius: 2% / 1.5%;
+  border: 1px solid rgba(200, 170, 80, 0.2);
+  box-shadow:
+    /* Channel fill — deep dark shadow fills the groove */
+    0 0 6px 2px rgba(0, 0, 0, 0.85),
+    /* Channel depth — top-left deep shadow (frame overhangs) */
+    -3px -3px 7px 0 rgba(0, 0, 0, 0.6),
+    /* Channel depth — bottom-right warm catch light */
+    3px 3px 5px 0 rgba(180, 150, 60, 0.05),
+    /* Recessed image — inner shadow at image top edge */
+    inset 0 3px 10px rgba(0, 0, 0, 0.4),
+    /* Recessed image — inner shadow at image left edge */
+    inset 3px 0 8px rgba(0, 0, 0, 0.2),
+    /* Inner lip glow — warm gold edge light at bottom */
+    inset 0 -1px 4px rgba(200, 170, 80, 0.08),
+    /* Inner lip glow — warm gold edge light at right */
+    inset -1px 0 3px rgba(200, 170, 80, 0.05);
 }
 
 /* Super Rare: Conic rainbow + double glitter (secret-rare main layer) */
@@ -1096,7 +1216,7 @@ body {
   pointer-events: none;
 }
 
-/* Super Rare: 3D Gold Bevel + Warm Glow */
+/* Super Rare: 3D Gold Bevel + Deep Channel + Warm Glow */
 .card[data-rarity='super_rare'] .card__front::after {
   content: '';
   position: absolute;
@@ -1107,12 +1227,14 @@ body {
     inset 2px 2px 0 0 rgba(255, 248, 200, 0.6),
     /* Outer bottom-right shadow (deep bronze) */
     inset -2px -2px 0 0 rgba(60, 35, 0, 0.65),
-    /* Inner edge shadow (top-left undercut) */
-    inset 9px 9px 4px -6px rgba(60, 35, 0, 0.35),
-    /* Inner edge highlight (bottom-right catch light) */
-    inset -9px -9px 4px -6px rgba(255, 240, 170, 0.25),
-    /* Warm inner glow */
-    inset 0 0 18px 0 rgba(251, 191, 36, 0.12),
+    /* Frame inner bevel — shadow side (gold frame overhangs into channel) */
+    inset 10px 10px 6px -5px rgba(40, 25, 0, 0.45),
+    /* Frame inner bevel — light side (warm gold catch light) */
+    inset -10px -10px 6px -5px rgba(255, 240, 170, 0.18),
+    /* Channel depth — deep shadow ring around image recess */
+    inset 0 0 16px 4px rgba(20, 10, 0, 0.3),
+    /* Gold glow bleeding into channel from frame */
+    inset 0 0 24px 0 rgba(251, 191, 36, 0.06),
     /* Outer golden glow */
     0 0 15px 2px rgba(251, 191, 36, 0.15),
     0 0 30px 0px rgba(251, 191, 36, 0.06);
