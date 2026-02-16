@@ -91,7 +91,7 @@ export default function AdminCardsPage({ searchParams }: PageProps) {
                 className="cursor-pointer border-b border-gray-800 last:border-0 hover:bg-gray-800/50"
               >
                 <td>
-                  <a href={`/admin/cards/${card.id}`} className="flex items-center gap-3 px-6 py-4">
+                  <a href={`/admin/cards/${card.id}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-6 py-4">
                     {card.card_image_url && (
                       <Image
                         src={card.card_image_url}
@@ -111,12 +111,12 @@ export default function AdminCardsPage({ searchParams }: PageProps) {
                   </a>
                 </td>
                 <td>
-                  <a href={`/admin/cards/${card.id}`} className="block px-6 py-4 text-gray-400">
+                  <a href={`/admin/cards/${card.id}`} target="_blank" rel="noopener noreferrer" className="block px-6 py-4 text-gray-400">
                     {card.artist?.name}
                   </a>
                 </td>
                 <td>
-                  <a href={`/admin/cards/${card.id}`} className="block px-6 py-4">
+                  <a href={`/admin/cards/${card.id}`} target="_blank" rel="noopener noreferrer" className="block px-6 py-4">
                     <span
                       className={`rounded px-2 py-1 text-xs ${rarityStyles[card.rarity] || rarityStyles.NORMAL}`}
                     >
@@ -125,13 +125,15 @@ export default function AdminCardsPage({ searchParams }: PageProps) {
                   </a>
                 </td>
                 <td>
-                  <a href={`/admin/cards/${card.id}`} className="block px-6 py-4 text-white">
+                  <a href={`/admin/cards/${card.id}`} target="_blank" rel="noopener noreferrer" className="block px-6 py-4 text-white">
                     ¥{card.price.toLocaleString()}
                   </a>
                 </td>
                 <td>
                   <a
                     href={`/admin/cards/${card.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="block px-6 py-4 font-mono text-gray-400"
                   >
                     {card.current_supply}
@@ -139,7 +141,7 @@ export default function AdminCardsPage({ searchParams }: PageProps) {
                   </a>
                 </td>
                 <td>
-                  <a href={`/admin/cards/${card.id}`} className="block px-6 py-4">
+                  <a href={`/admin/cards/${card.id}`} target="_blank" rel="noopener noreferrer" className="block px-6 py-4">
                     {card.is_active ? (
                       <span className="rounded bg-green-900/50 px-2 py-1 text-xs text-green-400">
                         Active
