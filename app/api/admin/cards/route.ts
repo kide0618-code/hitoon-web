@@ -37,7 +37,7 @@ export async function POST(request: Request) {
         card_image_url: body.card_image_url,
         song_title: body.song_title || null,
         subtitle: body.subtitle || null,
-        frame_template_id: body.frame_template_id || 'classic-normal',
+        frame_template_id: body.frame_template_id || 'normal-frame-radiant',
         is_active: body.is_active ?? true,
         sale_ends_at: body.sale_ends_at || null,
       })

@@ -3,7 +3,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { FRAME_TEMPLATES, getFrameTemplate } from '@/config/frame-templates';
+import {
+  getFrameTemplate,
+  getFrameTemplatesByRarity,
+  getDefaultFrameForRarity,
+} from '@/config/frame-templates';
 import { ArtistCard } from '@/components/cards/artist-card';
 import type { Rarity } from '@/types/card';
 
@@ -34,7 +38,7 @@ export default function NewCardPage() {
     card_image_url: '',
     song_title: '',
     subtitle: '',
-    frame_template_id: 'classic-normal',
+    frame_template_id: 'normal-frame-radiant',
     sale_ends_at: '',
   });
 
@@ -78,10 +82,12 @@ export default function NewCardPage() {
       RARE: 100,
       SUPER_RARE: 30,
     };
+    const defaultFrame = getDefaultFrameForRarity(formData.rarity);
     setFormData((prev) => ({
       ...prev,
       price: defaultPrices[formData.rarity],
       total_supply: defaultSupply[formData.rarity],
+      frame_template_id: defaultFrame.id,
     }));
   }, [formData.rarity]);
 
@@ -167,7 +173,7 @@ export default function NewCardPage() {
 
   const selectedArtist = artists.find((a) => a.id === formData.artist_id);
   const frameTemplate = getFrameTemplate(formData.frame_template_id);
-  const allFrameTemplates = Object.values(FRAME_TEMPLATES);
+  const filteredFrameTemplates = getFrameTemplatesByRarity(formData.rarity);
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -480,7 +486,7 @@ export default function NewCardPage() {
                   フレームテンプレート <span className="text-red-400">*</span>
                 </label>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-                  {allFrameTemplates.map((template) => (
+                  {filteredFrameTemplates.map((template) => (
                     <button
                       key={template.id}
                       type="button"

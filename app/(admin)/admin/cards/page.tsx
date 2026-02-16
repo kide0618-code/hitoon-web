@@ -1,18 +1,38 @@
 import Image from 'next/image';
+import { use } from 'react';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { ArtistFilter } from './artist-filter';
 
-export default async function AdminCardsPage() {
-  const supabase = await createServerSupabaseClient();
+interface PageProps {
+  searchParams: Promise<{ artist?: string }>;
+}
 
+export default function AdminCardsPage({ searchParams }: PageProps) {
+  const { artist: artistId } = use(searchParams);
+
+  const supabase = use(createServerSupabaseClient());
+
+  // Fetch artists for filter
+  const { data: artists } = use(
+    supabase.from('artists').select('id, name').order('name', { ascending: true }),
+  );
+
+  // Fetch cards with optional artist filter
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: cards } = (await (supabase.from('cards') as any)
+  let query = (supabase.from('cards') as any)
     .select(
       `
       *,
       artist:artists (id, name)
     `,
     )
-    .order('created_at', { ascending: false })) as {
+    .order('created_at', { ascending: false });
+
+  if (artistId) {
+    query = query.eq('artist_id', artistId);
+  }
+
+  const { data: cards } = use(query) as {
     data:
       | {
           id: string;
@@ -46,6 +66,10 @@ export default async function AdminCardsPage() {
         >
           + Add Card
         </a>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <ArtistFilter artists={artists || []} />
       </div>
 
       <div className="overflow-hidden rounded-xl border border-gray-800 bg-gray-900">

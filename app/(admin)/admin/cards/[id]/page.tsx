@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { FRAME_TEMPLATES, getFrameTemplate } from '@/config/frame-templates';
+import { getFrameTemplate, getFrameTemplatesByRarity } from '@/config/frame-templates';
 import { ArtistCard } from '@/components/cards/artist-card';
 import type { Rarity } from '@/types/card';
 
@@ -66,7 +66,7 @@ export default function EditCardPage({ params }: PageProps) {
     card_image_url: '',
     song_title: '',
     subtitle: '',
-    frame_template_id: 'classic-normal',
+    frame_template_id: 'normal-frame-radiant',
     sale_ends_at: '',
   });
 
@@ -98,7 +98,7 @@ export default function EditCardPage({ params }: PageProps) {
           card_image_url: data.card.card_image_url || '',
           song_title: data.card.song_title || '',
           subtitle: data.card.subtitle || '',
-          frame_template_id: data.card.frame_template_id || 'classic-normal',
+          frame_template_id: data.card.frame_template_id || 'normal-frame-radiant',
           sale_ends_at: saleEndsAtLocal,
         });
       } catch (err) {
@@ -251,7 +251,7 @@ export default function EditCardPage({ params }: PageProps) {
 
   const frameTemplate =
     getFrameTemplate(formData.frame_template_id) || getFrameTemplate(card.frame_template_id);
-  const allFrameTemplates = Object.values(FRAME_TEMPLATES);
+  const filteredFrameTemplates = getFrameTemplatesByRarity(card.rarity);
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -500,7 +500,7 @@ export default function EditCardPage({ params }: PageProps) {
                   フレームテンプレート
                 </label>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                  {allFrameTemplates.map((template) => (
+                  {filteredFrameTemplates.map((template) => (
                     <button
                       key={template.id}
                       type="button"
