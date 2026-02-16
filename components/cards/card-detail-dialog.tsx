@@ -110,7 +110,7 @@ export function CardDetailDialog({
         </div>
 
         {/* Drag hint */}
-        <div className="mb-4 text-center text-xs text-gray-500">スワイプでカードを回転</div>
+        <div className="mb-4 text-center text-xs text-gray-500">スワイプでカードを操作</div>
 
         {/* Bottom Section */}
         <div className="p-4 pt-0">

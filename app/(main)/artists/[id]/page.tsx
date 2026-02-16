@@ -19,6 +19,7 @@ interface CardData {
   cardImageUrl: string;
   songTitle: string | null;
   frameTemplateId: string;
+  saleEndsAt: string | null;
 }
 
 interface ArtistData {
@@ -54,7 +55,7 @@ async function getArtist(id: string): Promise<ArtistData | null> {
   const { data: cardsData, error: cardsError } = await supabase
     .from('cards')
     .select(
-      'id, rarity, price, total_supply, current_supply, card_image_url, song_title, frame_template_id',
+      'id, rarity, price, total_supply, current_supply, card_image_url, song_title, frame_template_id, sale_ends_at',
     )
     .eq('artist_id', id)
     .eq('is_active', true)
@@ -74,6 +75,7 @@ async function getArtist(id: string): Promise<ArtistData | null> {
     | 'card_image_url'
     | 'song_title'
     | 'frame_template_id'
+    | 'sale_ends_at'
   >[];
 
   // Fetch social links
@@ -98,6 +100,7 @@ async function getArtist(id: string): Promise<ArtistData | null> {
       cardImageUrl: card.card_image_url || artist.image_url || '',
       songTitle: card.song_title || null,
       frameTemplateId: card.frame_template_id,
+      saleEndsAt: card.sale_ends_at,
     })),
     socialLinks: (socialLinksData || []) as SocialLink[],
   };

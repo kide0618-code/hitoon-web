@@ -39,6 +39,7 @@ export async function POST(request: Request) {
         subtitle: body.subtitle || null,
         frame_template_id: body.frame_template_id || 'classic-normal',
         is_active: body.is_active ?? true,
+        sale_ends_at: body.sale_ends_at || null,
       })
       .select()
       .single();

@@ -12,7 +12,7 @@ import { CardDetailDialog } from '@/components/cards/card-detail-dialog';
 import { SocialLinks } from '@/components/features/social-links';
 import { useCart } from '@/contexts/cart-context';
 import { ROUTES } from '@/constants/routes';
-import { formatPrice } from '@/lib/utils/format';
+import { formatPrice, formatDeadline, isSaleEnded } from '@/lib/utils/format';
 import type { Rarity } from '@/types/card';
 import type { SocialLink } from '@/types/artist';
 
@@ -25,6 +25,7 @@ interface CardData {
   cardImageUrl: string;
   songTitle: string | null;
   frameTemplateId: string;
+  saleEndsAt: string | null;
 }
 
 interface ArtistData {
@@ -126,15 +127,17 @@ export function ArtistDetailClient({ artist, isAuthenticated }: Props) {
         <CardGrid columns={4}>
           {artist.cards.map((card) => {
             const isSoldOut = card.totalSupply !== null && card.currentSupply >= card.totalSupply;
+            const isExpired = isSaleEnded(card.saleEndsAt);
+            const isUnavailable = isSoldOut || isExpired;
             return (
-              <div key={card.id} className={`relative ${isSoldOut ? 'opacity-50' : ''}`}>
+              <div key={card.id} className={`relative ${isUnavailable ? 'opacity-50' : ''}`}>
                 <ArtistCard
                   artistName={artist.name}
                   artistImageUrl={card.cardImageUrl}
                   songTitle={card.songTitle}
                   rarity={card.rarity}
                   frameTemplateId={card.frameTemplateId}
-                  onClick={() => !isSoldOut && handleCardClick(card.id)}
+                  onClick={() => !isUnavailable && handleCardClick(card.id)}
                 />
                 <div className="mt-1.5 text-center sm:mt-2">
                   <p className="text-sm font-bold sm:text-lg">{formatPrice(card.price)}</p>
@@ -143,7 +146,15 @@ export function ArtistDetailClient({ artist, isAuthenticated }: Props) {
                       {card.currentSupply} / {card.totalSupply} sold
                     </p>
                   )}
-                  {isSoldOut && (
+                  {card.saleEndsAt && !isExpired && (
+                    <p className="text-2xs text-yellow-400 sm:text-xs">
+                      〜{formatDeadline(card.saleEndsAt)}
+                    </p>
+                  )}
+                  {isExpired && (
+                    <p className="text-2xs font-bold text-red-400 sm:text-xs">販売終了</p>
+                  )}
+                  {isSoldOut && !isExpired && (
                     <p className="text-2xs font-bold text-red-400 sm:text-xs">SOLD OUT</p>
                   )}
                 </div>

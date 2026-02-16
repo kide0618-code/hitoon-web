@@ -12,11 +12,7 @@ function createSpring(initial: number): SpringState {
   return { current: initial, target: initial, velocity: 0 };
 }
 
-function stepSpring(
-  state: SpringState,
-  stiffness: number,
-  damping: number,
-): void {
+function stepSpring(state: SpringState, stiffness: number, damping: number): void {
   const force = stiffness * (state.target - state.current);
   const dampForce = -damping * state.velocity;
   state.velocity = state.velocity + (force + dampForce);
@@ -24,10 +20,7 @@ function stepSpring(
 }
 
 function isSettled(state: SpringState, threshold = 0.01): boolean {
-  return (
-    Math.abs(state.velocity) < threshold &&
-    Math.abs(state.target - state.current) < threshold
-  );
+  return Math.abs(state.velocity) < threshold && Math.abs(state.target - state.current) < threshold;
 }
 
 function clamp(value: number, min = 0, max = 100): number {
@@ -125,11 +118,7 @@ export function useCardInteraction() {
 
       const glareX = springs.glareX.current;
       const glareY = springs.glareY.current;
-      const fromCenter = clamp(
-        Math.sqrt((glareY - 50) ** 2 + (glareX - 50) ** 2) / 50,
-        0,
-        1,
-      );
+      const fromCenter = clamp(Math.sqrt((glareY - 50) ** 2 + (glareX - 50) ** 2) / 50, 0, 1);
 
       setStyle({
         '--pointer-x': `${round(glareX)}%`,

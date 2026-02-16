@@ -108,262 +108,259 @@ export async function GET(request: Request) {
   const innerInset = rarity === 'SUPER_RARE' ? 10 : rarity === 'RARE' ? 8 : 6;
 
   return new ImageResponse(
-    (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #000000 0%, #0a0a1a 50%, #000000 100%)',
+        position: 'relative',
+      }}
+    >
+      {/* Subtle background glow */}
       <div
         style={{
-          width: '100%',
-          height: '100%',
+          position: 'absolute',
+          width: '500px',
+          height: '500px',
+          borderRadius: '50%',
+          background: style.glowColor,
+          filter: 'blur(100px)',
+          opacity: 0.5,
+        }}
+      />
+
+      {/* Card + Info layout */}
+      <div
+        style={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center',
-          background: 'linear-gradient(135deg, #000000 0%, #0a0a1a 50%, #000000 100%)',
-          position: 'relative',
+          gap: '60px',
         }}
       >
-        {/* Subtle background glow */}
+        {/* Trading Card */}
         <div
           style={{
-            position: 'absolute',
-            width: '500px',
-            height: '500px',
-            borderRadius: '50%',
-            background: style.glowColor,
-            filter: 'blur(100px)',
-            opacity: 0.5,
-          }}
-        />
-
-        {/* Card + Info layout */}
-        <div
-          style={{
+            width: `${cardWidth}px`,
+            height: `${cardHeight}px`,
+            borderRadius: '16px',
+            border: `${borderWidth}px solid ${style.borderColor}`,
+            background: style.frameBg,
+            boxShadow: `0 0 40px ${style.glowColor}, 0 0 80px ${style.glowColor}`,
             display: 'flex',
-            alignItems: 'center',
-            gap: '60px',
+            position: 'relative',
+            overflow: 'hidden',
           }}
         >
-          {/* Trading Card */}
+          {/* Inner card */}
           <div
             style={{
-              width: `${cardWidth}px`,
-              height: `${cardHeight}px`,
-              borderRadius: '16px',
-              border: `${borderWidth}px solid ${style.borderColor}`,
-              background: style.frameBg,
-              boxShadow: `0 0 40px ${style.glowColor}, 0 0 80px ${style.glowColor}`,
-              display: 'flex',
-              position: 'relative',
+              position: 'absolute',
+              top: `${innerInset}px`,
+              left: `${innerInset}px`,
+              right: `${innerInset}px`,
+              bottom: `${innerInset}px`,
+              borderRadius: '8px',
+              background: style.innerBg,
+              border: `1px solid ${style.borderColor}40`,
               overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
             }}
           >
-            {/* Inner card */}
+            {/* Card Image */}
             <div
               style={{
-                position: 'absolute',
-                top: `${innerInset}px`,
-                left: `${innerInset}px`,
-                right: `${innerInset}px`,
-                bottom: `${innerInset}px`,
-                borderRadius: '8px',
-                background: style.innerBg,
-                border: `1px solid ${style.borderColor}40`,
-                overflow: 'hidden',
+                flex: 1,
                 display: 'flex',
-                flexDirection: 'column',
+                position: 'relative',
+                overflow: 'hidden',
               }}
             >
-              {/* Card Image */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={card.card_image_url}
+                alt=""
+                width={cardWidth - innerInset * 2}
+                height={cardHeight * 0.75}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                }}
+              />
+              {/* Gradient overlay on image */}
               <div
                 style={{
-                  flex: 1,
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: '40%',
+                  background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)',
                   display: 'flex',
-                  position: 'relative',
-                  overflow: 'hidden',
+                  flexDirection: 'column',
+                  justifyContent: 'flex-end',
+                  padding: '12px',
                 }}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={card.card_image_url}
-                  alt=""
-                  width={cardWidth - innerInset * 2}
-                  height={cardHeight * 0.75}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                  }}
-                />
-                {/* Gradient overlay on image */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    height: '40%',
-                    background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'flex-end',
-                    padding: '12px',
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: '11px',
-                      fontWeight: 500,
-                      letterSpacing: '0.15em',
-                      color: '#d1d5db',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    IDOL
-                  </span>
-                  <span
-                    style={{
-                      fontSize: '16px',
-                      fontWeight: 700,
-                      color: '#ffffff',
-                      lineHeight: 1.2,
-                    }}
-                  >
-                    {card.artist_name}
-                  </span>
-                  {card.song_title && (
-                    <span
-                      style={{
-                        fontSize: '11px',
-                        color: '#9ca3af',
-                        marginTop: '2px',
-                      }}
-                    >
-                      SONG: {card.song_title}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {/* Info section */}
-              <div
-                style={{
-                  padding: '10px 12px',
-                  borderTop: '1px solid rgba(255,255,255,0.1)',
-                  background:
-                    'linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.95) 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
-              >
-                {/* Rarity badge */}
-                <span
-                  style={{
-                    background: style.badgeBg,
-                    color: style.badgeColor,
-                    fontSize: '12px',
-                    fontWeight: 700,
-                    padding: '3px 8px',
-                    borderRadius: '4px',
-                    letterSpacing: '0.05em',
-                  }}
-                >
-                  {style.code}
-                </span>
                 <span
                   style={{
                     fontSize: '11px',
-                    color: '#6b7280',
+                    fontWeight: 500,
+                    letterSpacing: '0.15em',
+                    color: '#d1d5db',
+                    textTransform: 'uppercase',
                   }}
                 >
-                  {style.label}
+                  IDOL
                 </span>
+                <span
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: 700,
+                    color: '#ffffff',
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {card.artist_name}
+                </span>
+                {card.song_title && (
+                  <span
+                    style={{
+                      fontSize: '11px',
+                      color: '#9ca3af',
+                      marginTop: '2px',
+                    }}
+                  >
+                    SONG: {card.song_title}
+                  </span>
+                )}
               </div>
             </div>
-          </div>
 
-          {/* Right side: Text info */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px',
-              maxWidth: '480px',
-            }}
-          >
-            {/* Card name */}
-            <span
-              style={{
-                fontSize: '36px',
-                fontWeight: 700,
-                color: '#ffffff',
-                lineHeight: 1.2,
-              }}
-            >
-              {card.name}
-            </span>
-
-            {/* Artist name */}
-            <span
-              style={{
-                fontSize: '20px',
-                color: '#9ca3af',
-              }}
-            >
-              {card.artist_name}
-            </span>
-
-            {card.song_title && (
-              <span
-                style={{
-                  fontSize: '16px',
-                  color: '#6b7280',
-                }}
-              >
-                {card.song_title}
-              </span>
-            )}
-
-            {/* Divider */}
+            {/* Info section */}
             <div
               style={{
-                width: '60px',
-                height: '2px',
-                background: style.borderColor,
-                marginTop: '8px',
-                marginBottom: '8px',
-              }}
-            />
-
-            {/* HITOON branding */}
-            <div
-              style={{
+                padding: '10px 12px',
+                borderTop: '1px solid rgba(255,255,255,0.1)',
+                background: 'linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.95) 100%)',
                 display: 'flex',
-                flexDirection: 'column',
-                gap: '4px',
+                alignItems: 'center',
+                justifyContent: 'space-between',
               }}
             >
+              {/* Rarity badge */}
               <span
                 style={{
-                  fontSize: '24px',
+                  background: style.badgeBg,
+                  color: style.badgeColor,
+                  fontSize: '12px',
                   fontWeight: 700,
-                  color: '#ffffff',
-                  letterSpacing: '0.1em',
+                  padding: '3px 8px',
+                  borderRadius: '4px',
+                  letterSpacing: '0.05em',
                 }}
               >
-                HITOON
+                {style.code}
               </span>
               <span
                 style={{
-                  fontSize: '13px',
+                  fontSize: '11px',
                   color: '#6b7280',
                 }}
               >
-                音楽を、一生モノにする。
+                {style.label}
               </span>
             </div>
           </div>
         </div>
+
+        {/* Right side: Text info */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+            maxWidth: '480px',
+          }}
+        >
+          {/* Card name */}
+          <span
+            style={{
+              fontSize: '36px',
+              fontWeight: 700,
+              color: '#ffffff',
+              lineHeight: 1.2,
+            }}
+          >
+            {card.name}
+          </span>
+
+          {/* Artist name */}
+          <span
+            style={{
+              fontSize: '20px',
+              color: '#9ca3af',
+            }}
+          >
+            {card.artist_name}
+          </span>
+
+          {card.song_title && (
+            <span
+              style={{
+                fontSize: '16px',
+                color: '#6b7280',
+              }}
+            >
+              {card.song_title}
+            </span>
+          )}
+
+          {/* Divider */}
+          <div
+            style={{
+              width: '60px',
+              height: '2px',
+              background: style.borderColor,
+              marginTop: '8px',
+              marginBottom: '8px',
+            }}
+          />
+
+          {/* HITOON branding */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '4px',
+            }}
+          >
+            <span
+              style={{
+                fontSize: '24px',
+                fontWeight: 700,
+                color: '#ffffff',
+                letterSpacing: '0.1em',
+              }}
+            >
+              HITOON
+            </span>
+            <span
+              style={{
+                fontSize: '13px',
+                color: '#6b7280',
+              }}
+            >
+              音楽を、一生モノにする。
+            </span>
+          </div>
+        </div>
       </div>
-    ),
+    </div>,
     {
       width: 1200,
       height: 630,

@@ -48,6 +48,7 @@ export interface Card {
   subtitle: string | null;
   frameTemplateId: string;
   isActive: boolean;
+  saleEndsAt: string | null;
   createdAt: string;
   updatedAt: string;
 }

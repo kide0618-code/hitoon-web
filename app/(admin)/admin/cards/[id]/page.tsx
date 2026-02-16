@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
-import Image from 'next/image';
+import { useState, useEffect, useRef, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { getFrameTemplate, getFrameTemplatesByRarity } from '@/config/frame-templates';
+import Image from 'next/image';
+import { FRAME_TEMPLATES, getFrameTemplate } from '@/config/frame-templates';
+import { ArtistCard } from '@/components/cards/artist-card';
 import type { Rarity } from '@/types/card';
 
 interface ExclusiveContent {
@@ -26,6 +27,7 @@ interface Card {
   current_supply: number;
   max_purchase_per_user: number | null;
   is_active: boolean;
+  sale_ends_at: string | null;
   card_image_url: string;
   song_title: string | null;
   subtitle: string | null;
@@ -45,9 +47,12 @@ interface PageProps {
 export default function EditCardPage({ params }: PageProps) {
   const { id } = use(params);
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [imageInputMode, setImageInputMode] = useState<'upload' | 'url'>('upload');
   const [error, setError] = useState<string | null>(null);
   const [card, setCard] = useState<Card | null>(null);
 
@@ -62,6 +67,7 @@ export default function EditCardPage({ params }: PageProps) {
     song_title: '',
     subtitle: '',
     frame_template_id: 'classic-normal',
+    sale_ends_at: '',
   });
 
   useEffect(() => {
@@ -75,6 +81,13 @@ export default function EditCardPage({ params }: PageProps) {
         }
 
         setCard(data.card);
+        // Convert ISO date to datetime-local format (YYYY-MM-DDTHH:MM)
+        let saleEndsAtLocal = '';
+        if (data.card.sale_ends_at) {
+          const d = new Date(data.card.sale_ends_at);
+          saleEndsAtLocal = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}T${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+        }
+
         setFormData({
           name: data.card.name,
           description: data.card.description || '',
@@ -86,6 +99,7 @@ export default function EditCardPage({ params }: PageProps) {
           song_title: data.card.song_title || '',
           subtitle: data.card.subtitle || '',
           frame_template_id: data.card.frame_template_id || 'classic-normal',
+          sale_ends_at: saleEndsAtLocal,
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
@@ -97,6 +111,49 @@ export default function EditCardPage({ params }: PageProps) {
     fetchCard();
   }, [id]);
 
+  const handleFileUpload = async (file: File) => {
+    setIsUploading(true);
+    setError(null);
+
+    try {
+      const uploadData = new FormData();
+      uploadData.append('file', file);
+      uploadData.append('folder', 'cards');
+
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: uploadData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Upload failed');
+      }
+
+      setFormData((prev) => ({ ...prev, card_image_url: data.url }));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Upload failed');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleFileUpload(file);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      handleFileUpload(file);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
@@ -106,7 +163,12 @@ export default function EditCardPage({ params }: PageProps) {
       const res = await fetch(`/api/admin/cards/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          sale_ends_at: formData.sale_ends_at
+            ? new Date(formData.sale_ends_at).toISOString()
+            : null,
+        }),
       });
 
       const data = await res.json();
@@ -164,7 +226,7 @@ export default function EditCardPage({ params }: PageProps) {
 
   if (isLoading) {
     return (
-      <div className="mx-auto max-w-3xl">
+      <div className="mx-auto max-w-5xl">
         <div className="animate-pulse space-y-6">
           <div className="h-8 w-1/3 rounded bg-gray-800" />
           <div className="space-y-4 rounded-xl border border-gray-800 bg-gray-900 p-6">
@@ -179,7 +241,7 @@ export default function EditCardPage({ params }: PageProps) {
 
   if (!card) {
     return (
-      <div className="mx-auto max-w-3xl">
+      <div className="mx-auto max-w-5xl">
         <div className="rounded-lg border border-red-700 bg-red-900/50 px-4 py-3 text-red-400">
           Card not found
         </div>
@@ -187,16 +249,27 @@ export default function EditCardPage({ params }: PageProps) {
     );
   }
 
-  const frameTemplate = getFrameTemplate(card.frame_template_id);
-  const frameTemplatesForRarity = getFrameTemplatesByRarity(card.rarity);
+  const frameTemplate =
+    getFrameTemplate(formData.frame_template_id) || getFrameTemplate(card.frame_template_id);
+  const allFrameTemplates = Object.values(FRAME_TEMPLATES);
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <div className="mb-8 flex items-center gap-4">
-        <a href="/admin/cards" className="text-gray-500 transition-colors hover:text-white">
-          ← Back
+    <div className="mx-auto max-w-5xl">
+      <div className="mb-8 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <a href="/admin/cards" className="text-gray-500 transition-colors hover:text-white">
+            ← Back
+          </a>
+          <h1 className="text-2xl font-bold text-white">Edit Card</h1>
+        </div>
+        <a
+          href={`/artists/${card.artist.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-lg border border-gray-700 px-4 py-2 text-sm text-gray-300 transition-colors hover:border-gray-500 hover:text-white"
+        >
+          ユーザー表示ページを見る ↗
         </a>
-        <h1 className="text-2xl font-bold text-white">Edit Card</h1>
       </div>
 
       {error && (
@@ -205,64 +278,196 @@ export default function EditCardPage({ params }: PageProps) {
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
         {/* Card Preview */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-4 rounded-xl border border-gray-800 bg-gray-900 p-4">
-            <div className="relative mb-4 aspect-[3/4] overflow-hidden rounded-lg">
-              <Image
-                src={card.card_image_url}
-                alt={card.name}
-                fill
-                className="object-cover"
-                unoptimized
-              />
+        <div className="lg:col-span-2">
+          <div className="sticky top-4 space-y-4">
+            <div className="rounded-xl border border-gray-800 bg-gray-900 p-4">
+              <p className="mb-3 text-xs font-medium uppercase tracking-wider text-gray-500">
+                Preview
+              </p>
+              {formData.card_image_url ? (
+                <ArtistCard
+                  artistName={card.artist.name}
+                  artistImageUrl={formData.card_image_url}
+                  songTitle={formData.song_title || null}
+                  rarity={card.rarity}
+                  frameTemplateId={formData.frame_template_id}
+                  serialNumber={card.current_supply > 0 ? 1 : undefined}
+                  totalSupply={formData.total_supply}
+                />
+              ) : (
+                <div className="flex aspect-[3/4] items-center justify-center rounded-lg bg-gray-800">
+                  <span className="text-sm text-gray-500">画像URLを入力してください</span>
+                </div>
+              )}
             </div>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-500">Artist</span>
-                <span className="text-white">{card.artist.name}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-500">Frame</span>
-                <span className="text-white">{frameTemplate?.name || card.frame_template_id}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-500">Rarity</span>
-                <span
-                  className={`rounded px-2 py-1 text-xs font-bold ${rarityStyles[card.rarity]}`}
-                >
-                  {rarityLabels[card.rarity]}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-500">Sold</span>
-                <span className="font-mono text-white">
-                  {card.current_supply}
-                  {card.total_supply !== null && ` / ${card.total_supply}`}
-                </span>
+            <div className="rounded-xl border border-gray-800 bg-gray-900 p-4">
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-500">Artist</span>
+                  <span className="text-white">{card.artist.name}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-500">Frame</span>
+                  <span className="text-white">
+                    {frameTemplate?.name || formData.frame_template_id}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-500">Rarity</span>
+                  <span
+                    className={`rounded px-2 py-1 text-xs font-bold ${rarityStyles[card.rarity]}`}
+                  >
+                    {rarityLabels[card.rarity]}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-500">Sold</span>
+                  <span className="font-mono text-white">
+                    {card.current_supply}
+                    {card.total_supply !== null && ` / ${card.total_supply}`}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Edit Form */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-3">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-6 rounded-xl border border-gray-800 bg-gray-900 p-6">
-              {/* Card Image URL */}
+              {/* Card Image */}
               <div>
-                <label className="mb-2 block text-sm font-medium text-gray-300">
-                  カード画像URL <span className="text-red-400">*</span>
-                </label>
-                <input
-                  type="url"
-                  required
-                  value={formData.card_image_url}
-                  onChange={(e) => setFormData({ ...formData, card_image_url: e.target.value })}
-                  className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
-                  placeholder="https://..."
-                />
+                <div className="mb-2 flex items-center justify-between">
+                  <label className="block text-sm font-medium text-gray-300">
+                    カード画像 <span className="text-red-400">*</span>
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setImageInputMode('upload')}
+                      className={`rounded px-3 py-1 text-xs transition-colors ${
+                        imageInputMode === 'upload'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-800 text-gray-400 hover:text-white'
+                      }`}
+                    >
+                      Upload
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setImageInputMode('url')}
+                      className={`rounded px-3 py-1 text-xs transition-colors ${
+                        imageInputMode === 'url'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-800 text-gray-400 hover:text-white'
+                      }`}
+                    >
+                      URL
+                    </button>
+                  </div>
+                </div>
+
+                {imageInputMode === 'upload' ? (
+                  <div
+                    onDrop={handleDrop}
+                    onDragOver={(e) => e.preventDefault()}
+                    onClick={() => fileInputRef.current?.click()}
+                    className={`cursor-pointer rounded-lg border-2 border-dashed p-6 text-center transition-colors ${
+                      isUploading
+                        ? 'border-blue-500 bg-blue-900/20'
+                        : 'border-gray-700 hover:border-gray-600'
+                    }`}
+                  >
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+                    {isUploading ? (
+                      <div className="text-blue-400">
+                        <svg
+                          className="mx-auto mb-2 h-8 w-8 animate-spin"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          />
+                        </svg>
+                        <p>Uploading...</p>
+                      </div>
+                    ) : formData.card_image_url ? (
+                      <div>
+                        <Image
+                          src={formData.card_image_url}
+                          alt="Preview"
+                          width={150}
+                          height={200}
+                          className="mx-auto mb-2 aspect-[3/4] w-[150px] rounded-lg object-cover"
+                          unoptimized
+                        />
+                        <p className="text-sm text-gray-400">Click or drag to replace</p>
+                      </div>
+                    ) : (
+                      <div className="text-gray-400">
+                        <svg
+                          className="mx-auto mb-2 h-12 w-12"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          />
+                        </svg>
+                        <p className="text-sm">Click or drag image here</p>
+                        <p className="mt-1 text-xs text-gray-500">JPEG, PNG, WebP, GIF (max 5MB)</p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <input
+                    type="url"
+                    value={formData.card_image_url}
+                    onChange={(e) => setFormData({ ...formData, card_image_url: e.target.value })}
+                    className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
+                    placeholder="https://..."
+                  />
+                )}
+
+                {imageInputMode === 'url' && formData.card_image_url && (
+                  <div className="mt-3">
+                    <Image
+                      src={formData.card_image_url}
+                      alt="Preview"
+                      width={150}
+                      height={200}
+                      className="aspect-[3/4] w-[150px] rounded-lg object-cover"
+                      unoptimized
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Song Title */}
@@ -294,8 +499,8 @@ export default function EditCardPage({ params }: PageProps) {
                 <label className="mb-2 block text-sm font-medium text-gray-300">
                   フレームテンプレート
                 </label>
-                <div className="grid grid-cols-3 gap-3">
-                  {frameTemplatesForRarity.map((template) => (
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {allFrameTemplates.map((template) => (
                     <button
                       key={template.id}
                       type="button"
@@ -312,6 +517,14 @@ export default function EditCardPage({ params }: PageProps) {
                       />
                       <p className="text-xs text-white">{template.name}</p>
                       <p className="text-xs text-gray-500">{template.nameJa}</p>
+                      <div className="mt-1 flex flex-wrap gap-1">
+                        <span className="rounded bg-gray-700 px-1 py-0.5 text-[10px] text-gray-400">
+                          {template.frameStyle}
+                        </span>
+                        <span className="rounded bg-gray-700 px-1 py-0.5 text-[10px] text-gray-400">
+                          {template.holoEffect}
+                        </span>
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -426,6 +639,22 @@ export default function EditCardPage({ params }: PageProps) {
                   </span>
                 </label>
               </div>
+
+              {/* Sale Deadline */}
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-300">
+                  販売期限 (空欄 = 無期限・JST)
+                </label>
+                <input
+                  type="datetime-local"
+                  value={formData.sale_ends_at}
+                  onChange={(e) => setFormData({ ...formData, sale_ends_at: e.target.value })}
+                  className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
+                />
+                <p className="mt-1 text-xs text-gray-500">
+                  設定した日時を過ぎると購入できなくなります
+                </p>
+              </div>
             </div>
 
             {/* Exclusive Contents */}
@@ -483,7 +712,7 @@ export default function EditCardPage({ params }: PageProps) {
               <div className="flex items-center gap-4">
                 <button
                   type="submit"
-                  disabled={isSaving}
+                  disabled={isSaving || isUploading}
                   className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-800"
                 >
                   {isSaving ? 'Saving...' : 'Save Changes'}

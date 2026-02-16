@@ -62,6 +62,8 @@ export function ArtistCard({
       className={cn('card interactive', className)}
       data-rarity={getRarityDataAttr(rarity)}
       data-frame={frame.cssClass}
+      data-frame-style={frame.frameStyle}
+      data-holo-effect={frame.holoEffect}
       style={style}
       onClick={onClick}
       onKeyDown={handleKeyDown}
@@ -77,7 +79,13 @@ export function ArtistCard({
           <div className="card__front">
             {/* Main card image */}
             <div className="card__image">
-              <Image src={artistImageUrl} alt={artistName} fill className="object-cover" unoptimized />
+              <Image
+                src={artistImageUrl}
+                alt={artistName}
+                fill
+                className="object-cover"
+                unoptimized
+              />
             </div>
 
             {/* Info overlay */}

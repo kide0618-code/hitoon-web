@@ -108,6 +108,7 @@ export interface Database {
           subtitle: string | null;
           frame_template_id: string;
           is_active: boolean;
+          sale_ends_at: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -126,6 +127,7 @@ export interface Database {
           subtitle?: string | null;
           frame_template_id?: string;
           is_active?: boolean;
+          sale_ends_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -144,6 +146,7 @@ export interface Database {
           subtitle?: string | null;
           frame_template_id?: string;
           is_active?: boolean;
+          sale_ends_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };

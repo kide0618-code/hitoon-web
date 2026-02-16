@@ -58,17 +58,16 @@ export default async function AdminCardsPage() {
               <th className="px-6 py-4">Price</th>
               <th className="px-6 py-4">Supply</th>
               <th className="px-6 py-4">Status</th>
-              <th className="px-6 py-4">Actions</th>
             </tr>
           </thead>
           <tbody>
             {cards?.map((card) => (
               <tr
                 key={card.id}
-                className="border-b border-gray-800 last:border-0 hover:bg-gray-800/50"
+                className="cursor-pointer border-b border-gray-800 last:border-0 hover:bg-gray-800/50"
               >
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
+                <td>
+                  <a href={`/admin/cards/${card.id}`} className="flex items-center gap-3 px-6 py-4">
                     {card.card_image_url && (
                       <Image
                         src={card.card_image_url}
@@ -85,55 +84,53 @@ export default async function AdminCardsPage() {
                         <p className="text-xs text-gray-500">{card.song_title}</p>
                       )}
                     </div>
-                  </div>
+                  </a>
                 </td>
-                <td className="px-6 py-4 text-gray-400">{card.artist?.name}</td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`rounded px-2 py-1 text-xs ${rarityStyles[card.rarity] || rarityStyles.NORMAL}`}
+                <td>
+                  <a href={`/admin/cards/${card.id}`} className="block px-6 py-4 text-gray-400">
+                    {card.artist?.name}
+                  </a>
+                </td>
+                <td>
+                  <a href={`/admin/cards/${card.id}`} className="block px-6 py-4">
+                    <span
+                      className={`rounded px-2 py-1 text-xs ${rarityStyles[card.rarity] || rarityStyles.NORMAL}`}
+                    >
+                      {card.rarity}
+                    </span>
+                  </a>
+                </td>
+                <td>
+                  <a href={`/admin/cards/${card.id}`} className="block px-6 py-4 text-white">
+                    ¥{card.price.toLocaleString()}
+                  </a>
+                </td>
+                <td>
+                  <a
+                    href={`/admin/cards/${card.id}`}
+                    className="block px-6 py-4 font-mono text-gray-400"
                   >
-                    {card.rarity}
-                  </span>
+                    {card.current_supply}
+                    {card.total_supply !== null && ` / ${card.total_supply}`}
+                  </a>
                 </td>
-                <td className="px-6 py-4 text-white">¥{card.price.toLocaleString()}</td>
-                <td className="px-6 py-4 font-mono text-gray-400">
-                  {card.current_supply}
-                  {card.total_supply !== null && ` / ${card.total_supply}`}
-                </td>
-                <td className="px-6 py-4">
-                  {card.is_active ? (
-                    <span className="rounded bg-green-900/50 px-2 py-1 text-xs text-green-400">
-                      Active
-                    </span>
-                  ) : (
-                    <span className="rounded bg-gray-800 px-2 py-1 text-xs text-gray-500">
-                      Inactive
-                    </span>
-                  )}
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-2">
-                    <a
-                      href={`/admin/cards/${card.id}`}
-                      className="text-sm text-blue-400 hover:text-blue-300"
-                    >
-                      Edit
-                    </a>
-                    <span className="text-gray-700">|</span>
-                    <a
-                      href={`/artists/${card.artist?.id}`}
-                      className="text-sm text-gray-500 hover:text-gray-300"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      View
-                    </a>
-                  </div>
+                <td>
+                  <a href={`/admin/cards/${card.id}`} className="block px-6 py-4">
+                    {card.is_active ? (
+                      <span className="rounded bg-green-900/50 px-2 py-1 text-xs text-green-400">
+                        Active
+                      </span>
+                    ) : (
+                      <span className="rounded bg-gray-800 px-2 py-1 text-xs text-gray-500">
+                        Inactive
+                      </span>
+                    )}
+                  </a>
                 </td>
               </tr>
             )) || (
               <tr>
-                <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
                   No cards yet. Click &quot;+ Add Card&quot; to create one.
                 </td>
               </tr>

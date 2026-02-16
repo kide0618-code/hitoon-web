@@ -60,6 +60,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
     if (body.song_title !== undefined) updateData.song_title = body.song_title;
     if (body.subtitle !== undefined) updateData.subtitle = body.subtitle;
     if (body.frame_template_id !== undefined) updateData.frame_template_id = body.frame_template_id;
+    if (body.sale_ends_at !== undefined) updateData.sale_ends_at = body.sale_ends_at;
     // Note: rarity should not be changed after creation
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

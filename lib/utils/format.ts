@@ -29,6 +29,32 @@ export function formatDate(date: Date | string): string {
 }
 
 /**
+ * Format deadline date for display in JST
+ * → "2025/03/31 23:59 (JST)"
+ */
+export function formatDeadline(dateString: string): string {
+  const d = new Date(dateString);
+  const formatted = d.toLocaleString('ja-JP', {
+    timeZone: 'Asia/Tokyo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+  return `${formatted} (JST)`;
+}
+
+/**
+ * Check if sale has ended
+ */
+export function isSaleEnded(saleEndsAt: string | null): boolean {
+  if (!saleEndsAt) return false;
+  return new Date(saleEndsAt) < new Date();
+}
+
+/**
  * Format member count with abbreviation
  */
 export function formatMemberCount(count: number): string {
