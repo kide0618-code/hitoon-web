@@ -42,16 +42,12 @@ export async function POST(request: Request, { params }: RouteParams) {
       return Response.json({ error: 'type and title are required' }, { status: 400 });
     }
 
-    if (type !== 'text' && !url) {
-      return Response.json({ error: 'url is required for non-text content' }, { status: 400 });
-    }
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabaseAdmin.from('exclusive_contents') as any)
       .insert({
         card_id: id,
         type,
-        url: url || null,
+        url: url || '',
         title,
         description: description || null,
         display_order: display_order ?? 0,

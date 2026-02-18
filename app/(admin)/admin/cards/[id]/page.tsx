@@ -3,7 +3,11 @@
 import { useState, useEffect, useRef, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { getFrameTemplate, getFrameTemplatesByRarity } from '@/config/frame-templates';
+import {
+  getFrameTemplate,
+  getFrameTemplatesByRarity,
+  getDefaultFrameForRarity,
+} from '@/config/frame-templates';
 import { ArtistCard } from '@/components/cards/artist-card';
 import type { Rarity } from '@/types/card';
 
@@ -40,6 +44,11 @@ interface Card {
   exclusive_contents: ExclusiveContent[];
 }
 
+interface Artist {
+  id: string;
+  name: string;
+}
+
 interface PageProps {
   params: Promise<{ id: string }>;
 }
@@ -52,13 +61,17 @@ export default function EditCardPage({ params }: PageProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isCreatingContent, setIsCreatingContent] = useState(false);
   const [imageInputMode, setImageInputMode] = useState<'upload' | 'url'>('upload');
   const [error, setError] = useState<string | null>(null);
   const [card, setCard] = useState<Card | null>(null);
+  const [artists, setArtists] = useState<Artist[]>([]);
 
   const [formData, setFormData] = useState({
     name: '',
     description: '',
+    artist_id: '',
+    rarity: 'NORMAL' as Rarity,
     price: 0,
     total_supply: null as number | null,
     max_purchase_per_user: null as number | null,
@@ -71,34 +84,42 @@ export default function EditCardPage({ params }: PageProps) {
   });
 
   useEffect(() => {
-    const fetchCard = async () => {
+    const fetchData = async () => {
       try {
-        const res = await fetch(`/api/admin/cards/${id}`);
-        const data = await res.json();
+        const [cardRes, artistsRes] = await Promise.all([
+          fetch(`/api/admin/cards/${id}`),
+          fetch('/api/artists'),
+        ]);
 
-        if (!res.ok) {
-          throw new Error(data.error || 'Failed to fetch card');
+        const cardData = await cardRes.json();
+        if (!cardRes.ok) {
+          throw new Error(cardData.error || 'Failed to fetch card');
         }
 
-        setCard(data.card);
+        const artistsData = await artistsRes.json();
+        setArtists(Array.isArray(artistsData) ? artistsData : artistsData.artists || []);
+
+        setCard(cardData.card);
         // Convert ISO date to datetime-local format (YYYY-MM-DDTHH:MM)
         let saleEndsAtLocal = '';
-        if (data.card.sale_ends_at) {
-          const d = new Date(data.card.sale_ends_at);
+        if (cardData.card.sale_ends_at) {
+          const d = new Date(cardData.card.sale_ends_at);
           saleEndsAtLocal = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}T${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
         }
 
         setFormData({
-          name: data.card.name,
-          description: data.card.description || '',
-          price: data.card.price,
-          total_supply: data.card.total_supply,
-          max_purchase_per_user: data.card.max_purchase_per_user,
-          is_active: data.card.is_active,
-          card_image_url: data.card.card_image_url || '',
-          song_title: data.card.song_title || '',
-          subtitle: data.card.subtitle || '',
-          frame_template_id: data.card.frame_template_id || 'normal-frame-radiant',
+          name: cardData.card.name,
+          description: cardData.card.description || '',
+          artist_id: cardData.card.artist_id,
+          rarity: cardData.card.rarity,
+          price: cardData.card.price,
+          total_supply: cardData.card.total_supply,
+          max_purchase_per_user: cardData.card.max_purchase_per_user,
+          is_active: cardData.card.is_active,
+          card_image_url: cardData.card.card_image_url || '',
+          song_title: cardData.card.song_title || '',
+          subtitle: cardData.card.subtitle || '',
+          frame_template_id: cardData.card.frame_template_id || 'normal-frame-radiant',
           sale_ends_at: saleEndsAtLocal,
         });
       } catch (err) {
@@ -108,7 +129,7 @@ export default function EditCardPage({ params }: PageProps) {
       }
     };
 
-    fetchCard();
+    fetchData();
   }, [id]);
 
   const handleFileUpload = async (file: File) => {
@@ -160,15 +181,22 @@ export default function EditCardPage({ params }: PageProps) {
     setError(null);
 
     try {
+      const payload: Record<string, unknown> = {
+        ...formData,
+        sale_ends_at: formData.sale_ends_at
+          ? new Date(formData.sale_ends_at).toISOString()
+          : null,
+      };
+      // Only send artist_id/rarity if card has no purchases (editable)
+      if (card && card.current_supply > 0) {
+        delete payload.artist_id;
+        delete payload.rarity;
+      }
+
       const res = await fetch(`/api/admin/cards/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          sale_ends_at: formData.sale_ends_at
-            ? new Date(formData.sale_ends_at).toISOString()
-            : null,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
@@ -212,6 +240,34 @@ export default function EditCardPage({ params }: PageProps) {
     }
   };
 
+  const handleCreateContent = async () => {
+    setIsCreatingContent(true);
+    setError(null);
+
+    try {
+      const res = await fetch(`/api/admin/cards/${id}/contents`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'image',
+          title: '(下書き)',
+          url: '',
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to create content');
+      }
+
+      router.push(`/admin/cards/${id}/contents/${data.content.id}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+      setIsCreatingContent(false);
+    }
+  };
+
   const rarityStyles: Record<string, string> = {
     NORMAL: 'bg-gray-800 text-gray-400',
     RARE: 'bg-blue-900/50 text-blue-400',
@@ -249,9 +305,33 @@ export default function EditCardPage({ params }: PageProps) {
     );
   }
 
+  const canEditArtistAndRarity = card.current_supply === 0;
+  const currentRarity = formData.rarity;
+  const selectedArtist = artists.find((a) => a.id === formData.artist_id) || card.artist;
   const frameTemplate =
     getFrameTemplate(formData.frame_template_id) || getFrameTemplate(card.frame_template_id);
-  const filteredFrameTemplates = getFrameTemplatesByRarity(card.rarity);
+  const filteredFrameTemplates = getFrameTemplatesByRarity(currentRarity);
+
+  const handleRarityChange = (rarity: Rarity) => {
+    const defaultPrices: Record<Rarity, number> = {
+      NORMAL: 1500,
+      RARE: 3000,
+      SUPER_RARE: 8000,
+    };
+    const defaultSupply: Record<Rarity, number | null> = {
+      NORMAL: null,
+      RARE: 100,
+      SUPER_RARE: 30,
+    };
+    const defaultFrame = getDefaultFrameForRarity(rarity);
+    setFormData((prev) => ({
+      ...prev,
+      rarity,
+      price: defaultPrices[rarity],
+      total_supply: defaultSupply[rarity],
+      frame_template_id: defaultFrame.id,
+    }));
+  };
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -263,7 +343,7 @@ export default function EditCardPage({ params }: PageProps) {
           <h1 className="text-2xl font-bold text-white">Edit Card</h1>
         </div>
         <a
-          href={`/artists/${card.artist.id}`}
+          href={`/artists/${selectedArtist.id}`}
           target="_blank"
           rel="noopener noreferrer"
           className="rounded-lg border border-gray-700 px-4 py-2 text-sm text-gray-300 transition-colors hover:border-gray-500 hover:text-white"
@@ -288,10 +368,10 @@ export default function EditCardPage({ params }: PageProps) {
               </p>
               {formData.card_image_url ? (
                 <ArtistCard
-                  artistName={card.artist.name}
+                  artistName={selectedArtist.name}
                   artistImageUrl={formData.card_image_url}
                   songTitle={formData.song_title || null}
-                  rarity={card.rarity}
+                  rarity={currentRarity}
                   frameTemplateId={formData.frame_template_id}
                   serialNumber={card.current_supply > 0 ? 1 : undefined}
                   totalSupply={formData.total_supply}
@@ -306,7 +386,7 @@ export default function EditCardPage({ params }: PageProps) {
               <div className="space-y-2 text-sm">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-500">Artist</span>
-                  <span className="text-white">{card.artist.name}</span>
+                  <span className="text-white">{selectedArtist.name}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-500">Frame</span>
@@ -317,9 +397,9 @@ export default function EditCardPage({ params }: PageProps) {
                 <div className="flex items-center justify-between">
                   <span className="text-gray-500">Rarity</span>
                   <span
-                    className={`rounded px-2 py-1 text-xs font-bold ${rarityStyles[card.rarity]}`}
+                    className={`rounded px-2 py-1 text-xs font-bold ${rarityStyles[currentRarity]}`}
                   >
-                    {rarityLabels[card.rarity]}
+                    {rarityLabels[currentRarity]}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
@@ -338,6 +418,70 @@ export default function EditCardPage({ params }: PageProps) {
         <div className="lg:col-span-3">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-6 rounded-xl border border-gray-800 bg-gray-900 p-6">
+              {/* Artist Selection (only when no purchases) */}
+              {canEditArtistAndRarity && (
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-gray-300">
+                    Artist <span className="text-red-400">*</span>
+                  </label>
+                  <select
+                    value={formData.artist_id}
+                    onChange={(e) =>
+                      setFormData({ ...formData, artist_id: e.target.value })
+                    }
+                    className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
+                  >
+                    {artists.map((artist) => (
+                      <option key={artist.id} value={artist.id}>
+                        {artist.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {/* Rarity Selection (only when no purchases) */}
+              {canEditArtistAndRarity && (
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-gray-300">
+                    Rarity <span className="text-red-400">*</span>
+                  </label>
+                  <div className="grid grid-cols-3 gap-3">
+                    {(['NORMAL', 'RARE', 'SUPER_RARE'] as const).map((rarity) => (
+                      <button
+                        key={rarity}
+                        type="button"
+                        onClick={() => handleRarityChange(rarity)}
+                        className={`rounded-lg border-2 p-3 transition-all ${
+                          currentRarity === rarity
+                            ? (rarity === 'NORMAL'
+                                ? 'border-gray-700'
+                                : rarity === 'RARE'
+                                  ? 'border-blue-500'
+                                  : 'border-yellow-400') + ' bg-gray-800'
+                            : 'border-gray-800 bg-gray-900 hover:border-gray-700'
+                        }`}
+                      >
+                        <span
+                          className={`rounded px-2 py-1 text-xs font-bold ${
+                            rarity === 'NORMAL'
+                              ? 'bg-gray-700 text-gray-300'
+                              : rarity === 'RARE'
+                                ? 'bg-blue-900/50 text-blue-400'
+                                : 'bg-gradient-to-r from-yellow-400 to-amber-500 text-black'
+                          }`}
+                        >
+                          {rarity === 'SUPER_RARE' ? 'SR' : rarity[0]}
+                        </span>
+                        <p className="mt-2 text-sm text-white">
+                          {rarity === 'SUPER_RARE' ? 'Super Rare' : rarity}
+                        </p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Card Image */}
               <div>
                 <div className="mb-2 flex items-center justify-between">
@@ -661,12 +805,14 @@ export default function EditCardPage({ params }: PageProps) {
             <div className="space-y-4 rounded-xl border border-gray-800 bg-gray-900 p-6">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-medium text-white">Exclusive Contents</h2>
-                <a
-                  href={`/admin/cards/${card.id}/contents/new`}
-                  className="text-sm text-blue-400 hover:text-blue-300"
+                <button
+                  type="button"
+                  onClick={handleCreateContent}
+                  disabled={isCreatingContent}
+                  className="text-sm text-blue-400 transition-colors hover:text-blue-300 disabled:text-blue-800"
                 >
-                  + Add Content
-                </a>
+                  {isCreatingContent ? '作成中...' : '+ Add Content'}
+                </button>
               </div>
 
               {card.exclusive_contents.length > 0 ? (

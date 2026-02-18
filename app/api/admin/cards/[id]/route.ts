@@ -61,7 +61,33 @@ export async function PUT(request: Request, { params }: RouteParams) {
     if (body.subtitle !== undefined) updateData.subtitle = body.subtitle;
     if (body.frame_template_id !== undefined) updateData.frame_template_id = body.frame_template_id;
     if (body.sale_ends_at !== undefined) updateData.sale_ends_at = body.sale_ends_at;
-    // Note: rarity should not be changed after creation
+
+    // Allow artist_id and rarity changes only when no purchases exist (current_supply === 0)
+    if (body.artist_id !== undefined || body.rarity !== undefined) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: currentCard } = await (supabaseAdmin.from('cards') as any)
+        .select('current_supply')
+        .eq('id', id)
+        .single();
+
+      if (currentCard && currentCard.current_supply > 0) {
+        if (body.artist_id !== undefined) {
+          return Response.json(
+            { error: 'Cannot change artist after purchases have been made' },
+            { status: 400 },
+          );
+        }
+        if (body.rarity !== undefined) {
+          return Response.json(
+            { error: 'Cannot change rarity after purchases have been made' },
+            { status: 400 },
+          );
+        }
+      }
+
+      if (body.artist_id !== undefined) updateData.artist_id = body.artist_id;
+      if (body.rarity !== undefined) updateData.rarity = body.rarity;
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: card, error } = await (supabaseAdmin.from('cards') as any)

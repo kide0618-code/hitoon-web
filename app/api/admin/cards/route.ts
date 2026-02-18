@@ -15,11 +15,8 @@ export async function POST(request: Request) {
     if (!body.name) {
       return Response.json({ error: 'Name is required' }, { status: 400 });
     }
-    if (!body.card_image_url) {
-      return Response.json({ error: 'Card image URL is required' }, { status: 400 });
-    }
-    if (body.price === undefined || body.price < 0) {
-      return Response.json({ error: 'Valid price is required' }, { status: 400 });
+    if (body.price !== undefined && body.price < 0) {
+      return Response.json({ error: 'Price cannot be negative' }, { status: 400 });
     }
 
     const supabaseAdmin = createAdminClient();
@@ -31,10 +28,10 @@ export async function POST(request: Request) {
         name: body.name,
         description: body.description || null,
         rarity: body.rarity || 'NORMAL',
-        price: body.price,
+        price: body.price ?? 0,
         total_supply: body.total_supply || null,
         max_purchase_per_user: body.max_purchase_per_user || null,
-        card_image_url: body.card_image_url,
+        card_image_url: body.card_image_url || '',
         song_title: body.song_title || null,
         subtitle: body.subtitle || null,
         frame_template_id: body.frame_template_id || 'normal-frame-radiant',

@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { use } from 'react';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { ArtistFilter } from './artist-filter';
+import { CreateCardButton } from './create-card-button';
 
 interface PageProps {
   searchParams: Promise<{ artist?: string }>;
@@ -60,12 +61,7 @@ export default function AdminCardsPage({ searchParams }: PageProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-white">Cards</h1>
-        <a
-          href="/admin/cards/new"
-          className="rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
-        >
-          + Add Card
-        </a>
+        <CreateCardButton artists={artists || []} />
       </div>
 
       <div className="flex items-center gap-3">

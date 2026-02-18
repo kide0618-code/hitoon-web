@@ -250,6 +250,10 @@ body {
   transform-style: preserve-3d;
 }
 
+.card.interactive .card__rotator {
+  touch-action: none;
+}
+
 .card__translater {
   width: auto;
   position: relative;
