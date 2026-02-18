@@ -175,6 +175,7 @@ export function ArtistDetailClient({ artist, isAuthenticated }: Props) {
             artistImageUrl: selectedCard.cardImageUrl,
             songTitle: selectedCard.songTitle,
             rarity: selectedCard.rarity,
+            frameTemplateId: selectedCard.frameTemplateId,
             price: selectedCard.price,
             totalSupply: selectedCard.totalSupply,
             currentSupply: selectedCard.currentSupply,

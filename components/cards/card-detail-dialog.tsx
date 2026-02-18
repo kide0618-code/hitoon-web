@@ -16,6 +16,7 @@ interface CardDetailDialogProps {
     artistImageUrl: string;
     songTitle: string | null;
     rarity: Rarity;
+    frameTemplateId?: string;
     price: number;
     totalSupply: number | null;
     currentSupply: number;
@@ -105,6 +106,7 @@ export function CardDetailDialog({
               artistImageUrl={card.artistImageUrl}
               songTitle={card.songTitle}
               rarity={card.rarity}
+              frameTemplateId={card.frameTemplateId}
             />
           </div>
         </div>

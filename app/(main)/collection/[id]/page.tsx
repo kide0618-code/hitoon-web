@@ -210,9 +210,9 @@ export default async function CollectionDetailPage({ params }: PageProps) {
             totalSupply={purchase.card.totalSupply}
             owned={1}
           />
-          <p className="mt-2 text-center text-xs text-gray-500">
-            カードにマウスを乗せてホログラム効果を確認
-          </p>
+          {/* <p className="mt-2 text-center text-xs text-gray-500">
+            スワイプで
+          </p> */}
         </div>
       </div>
 
