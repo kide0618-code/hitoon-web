@@ -183,9 +183,7 @@ export default function EditCardPage({ params }: PageProps) {
     try {
       const payload: Record<string, unknown> = {
         ...formData,
-        sale_ends_at: formData.sale_ends_at
-          ? new Date(formData.sale_ends_at).toISOString()
-          : null,
+        sale_ends_at: formData.sale_ends_at ? new Date(formData.sale_ends_at).toISOString() : null,
       };
       // Only send artist_id/rarity if card has no purchases (editable)
       if (card && card.current_supply > 0) {
@@ -426,9 +424,7 @@ export default function EditCardPage({ params }: PageProps) {
                   </label>
                   <select
                     value={formData.artist_id}
-                    onChange={(e) =>
-                      setFormData({ ...formData, artist_id: e.target.value })
-                    }
+                    onChange={(e) => setFormData({ ...formData, artist_id: e.target.value })}
                     className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
                   >
                     {artists.map((artist) => (
