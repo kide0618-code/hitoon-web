@@ -23,6 +23,7 @@ async function getFeaturedArtists(): Promise<FeaturedArtist[]> {
   const { data: artists, error } = await supabase
     .from('artists')
     .select('id, name, image_url, member_count')
+    .is('archived_at', null)
     .eq('is_featured', true)
     .order('display_order', { ascending: true })
     .limit(3);

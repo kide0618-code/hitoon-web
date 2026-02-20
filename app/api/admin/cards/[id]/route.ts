@@ -113,24 +113,14 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     const { id } = await params;
     const supabaseAdmin = createAdminClient();
 
-    // Check if card has any purchases
+    // Soft delete: set archived_at and deactivate
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: purchases } = await (supabaseAdmin.from('purchases') as any)
-      .select('id')
-      .eq('card_id', id)
-      .limit(1);
-
-    if (purchases && purchases.length > 0) {
-      return Response.json(
-        {
-          error: 'Cannot delete card with existing purchases. Deactivate it instead.',
-        },
-        { status: 400 },
-      );
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabaseAdmin.from('cards') as any).delete().eq('id', id);
+    const { error } = await (supabaseAdmin.from('cards') as any)
+      .update({
+        archived_at: new Date().toISOString(),
+        is_active: false,
+      })
+      .eq('id', id);
 
     if (error) {
       return Response.json({ error: error.message }, { status: 500 });

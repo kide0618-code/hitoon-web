@@ -20,6 +20,7 @@ interface Artist {
   is_featured: boolean;
   display_order: number;
   created_at: string;
+  archived_at: string | null;
 }
 
 interface SaleItem {
@@ -249,7 +250,7 @@ export function ArtistEditForm({ artistId, onClose }: ArtistEditFormProps) {
   const handleDelete = async () => {
     if (
       !confirm(
-        'Are you sure you want to delete this artist? This will also delete all associated templates and cards.',
+        'このアーティストを契約終了にしますか？\nユーザー向けページには表示されなくなりますが、管理画面には残ります。',
       )
     ) {
       return;
@@ -565,14 +566,21 @@ export function ArtistEditForm({ artistId, onClose }: ArtistEditFormProps) {
             </button>
           </div>
 
-          <button
-            type="button"
-            onClick={handleDelete}
-            disabled={isDeleting}
-            className="rounded-lg bg-red-900/50 px-4 py-2 font-medium text-red-400 transition-colors hover:bg-red-900 disabled:opacity-50"
-          >
-            {isDeleting ? 'Deleting...' : 'Delete Artist'}
-          </button>
+          {!artist.archived_at && (
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="rounded-lg bg-red-900/50 px-4 py-2 font-medium text-red-400 transition-colors hover:bg-red-900 disabled:opacity-50"
+            >
+              {isDeleting ? '処理中...' : '契約終了にする'}
+            </button>
+          )}
+          {artist.archived_at && (
+            <span className="rounded-lg border border-red-700 bg-red-900/30 px-4 py-2 text-sm text-red-400">
+              契約終了済み（{new Date(artist.archived_at).toLocaleDateString('ja-JP')}）
+            </span>
+          )}
         </div>
       </form>
 

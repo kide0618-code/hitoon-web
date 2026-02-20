@@ -25,6 +25,7 @@ export default async function AdminArtistsPage() {
           member_count: number;
           is_featured: boolean;
           display_order: number;
+          archived_at: string | null;
         }[]
       | null;
   };

@@ -25,7 +25,7 @@ export function CreateCardButton({ artists }: { artists: Artist[] }) {
           artist_id: artistId,
           name: '(下書き)',
           card_image_url: '',
-          price: 0,
+          price: 1000,
           is_active: false,
         }),
       });

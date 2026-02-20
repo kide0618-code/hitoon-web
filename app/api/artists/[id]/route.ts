@@ -21,6 +21,7 @@ export async function GET(request: Request, context: RouteContext) {
         'id, name, description, image_url, member_count, is_featured, display_order, created_at, updated_at',
       )
       .eq('id', id)
+      .is('archived_at', null)
       .single();
 
     if (artistError) {

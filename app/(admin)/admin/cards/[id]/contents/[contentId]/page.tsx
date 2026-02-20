@@ -125,7 +125,11 @@ export default function EditContentPage({ params }: PageProps) {
   };
 
   const handleDelete = async () => {
-    if (!confirm('このコンテンツを削除しますか？')) {
+    if (
+      !confirm(
+        'このコンテンツをアーカイブしますか？\nユーザーには表示されなくなりますが、管理画面には残ります。',
+      )
+    ) {
       return;
     }
 
@@ -397,7 +401,7 @@ export default function EditContentPage({ params }: PageProps) {
             disabled={isDeleting}
             className="rounded-lg bg-red-900/50 px-4 py-2 font-medium text-red-400 transition-colors hover:bg-red-900 disabled:opacity-50"
           >
-            {isDeleting ? 'Deleting...' : 'Delete'}
+            {isDeleting ? '処理中...' : 'アーカイブする'}
           </button>
         </div>
       </form>

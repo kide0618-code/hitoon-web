@@ -68,9 +68,10 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     const { contentId } = await params;
     const supabaseAdmin = createAdminClient();
 
+    // Soft delete: set archived_at instead of removing the record
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error } = await (supabaseAdmin.from('exclusive_contents') as any)
-      .delete()
+      .update({ archived_at: new Date().toISOString() })
       .eq('id', contentId);
 
     if (error) {

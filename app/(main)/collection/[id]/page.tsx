@@ -125,6 +125,7 @@ async function getPurchaseDetail(id: string): Promise<PurchaseDetail | null> {
     .from('exclusive_contents')
     .select('id, type, url, title, description')
     .eq('card_id', card.id)
+    .is('archived_at', null)
     .order('display_order', { ascending: true });
 
   const contents = (contentsData || []) as Pick<

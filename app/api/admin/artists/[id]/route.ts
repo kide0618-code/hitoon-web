@@ -102,8 +102,11 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     const { id } = await params;
     const supabaseAdmin = createAdminClient();
 
+    // Soft delete: set archived_at timestamp instead of removing the record
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabaseAdmin.from('artists') as any).delete().eq('id', id);
+    const { error } = await (supabaseAdmin.from('artists') as any)
+      .update({ archived_at: new Date().toISOString(), is_featured: false })
+      .eq('id', id);
 
     if (error) {
       return Response.json({ error: error.message }, { status: 500 });

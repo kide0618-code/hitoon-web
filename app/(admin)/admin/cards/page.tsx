@@ -45,6 +45,7 @@ export default function AdminCardsPage({ searchParams }: PageProps) {
           card_image_url: string;
           song_title: string | null;
           is_active: boolean;
+          archived_at: string | null;
           created_at: string;
           artist: { id: string; name: string };
         }[]
@@ -163,7 +164,11 @@ export default function AdminCardsPage({ searchParams }: PageProps) {
                     rel="noopener noreferrer"
                     className="block px-6 py-4"
                   >
-                    {card.is_active ? (
+                    {card.archived_at ? (
+                      <span className="rounded bg-red-900/50 px-2 py-1 text-xs text-red-400">
+                        Archived
+                      </span>
+                    ) : card.is_active ? (
                       <span className="rounded bg-green-900/50 px-2 py-1 text-xs text-green-400">
                         Active
                       </span>

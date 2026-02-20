@@ -97,6 +97,7 @@ async function getCollection(): Promise<CollectionItem[]> {
   const { data: exclusiveData } = await supabase
     .from('exclusive_contents')
     .select('card_id')
+    .is('archived_at', null)
     .in('card_id', cardIds.length > 0 ? cardIds : ['']);
 
   const exclusiveContents = (exclusiveData || []) as { card_id: string }[];

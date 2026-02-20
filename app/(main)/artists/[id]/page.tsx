@@ -40,6 +40,7 @@ async function getArtist(id: string): Promise<ArtistData | null> {
     .from('artists')
     .select('id, name, description, image_url, member_count')
     .eq('id', id)
+    .is('archived_at', null)
     .single();
 
   if (artistError || !artistData) {

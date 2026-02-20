@@ -25,6 +25,7 @@ async function getArtists(): Promise<ArtistItem[]> {
   const { data, error } = await supabase
     .from('artists')
     .select('id, name, description, image_url, member_count')
+    .is('archived_at', null)
     .order('member_count', { ascending: false });
 
   if (error || !data) {

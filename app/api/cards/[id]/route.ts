@@ -67,6 +67,7 @@ export async function GET(request: Request, context: RouteContext) {
           .from('exclusive_contents')
           .select('*')
           .eq('card_id', id)
+          .is('archived_at', null)
           .order('display_order', { ascending: true });
 
         exclusiveContents = contents || [];

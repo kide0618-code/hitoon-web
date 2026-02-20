@@ -18,6 +18,7 @@ interface ExclusiveContent {
   title: string;
   description: string | null;
   display_order: number;
+  archived_at: string | null;
 }
 
 interface Card {
@@ -31,6 +32,7 @@ interface Card {
   current_supply: number;
   max_purchase_per_user: number | null;
   is_active: boolean;
+  archived_at: string | null;
   sale_ends_at: string | null;
   card_image_url: string;
   song_title: string | null;
@@ -212,7 +214,11 @@ export default function EditCardPage({ params }: PageProps) {
   };
 
   const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this card? This action cannot be undone.')) {
+    if (
+      !confirm(
+        'このカードをアーカイブしますか？\nユーザー向けページには表示されなくなりますが、管理画面には残ります。',
+      )
+    ) {
       return;
     }
 
@@ -816,28 +822,38 @@ export default function EditCardPage({ params }: PageProps) {
                   {card.exclusive_contents.map((content) => (
                     <div
                       key={content.id}
-                      className="flex items-center justify-between rounded-lg bg-gray-800 p-3"
+                      className={`flex items-center justify-between rounded-lg bg-gray-800 p-3 ${content.archived_at ? 'opacity-50' : ''}`}
                     >
                       <div className="flex items-center gap-3">
                         <span
                           className={`rounded px-2 py-1 text-xs ${
-                            content.type === 'video'
+                            content.archived_at
                               ? 'bg-red-900/50 text-red-400'
-                              : content.type === 'music'
-                                ? 'bg-green-900/50 text-green-400'
-                                : 'bg-blue-900/50 text-blue-400'
+                              : content.type === 'video'
+                                ? 'bg-red-900/50 text-red-400'
+                                : content.type === 'music'
+                                  ? 'bg-green-900/50 text-green-400'
+                                  : 'bg-blue-900/50 text-blue-400'
                           }`}
                         >
-                          {content.type}
+                          {content.archived_at ? 'Archived' : content.type}
                         </span>
-                        <span className="text-white">{content.title}</span>
+                        <span
+                          className={
+                            content.archived_at ? 'text-gray-500 line-through' : 'text-white'
+                          }
+                        >
+                          {content.title}
+                        </span>
                       </div>
-                      <a
-                        href={`/admin/cards/${card.id}/contents/${content.id}`}
-                        className="text-sm text-blue-400 hover:text-blue-300"
-                      >
-                        Edit
-                      </a>
+                      {!content.archived_at && (
+                        <a
+                          href={`/admin/cards/${card.id}/contents/${content.id}`}
+                          className="text-sm text-blue-400 hover:text-blue-300"
+                        >
+                          Edit
+                        </a>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -864,17 +880,20 @@ export default function EditCardPage({ params }: PageProps) {
                 </a>
               </div>
 
-              <button
-                type="button"
-                onClick={handleDelete}
-                disabled={isDeleting || card.current_supply > 0}
-                className="rounded-lg bg-red-900/50 px-4 py-2 font-medium text-red-400 transition-colors hover:bg-red-900 disabled:cursor-not-allowed disabled:opacity-50"
-                title={
-                  card.current_supply > 0 ? 'Cannot delete card with purchases' : 'Delete card'
-                }
-              >
-                {isDeleting ? 'Deleting...' : 'Delete Card'}
-              </button>
+              {!card.archived_at ? (
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                  className="rounded-lg bg-red-900/50 px-4 py-2 font-medium text-red-400 transition-colors hover:bg-red-900 disabled:opacity-50"
+                >
+                  {isDeleting ? '処理中...' : 'アーカイブする'}
+                </button>
+              ) : (
+                <span className="rounded-lg border border-red-700 bg-red-900/30 px-4 py-2 text-sm text-red-400">
+                  アーカイブ済み（{new Date(card.archived_at).toLocaleDateString('ja-JP')}）
+                </span>
+              )}
             </div>
           </form>
         </div>
