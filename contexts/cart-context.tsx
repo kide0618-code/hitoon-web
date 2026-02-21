@@ -63,6 +63,7 @@ interface CardQueryResult {
   name: string;
   price: number;
   rarity: string;
+  frame_template_id: string;
   total_supply: number | null;
   current_supply: number;
   card_image_url: string;
@@ -96,6 +97,7 @@ export function CartProvider({ children }: CartProviderProps) {
           name,
           price,
           rarity,
+          frame_template_id,
           total_supply,
           current_supply,
           card_image_url,
@@ -133,6 +135,7 @@ export function CartProvider({ children }: CartProviderProps) {
               name: card.name,
               price: card.price,
               rarity: card.rarity as CartItemWithCard['card']['rarity'],
+              frameTemplateId: card.frame_template_id,
               totalSupply: card.total_supply,
               currentSupply: card.current_supply,
               cardImageUrl: card.card_image_url || '',

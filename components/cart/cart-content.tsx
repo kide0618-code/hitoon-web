@@ -41,6 +41,7 @@ function CartItem({
               item.card.cardImageUrl || 'https://placehold.co/120x160/1e293b/60a5fa?text=Card'
             }
             rarity={item.card.rarity}
+            frameTemplateId={item.card.frameTemplateId}
             songTitle={item.card.songTitle}
           />
         </Link>

@@ -20,6 +20,7 @@ export interface CartItemWithCard extends CartItem {
     name: string;
     price: number;
     rarity: Rarity;
+    frameTemplateId: string;
     totalSupply: number | null;
     currentSupply: number;
     cardImageUrl: string;
