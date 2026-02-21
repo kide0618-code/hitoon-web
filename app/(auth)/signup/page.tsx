@@ -1,16 +1,9 @@
-import type { Metadata } from 'next';
-import { Suspense } from 'react';
-import { AuthForm } from '@/components/auth/auth-form';
+import { redirect } from 'next/navigation';
 
-export const metadata: Metadata = {
-  title: '新規登録',
-  description: 'HITOONに新規登録',
-};
-
+/**
+ * Signup page redirects to unified login page.
+ * Login and signup are now handled on the same page.
+ */
 export default function SignupPage() {
-  return (
-    <Suspense fallback={<div className="animate-pulse">Loading...</div>}>
-      <AuthForm mode="signup" />
-    </Suspense>
-  );
+  redirect('/login');
 }

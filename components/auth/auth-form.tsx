@@ -9,10 +9,6 @@ import { localizeAuthError } from '@/lib/utils/auth-errors';
 import { Button } from '@/components/ui/button';
 import { ROUTES } from '@/constants/routes';
 
-interface AuthFormProps {
-  mode: 'login' | 'signup';
-}
-
 const REDIRECT_STORAGE_KEY = 'hitoon_auth_redirect';
 
 function getStoredRedirect(): string {
@@ -42,7 +38,7 @@ function clearStoredRedirect(): void {
   }
 }
 
-export function AuthForm({ mode }: AuthFormProps) {
+export function AuthForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect') || getStoredRedirect();
@@ -67,40 +63,47 @@ export function AuthForm({ mode }: AuthFormProps) {
     setMessage(null);
 
     try {
-      if (mode === 'signup') {
-        storeRedirect(redirectTo);
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`,
-          },
-        });
+      // 1. まずログインを試行
+      const { error: loginError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-        if (error) throw error;
-
-        setMessage(
-          '確認メールを送信しました。メール内のリンクをクリックして登録を完了してください。',
-        );
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (error) throw error;
-
+      if (!loginError) {
+        // ログイン成功
         clearStoredRedirect();
         router.push(redirectTo);
         router.refresh();
+        return;
       }
+
+      // 2. ログイン失敗 → 新規登録を試行
+      storeRedirect(redirectTo);
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`,
+        },
+      });
+
+      if (signUpError) throw signUpError;
+
+      // ユーザーが既に存在する場合（identitiesが空）
+      if (signUpData.user && signUpData.user.identities?.length === 0) {
+        setError('メールアドレスまたはパスワードが正しくありません');
+        return;
+      }
+
+      // 新規登録成功 → 確認メール送信
+      setMessage(
+        '確認メールを送信しました。メール内のリンクをクリックして登録を完了してください。',
+      );
     } catch (err) {
       setError(
         err instanceof Error
           ? localizeAuthError(err.message)
-          : mode === 'login'
-            ? 'ログインに失敗しました'
-            : '登録に失敗しました',
+          : 'エラーが発生しました',
       );
     } finally {
       setIsLoading(false);
@@ -132,10 +135,10 @@ export function AuthForm({ mode }: AuthFormProps) {
       {/* Header */}
       <div className="mb-8 text-center">
         <h1 className="mb-2 text-2xl font-bold text-white">
-          {mode === 'login' ? 'ログイン' : 'アカウント作成'}
+          ログイン / 新規登録
         </h1>
         <p className="text-gray-400">
-          {mode === 'login' ? 'HITOONへようこそ' : '新しいアカウントを作成'}
+          HITOONへようこそ
         </p>
       </div>
 
@@ -180,7 +183,7 @@ export function AuthForm({ mode }: AuthFormProps) {
             />
           </svg>
         )}
-        Googleで{mode === 'login' ? 'ログイン' : '登録'}
+        Googleで続ける
       </button>
 
       {/* Divider */}
@@ -229,7 +232,7 @@ export function AuthForm({ mode }: AuthFormProps) {
               required
               minLength={6}
               placeholder="6文字以上"
-              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+              autoComplete="current-password"
               className="w-full rounded-xl border border-gray-700 bg-gray-800/50 py-3.5 pl-12 pr-12 text-white transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 [&:-webkit-autofill]:bg-gray-800/50 [&:-webkit-autofill]:[-webkit-text-fill-color:white] [&:-webkit-autofill]:[transition:background-color_9999s_ease-in-out_0s]"
             />
             <button
@@ -242,16 +245,14 @@ export function AuthForm({ mode }: AuthFormProps) {
           </div>
         </div>
 
-        {mode === 'login' && (
-          <div className="text-right">
-            <Link
-              href={ROUTES.FORGOT_PASSWORD}
-              className="text-sm text-blue-400 hover:text-blue-300"
-            >
-              パスワードをお忘れですか？
-            </Link>
-          </div>
-        )}
+        <div className="text-right">
+          <Link
+            href={ROUTES.FORGOT_PASSWORD}
+            className="text-sm text-blue-400 hover:text-blue-300"
+          >
+            パスワードをお忘れですか？
+          </Link>
+        </div>
 
         <Button
           type="submit"
@@ -261,33 +262,12 @@ export function AuthForm({ mode }: AuthFormProps) {
           disabled={isGoogleLoading}
           className="w-full"
         >
-          {mode === 'login' ? 'ログイン' : 'アカウント作成'}
+          ログイン / 新規登録
         </Button>
       </form>
 
-      {/* Footer Link */}
-      <p className="mt-6 text-center text-gray-400">
-        {mode === 'login' ? (
-          <>
-            アカウントをお持ちでないですか？{' '}
-            <Link
-              href={`/signup${redirectTo !== '/' ? `?redirect=${redirectTo}` : ''}`}
-              className="text-blue-400 hover:text-blue-300"
-            >
-              新規登録
-            </Link>
-          </>
-        ) : (
-          <>
-            すでにアカウントをお持ちですか？{' '}
-            <Link
-              href={`/login${redirectTo !== '/' ? `?redirect=${redirectTo}` : ''}`}
-              className="text-blue-400 hover:text-blue-300"
-            >
-              ログイン
-            </Link>
-          </>
-        )}
+      <p className="mt-6 text-center text-sm text-gray-500">
+        アカウントが存在しない場合は自動的に新規登録されます
       </p>
     </div>
   );
