@@ -3,7 +3,7 @@
 **Version**: 1.0.0
 **Last Updated**: 2026-02-02
 **Status**: Active Development
-**MVP URL**: <https://hitoon-music.vercel.app/>
+**MVP URL**: <https://hitoonstore.com/>
 
 ---
 
@@ -732,7 +732,7 @@ User Journey:
 
 ### A. References
 
-- MVP Design: <https://hitoon-music.vercel.app/>
+- MVP Design: <https://hitoonstore.com/>
 - Card Design Example: `/docs/card-image.png`
 - Pokemon Card Rarity: <https://www.sangatuusagi.com/pokeking/card/rarity.html>
 

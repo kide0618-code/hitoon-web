@@ -2,7 +2,7 @@
 
 **Tag line**: 音楽を、一生モノにする。
 **Platform**: Artist Digital Content Marketplace (Web/Mobile)
-**MVP URL**: https://hitoon-music.vercel.app/
+**MVP URL**: https://hitoonstore.com/
 
 ## Quick Start
 
