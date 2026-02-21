@@ -137,9 +137,9 @@ export function AuthForm() {
         <h1 className="mb-2 text-2xl font-bold text-white">
           ログイン / 新規登録
         </h1>
-        <p className="text-gray-400">
+        {/* <p className="text-gray-400">
           HITOONへようこそ
-        </p>
+        </p> */}
       </div>
 
       {/* Error/Message Display */}
@@ -266,9 +266,9 @@ export function AuthForm() {
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-gray-500">
+      {/* <p className="mt-6 text-center text-sm text-gray-500">
         アカウントが存在しない場合は自動的に新規登録されます
-      </p>
+      </p> */}
 
       <p className="mt-3 text-center text-xs leading-relaxed text-gray-500">
         アカウント登録することで、
@@ -287,7 +287,7 @@ export function AuthForm() {
         >
           プライバシーポリシー
         </Link>
-        に同意したものとみなします。
+        に同意したことになります。
       </p>
     </div>
   );
