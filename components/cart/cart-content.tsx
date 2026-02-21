@@ -8,8 +8,6 @@ import {
   Plus,
   Loader2,
   ShoppingBag,
-  ShieldCheck,
-  ExternalLink,
   Wallet,
 } from 'lucide-react';
 import { ArtistCard } from '@/components/cards/artist-card';
@@ -128,7 +126,6 @@ export function CartContent({ onClose }: CartContentProps = {}) {
   const [updatingCardId, setUpdatingCardId] = useState<string | null>(null);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
-  const [isAgreed, setIsAgreed] = useState(false);
 
   const handleUpdateQuantity = async (cardId: string, quantity: number) => {
     setUpdatingCardId(cardId);
@@ -143,7 +140,7 @@ export function CartContent({ onClose }: CartContentProps = {}) {
   };
 
   const handleCheckout = async () => {
-    if (items.length === 0 || !isAgreed) return;
+    if (items.length === 0) return;
 
     setIsCheckingOut(true);
     setCheckoutError(null);
@@ -229,58 +226,14 @@ export function CartContent({ onClose }: CartContentProps = {}) {
             </button>
           </div>
 
-          {/* 重要事項説明書 */}
-          <div className="mb-5">
-            <h4 className="mb-3 flex items-center gap-2 text-sm font-bold text-white">
-              <ShieldCheck size={16} className="text-blue-400" />
-              確認事項
-            </h4>
+          {/* 確認事項 */}
+          <div className="mb-4">
             <div className="rounded-xl border border-gray-700 bg-gray-800 p-4 text-sm leading-relaxed text-gray-300">
-              <div className="space-y-4">
-                {/* <div>
-                  <p className="mb-1 font-semibold text-blue-400">1. 金融商品ではありません</p>
-                  <p className="text-gray-400">本パスは投資商品ではありません。</p>
-                </div>
-                <div>
-                  <p className="mb-1 font-semibold text-blue-400">2. 元本保証はありません</p>
-                  <p className="text-gray-400">収益が購入額を下回る可能性があります。</p>
-                </div> */}
-                <div>
-                  <p className="mb-1 font-semibold text-blue-400">1. 返金不可</p>
-                  <p className="text-gray-400">決済完了後のキャンセルはできません。</p>
-                </div>
+              <div>
+                <p className="mb-1 font-semibold text-blue-400">返金不可</p>
+                <p className="text-gray-400">決済完了後のキャンセルはできません。</p>
               </div>
             </div>
-          </div>
-
-          {/* Agreement Checkbox */}
-          <div className="mb-5 flex items-start rounded-xl border border-gray-700 bg-gray-800/50 p-3">
-            <div className="mt-0.5 flex h-5 items-center">
-              <input
-                id="cart-agreement-checkbox"
-                type="checkbox"
-                checked={isAgreed}
-                onChange={() => setIsAgreed(!isAgreed)}
-                disabled={isCheckingOut}
-                className="h-5 w-5 cursor-pointer rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500 focus:ring-offset-0"
-              />
-            </div>
-            <label
-              htmlFor="cart-agreement-checkbox"
-              className="ml-3 cursor-pointer select-none text-sm leading-relaxed text-gray-300"
-            >
-              上記の確認事項および
-              <Link
-                href={ROUTES.TERMS}
-                target="_blank"
-                className="mx-1 inline-flex items-center gap-0.5 text-blue-400 hover:text-blue-300 hover:underline"
-                onClick={(e) => e.stopPropagation()}
-              >
-                利用規約
-                <ExternalLink size={12} />
-              </Link>
-              に同意し、申し込みます。
-            </label>
           </div>
 
           {/* Total */}
@@ -301,9 +254,9 @@ export function CartContent({ onClose }: CartContentProps = {}) {
           {/* Checkout Button */}
           <button
             onClick={handleCheckout}
-            disabled={!isAgreed || isCheckingOut}
+            disabled={isCheckingOut}
             className={`flex w-full items-center justify-center gap-2 rounded-full py-4 font-bold text-white transition-all ${
-              isAgreed && !isCheckingOut
+              !isCheckingOut
                 ? 'bg-gradient-to-r from-blue-600 to-indigo-600 shadow-lg shadow-blue-900/30 hover:from-blue-500 hover:to-indigo-500'
                 : 'cursor-not-allowed bg-gray-700 text-gray-500'
             }`}
@@ -313,13 +266,11 @@ export function CartContent({ onClose }: CartContentProps = {}) {
                 <Loader2 size={20} className="animate-spin" />
                 処理中...
               </>
-            ) : isAgreed ? (
+            ) : (
               <>
                 <Wallet size={20} />
                 決済へ進む
               </>
-            ) : (
-              '上記に同意してください'
             )}
           </button>
         </div>

@@ -269,6 +269,26 @@ export function AuthForm() {
       <p className="mt-6 text-center text-sm text-gray-500">
         アカウントが存在しない場合は自動的に新規登録されます
       </p>
+
+      <p className="mt-3 text-center text-xs leading-relaxed text-gray-500">
+        アカウント登録することで、
+        <Link
+          href={ROUTES.TERMS}
+          target="_blank"
+          className="text-blue-400 hover:text-blue-300 hover:underline"
+        >
+          利用規約
+        </Link>
+        および
+        <Link
+          href={ROUTES.PRIVACY}
+          target="_blank"
+          className="text-blue-400 hover:text-blue-300 hover:underline"
+        >
+          プライバシーポリシー
+        </Link>
+        に同意したものとみなします。
+      </p>
     </div>
   );
 }

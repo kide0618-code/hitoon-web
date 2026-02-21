@@ -2,12 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import Link from 'next/link';
 import {
   Wallet,
   X,
-  CheckCircle,
-  ExternalLink,
   Minus,
   Plus,
   Loader2,
@@ -36,7 +33,6 @@ export default function PurchaseAgreement({
   songTitle,
 }: PurchaseAgreementProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isAgreed, setIsAgreed] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -194,58 +190,18 @@ export default function PurchaseAgreement({
             </div>
           </div>
 
-          {/* Terms Scrollable Area */}
+          {/* 確認事項 */}
           <div className="mb-5">
             <h4 className="mb-3 flex items-center gap-2 text-sm font-bold text-white">
-              <CheckCircle size={16} className="text-blue-400" />
+              <ShieldCheck size={16} className="text-blue-400" />
               確認事項
             </h4>
-            <div className="h-32 overflow-y-auto rounded-xl border border-gray-700 bg-gray-800 p-4 text-sm leading-relaxed text-gray-300">
-              <div className="space-y-4">
-                {/* <div>
-                  <p className="mb-1 font-semibold text-blue-400">1. 金融商品ではありません</p>
-                  <p className="text-gray-400">本パスは投資商品ではありません。</p>
-                </div>
-                <div>
-                  <p className="mb-1 font-semibold text-blue-400">2. 元本保証はありません</p>
-                  <p className="text-gray-400">収益が購入額を下回る可能性があります。</p>
-                </div> */}
-                <div>
-                  <p className="mb-1 font-semibold text-blue-400">1. 返金不可</p>
-                  <p className="text-gray-400">決済完了後のキャンセルはできません。</p>
-                </div>
+            <div className="rounded-xl border border-gray-700 bg-gray-800 p-4 text-sm leading-relaxed text-gray-300">
+              <div>
+                <p className="mb-1 font-semibold text-blue-400">返金不可</p>
+                <p className="text-gray-400">決済完了後のキャンセルはできません。</p>
               </div>
             </div>
-          </div>
-
-          {/* Agreement Checkbox */}
-          <div className="mb-5 flex items-start rounded-xl border border-gray-700 bg-gray-800/50 p-3">
-            <div className="mt-0.5 flex h-5 items-center">
-              <input
-                id="agreement-checkbox"
-                type="checkbox"
-                checked={isAgreed}
-                onChange={() => setIsAgreed(!isAgreed)}
-                disabled={isLoading}
-                className="h-5 w-5 cursor-pointer rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500 focus:ring-offset-0"
-              />
-            </div>
-            <label
-              htmlFor="agreement-checkbox"
-              className="ml-3 cursor-pointer select-none text-sm leading-relaxed text-gray-300"
-            >
-              上記の確認事項および
-              <Link
-                href={ROUTES.TERMS}
-                target="_blank"
-                className="mx-1 inline-flex items-center gap-0.5 text-blue-400 hover:text-blue-300 hover:underline"
-                onClick={(e) => e.stopPropagation()}
-              >
-                利用規約
-                <ExternalLink size={12} />
-              </Link>
-              に同意し、申し込みます。
-            </label>
           </div>
 
           {/* Error Message */}
@@ -266,9 +222,9 @@ export default function PurchaseAgreement({
             {/* Submit Button */}
             <button
               onClick={handlePurchase}
-              disabled={!isAgreed || isLoading}
+              disabled={isLoading}
               className={`flex w-full items-center justify-center gap-2 rounded-xl px-5 py-4 text-center font-bold text-white transition-all duration-200 ${
-                isAgreed && !isLoading
+                !isLoading
                   ? 'bg-gradient-to-r from-blue-600 to-indigo-600 shadow-lg shadow-blue-900/30 hover:from-blue-500 hover:to-indigo-500'
                   : 'cursor-not-allowed bg-gray-700 text-gray-500'
               }`}
@@ -278,13 +234,11 @@ export default function PurchaseAgreement({
                   <Loader2 size={20} className="animate-spin" />
                   処理中...
                 </>
-              ) : isAgreed ? (
+              ) : (
                 <>
                   <Wallet size={20} />
                   決済へ進む
                 </>
-              ) : (
-                '上記に同意してください'
               )}
             </button>
           </div>
