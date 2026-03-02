@@ -23,7 +23,7 @@ export const ROUTES = {
   // Legal routes
   TERMS: '/terms',
   PRIVACY: '/privacy',
-  TOKUSHOHO: '/tokushoho',
+  TERMS_OF_SALE: '/terms-of-sale',
 
   // API routes
   API: {
