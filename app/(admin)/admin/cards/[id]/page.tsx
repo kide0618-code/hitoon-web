@@ -254,7 +254,7 @@ export default function EditCardPage({ params }: PageProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'image',
-          title: '(下書き)',
+          title: '-',
           url: '',
         }),
       });

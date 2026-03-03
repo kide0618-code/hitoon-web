@@ -23,7 +23,7 @@ export function CreateCardButton({ artists }: { artists: Artist[] }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           artist_id: artistId,
-          name: '(下書き)',
+          name: '-',
           card_image_url: '',
           price: 1000,
           is_active: false,

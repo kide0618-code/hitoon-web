@@ -15,7 +15,7 @@ export function CreateArtistButton() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: '(下書き)',
+          name: '-',
         }),
       });
 
