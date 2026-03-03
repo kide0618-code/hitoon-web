@@ -93,8 +93,7 @@ export function ArtistCard({
             {/* Info overlay */}
             <div className="card__info">
               <div className="card__info-text">
-                <p className="card__name">{artistName}</p>
-                {cardName && <p className="card__card-name">{cardName}</p>}
+                {cardName && <p className="card__name">{cardName}</p>}
                 {songTitle && <p className="card__song">SONG: {songTitle}</p>}
               </div>
               <div className="card__meta">

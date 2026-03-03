@@ -378,16 +378,6 @@ body {
   white-space: nowrap;
 }
 
-.card__card-name {
-  font-size: 10px;
-  font-weight: 500;
-  color: #9ca3af;
-  margin-top: 1px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .card__song {
   font-size: 9px;
   color: #6b7280;
