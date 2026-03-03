@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Sparkles } from 'lucide-react';
@@ -42,6 +44,7 @@ async function getFeaturedArtists(): Promise<FeaturedArtist[]> {
           .select('price')
           .eq('artist_id', artist.id)
           .eq('is_active', true)
+          .is('archived_at', null)
           .order('price', { ascending: true })
           .limit(1);
 

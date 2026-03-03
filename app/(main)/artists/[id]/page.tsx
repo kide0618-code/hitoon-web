@@ -63,6 +63,7 @@ async function getArtist(id: string): Promise<ArtistData | null> {
     )
     .eq('artist_id', id)
     .eq('is_active', true)
+    .is('archived_at', null)
     .order('price', { ascending: true });
 
   if (cardsError || !cardsData || cardsData.length === 0) {

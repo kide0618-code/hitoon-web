@@ -4,6 +4,8 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 import type { Artist, Card } from '@/types/database';
 import { MarketClient } from './client';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Store',
   description: 'アーティストのデジタルカードを探す',
@@ -46,6 +48,7 @@ async function getArtists(): Promise<ArtistItem[]> {
         .select('price')
         .eq('artist_id', artist.id)
         .eq('is_active', true)
+        .is('archived_at', null)
         .order('price', { ascending: true })
         .limit(1);
 
