@@ -213,9 +213,6 @@ export default async function CollectionDetailPage({ params }: PageProps) {
             songTitle={purchase.card.songTitle}
             rarity={purchase.card.rarity}
             frameTemplateId={purchase.card.frameTemplateId}
-            serialNumber={purchase.serialNumber}
-            totalSupply={purchase.card.totalSupply}
-            owned={1}
           />
           {/* <p className="mt-2 text-center text-xs text-gray-500">
             スワイプで
