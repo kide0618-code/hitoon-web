@@ -12,12 +12,15 @@ interface PageProps {
 
 interface CardData {
   id: string;
+  name: string;
+  description: string | null;
   rarity: Rarity;
   price: number;
   totalSupply: number | null;
   currentSupply: number;
   cardImageUrl: string;
   songTitle: string | null;
+  subtitle: string | null;
   frameTemplateId: string;
   saleEndsAt: string | null;
 }
@@ -56,7 +59,7 @@ async function getArtist(id: string): Promise<ArtistData | null> {
   const { data: cardsData, error: cardsError } = await supabase
     .from('cards')
     .select(
-      'id, rarity, price, total_supply, current_supply, card_image_url, song_title, frame_template_id, sale_ends_at',
+      'id, name, description, rarity, price, total_supply, current_supply, card_image_url, song_title, subtitle, frame_template_id, sale_ends_at',
     )
     .eq('artist_id', id)
     .eq('is_active', true)
@@ -69,12 +72,15 @@ async function getArtist(id: string): Promise<ArtistData | null> {
   const cards = cardsData as Pick<
     Card,
     | 'id'
+    | 'name'
+    | 'description'
     | 'rarity'
     | 'price'
     | 'total_supply'
     | 'current_supply'
     | 'card_image_url'
     | 'song_title'
+    | 'subtitle'
     | 'frame_template_id'
     | 'sale_ends_at'
   >[];
@@ -94,12 +100,15 @@ async function getArtist(id: string): Promise<ArtistData | null> {
     memberCount: artist.member_count,
     cards: cards.map((card) => ({
       id: card.id,
+      name: card.name,
+      description: card.description,
       rarity: card.rarity as Rarity,
       price: card.price,
       totalSupply: card.total_supply,
       currentSupply: card.current_supply,
       cardImageUrl: card.card_image_url || artist.image_url || '',
       songTitle: card.song_title || null,
+      subtitle: card.subtitle,
       frameTemplateId: card.frame_template_id,
       saleEndsAt: card.sale_ends_at,
     })),

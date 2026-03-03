@@ -12,9 +12,12 @@ interface CardDetailDialogProps {
   onClose: () => void;
   card: {
     id: string;
+    cardName: string | null;
     artistName: string;
     artistImageUrl: string;
     songTitle: string | null;
+    subtitle: string | null;
+    description: string | null;
     rarity: Rarity;
     frameTemplateId?: string;
     price: number;
@@ -104,6 +107,7 @@ export function CardDetailDialog({
             <ArtistCard
               artistName={card.artistName}
               artistImageUrl={card.artistImageUrl}
+              cardName={card.cardName}
               songTitle={card.songTitle}
               rarity={card.rarity}
               frameTemplateId={card.frameTemplateId}
@@ -121,7 +125,9 @@ export function CardDetailDialog({
             <div className="flex items-start justify-between">
               <div>
                 <h2 className="text-xl font-bold text-white">{card.artistName}</h2>
+                {card.cardName && <p className="text-sm text-gray-300">{card.cardName}</p>}
                 {card.songTitle && <p className="text-sm text-gray-400">{card.songTitle}</p>}
+                {card.subtitle && <p className="text-sm text-gray-500">{card.subtitle}</p>}
               </div>
               {card.totalSupply && (
                 <p className="text-sm text-gray-500">
@@ -129,6 +135,9 @@ export function CardDetailDialog({
                 </p>
               )}
             </div>
+            {card.description && (
+              <p className="mt-2 text-sm leading-relaxed text-gray-400">{card.description}</p>
+            )}
             {isSoldOut && <p className="mt-1 font-bold text-red-400">SOLD OUT</p>}
           </div>
 

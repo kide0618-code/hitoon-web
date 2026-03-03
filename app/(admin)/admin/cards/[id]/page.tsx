@@ -374,6 +374,7 @@ export default function EditCardPage({ params }: PageProps) {
                 <ArtistCard
                   artistName={selectedArtist.name}
                   artistImageUrl={formData.card_image_url}
+                  cardName={formData.name || null}
                   songTitle={formData.song_title || null}
                   rarity={currentRarity}
                   frameTemplateId={formData.frame_template_id}

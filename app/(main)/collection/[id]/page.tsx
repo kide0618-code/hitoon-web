@@ -43,6 +43,7 @@ interface PurchaseDetail {
   purchasedAt: string;
   card: {
     id: string;
+    name: string;
     rarity: Rarity;
     totalSupply: number | null;
     cardImageUrl: string;
@@ -92,7 +93,9 @@ async function getPurchaseDetail(id: string): Promise<PurchaseDetail | null> {
   // Fetch card (card_image_url, song_title, frame_template_id are now on cards directly)
   const { data: cardData } = await supabase
     .from('cards')
-    .select('id, rarity, total_supply, artist_id, card_image_url, song_title, frame_template_id')
+    .select(
+      'id, name, rarity, total_supply, artist_id, card_image_url, song_title, frame_template_id',
+    )
     .eq('id', purchase.card_id)
     .single();
 
@@ -103,6 +106,7 @@ async function getPurchaseDetail(id: string): Promise<PurchaseDetail | null> {
   const card = cardData as Pick<
     Card,
     | 'id'
+    | 'name'
     | 'rarity'
     | 'total_supply'
     | 'artist_id'
@@ -140,6 +144,7 @@ async function getPurchaseDetail(id: string): Promise<PurchaseDetail | null> {
     purchasedAt: purchase.purchased_at,
     card: {
       id: card.id,
+      name: card.name,
       rarity: card.rarity as Rarity,
       totalSupply: card.total_supply,
       cardImageUrl: card.card_image_url || artist?.image_url || '',
@@ -204,6 +209,7 @@ export default async function CollectionDetailPage({ params }: PageProps) {
           <ArtistCard
             artistName={purchase.artist.name}
             artistImageUrl={purchase.card.cardImageUrl}
+            cardName={purchase.card.name}
             songTitle={purchase.card.songTitle}
             rarity={purchase.card.rarity}
             frameTemplateId={purchase.card.frameTemplateId}

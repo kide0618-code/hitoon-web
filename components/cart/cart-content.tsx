@@ -2,14 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import {
-  Trash2,
-  Minus,
-  Plus,
-  Loader2,
-  ShoppingBag,
-  Wallet,
-} from 'lucide-react';
+import { Trash2, Minus, Plus, Loader2, ShoppingBag, Wallet } from 'lucide-react';
 import { ArtistCard } from '@/components/cards/artist-card';
 import { useCart } from '@/contexts/cart-context';
 import { ROUTES } from '@/constants/routes';
@@ -40,6 +33,7 @@ function CartItem({
             artistImageUrl={
               item.card.cardImageUrl || 'https://placehold.co/120x160/1e293b/60a5fa?text=Card'
             }
+            cardName={item.card.name}
             rarity={item.card.rarity}
             frameTemplateId={item.card.frameTemplateId}
             songTitle={item.card.songTitle}

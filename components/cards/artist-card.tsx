@@ -11,6 +11,7 @@ import { useCardInteraction } from '@/hooks/use-card-interaction';
 interface ArtistCardProps {
   artistName: string;
   artistImageUrl: string;
+  cardName?: string | null;
   songTitle?: string | null;
   rarity: Rarity;
   frameTemplateId?: string;
@@ -36,6 +37,7 @@ function getRarityDataAttr(rarity: Rarity): string {
 export function ArtistCard({
   artistName,
   artistImageUrl,
+  cardName,
   songTitle,
   rarity,
   frameTemplateId,
@@ -91,8 +93,8 @@ export function ArtistCard({
             {/* Info overlay */}
             <div className="card__info">
               <div className="card__info-text">
-                <p className="card__label">IDOL</p>
                 <p className="card__name">{artistName}</p>
+                {cardName && <p className="card__card-name">{cardName}</p>}
                 {songTitle && <p className="card__song">SONG: {songTitle}</p>}
               </div>
               <div className="card__meta">

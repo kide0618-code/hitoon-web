@@ -18,12 +18,15 @@ import type { SocialLink } from '@/types/artist';
 
 interface CardData {
   id: string;
+  name: string;
+  description: string | null;
   rarity: Rarity;
   price: number;
   totalSupply: number | null;
   currentSupply: number;
   cardImageUrl: string;
   songTitle: string | null;
+  subtitle: string | null;
   frameTemplateId: string;
   saleEndsAt: string | null;
 }
@@ -134,6 +137,7 @@ export function ArtistDetailClient({ artist, isAuthenticated }: Props) {
                 <ArtistCard
                   artistName={artist.name}
                   artistImageUrl={card.cardImageUrl}
+                  cardName={card.name}
                   songTitle={card.songTitle}
                   rarity={card.rarity}
                   frameTemplateId={card.frameTemplateId}
@@ -171,9 +175,12 @@ export function ArtistDetailClient({ artist, isAuthenticated }: Props) {
           onClose={() => setIsDialogOpen(false)}
           card={{
             id: selectedCard.id,
+            cardName: selectedCard.name,
             artistName: artist.name,
             artistImageUrl: selectedCard.cardImageUrl,
             songTitle: selectedCard.songTitle,
+            subtitle: selectedCard.subtitle,
+            description: selectedCard.description,
             rarity: selectedCard.rarity,
             frameTemplateId: selectedCard.frameTemplateId,
             price: selectedCard.price,

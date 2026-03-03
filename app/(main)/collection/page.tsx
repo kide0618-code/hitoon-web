@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 interface CollectionItem {
   purchaseId: string;
   cardId: string;
+  cardName: string;
   artistId: string;
   artistName: string;
   artistImageUrl: string;
@@ -52,6 +53,7 @@ async function getCollection(): Promise<CollectionItem[]> {
       card_id,
       cards (
         id,
+        name,
         rarity,
         total_supply,
         song_title,
@@ -80,6 +82,7 @@ async function getCollection(): Promise<CollectionItem[]> {
     card_id: string | null;
     cards: {
       id: string;
+      name: string;
       rarity: string;
       total_supply: number | null;
       song_title: string | null;
@@ -113,6 +116,7 @@ async function getCollection(): Promise<CollectionItem[]> {
       return {
         purchaseId: purchase.id,
         cardId: card.id,
+        cardName: card.name,
         artistId: artist?.id || '',
         artistName: artist?.name || 'Unknown Artist',
         artistImageUrl:
@@ -180,6 +184,7 @@ export default async function CollectionPage() {
                     <h3 className="truncate font-bold">{item.artistName}</h3>
                     <RarityBadge rarity={item.rarity} />
                   </div>
+                  <p className="truncate text-xs text-gray-400">{item.cardName}</p>
                   <p className="font-mono text-2xs uppercase tracking-widest text-gray-500">
                     {formatSerialNumber(item.serialNumber)}
                     {item.totalSupply && ` / ${item.totalSupply}`}

@@ -100,11 +100,7 @@ export function AuthForm() {
         '確認メールを送信しました。メール内のリンクをクリックして登録を完了してください。',
       );
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? localizeAuthError(err.message)
-          : 'エラーが発生しました',
-      );
+      setError(err instanceof Error ? localizeAuthError(err.message) : 'エラーが発生しました');
     } finally {
       setIsLoading(false);
     }
@@ -134,9 +130,7 @@ export function AuthForm() {
     <div className="mx-auto w-full max-w-md">
       {/* Header */}
       <div className="mb-8 text-center">
-        <h1 className="mb-2 text-2xl font-bold text-white">
-          ログイン / 新規登録
-        </h1>
+        <h1 className="mb-2 text-2xl font-bold text-white">ログイン / 新規登録</h1>
         {/* <p className="text-gray-400">
           HITOONへようこそ
         </p> */}
@@ -246,10 +240,7 @@ export function AuthForm() {
         </div>
 
         <div className="text-right">
-          <Link
-            href={ROUTES.FORGOT_PASSWORD}
-            className="text-sm text-blue-400 hover:text-blue-300"
-          >
+          <Link href={ROUTES.FORGOT_PASSWORD} className="text-sm text-blue-400 hover:text-blue-300">
             パスワードをお忘れですか？
           </Link>
         </div>

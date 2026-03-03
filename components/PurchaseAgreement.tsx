@@ -2,14 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import {
-  Wallet,
-  X,
-  Minus,
-  Plus,
-  Loader2,
-  ShieldCheck,
-} from 'lucide-react';
+import { Wallet, X, Minus, Plus, Loader2, ShieldCheck } from 'lucide-react';
 import { formatPrice } from '@/lib/utils/format';
 import { ROUTES } from '@/constants/routes';
 import { ArtistCard } from '@/components/cards/artist-card';
