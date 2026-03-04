@@ -25,10 +25,9 @@ export function MarketClient({ artists }: { artists: ArtistItem[] }) {
 
   return (
     <div className="p-4">
-      <h1 className="mb-6 text-2xl font-bold">Find Artists</h1>
-
-      {/* Spotify-style search bar - sticky on scroll */}
-      <div className="sticky top-0 z-40 -mx-4 bg-black px-4 pb-4">
+      {/* Header + search bar - sticky on scroll */}
+      <div className="sticky top-0 z-40 -mx-4 -mt-4 bg-black px-4 pb-4 pt-4">
+        <h1 className="mb-4 text-2xl font-bold">Find Artists</h1>
         <div className="relative">
           <Search size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
