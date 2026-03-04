@@ -111,6 +111,8 @@ export function CardDetailDialog({
               songTitle={card.songTitle}
               rarity={card.rarity}
               frameTemplateId={card.frameTemplateId}
+              serialNumber={card.currentSupply + 1}
+              totalSupply={card.totalSupply}
             />
           </div>
         </div>

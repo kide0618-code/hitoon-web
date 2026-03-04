@@ -141,6 +141,8 @@ export function ArtistDetailClient({ artist, isAuthenticated }: Props) {
                   songTitle={card.songTitle}
                   rarity={card.rarity}
                   frameTemplateId={card.frameTemplateId}
+                  serialNumber={card.currentSupply + 1}
+                  totalSupply={card.totalSupply}
                   onClick={() => !isUnavailable && handleCardClick(card.id)}
                 />
                 <div className="mt-1.5 text-center sm:mt-2">
