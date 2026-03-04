@@ -48,25 +48,30 @@ export default function TokushohoPage() {
         </tbody>
       </table>
 
-      <h2>販売価格</h2>
-      <p>各デジタルグッズ詳細ページに表示された価格（消費税込）に基づきます。</p>
-
-      <h2>商品代金以外に必要な料金</h2>
-      <ul>
-        <li>
-          <strong>インターネット接続料金・通信料金:</strong>{' '}
-          お客様がご利用の通信契約に基づきます。
-        </li>
-        <li>
-          <strong>決済手数料:</strong>{' '}
-          原則無料ですが、一部の決済方法（コンビニ決済等）を選択された場合のみ、別途手数料が発生する場合があります（決済画面に表示されます）。
-        </li>
-      </ul>
-
       <table className="w-full border-collapse">
         <tbody>
           <tr className="border-b border-gray-700">
             <th className="w-1/3 py-3 pr-4 text-left align-top text-gray-300">
+              販売価格
+            </th>
+            <td className="py-3">
+              各デジタルグッズ詳細ページに表示された価格（消費税込）に基づきます。
+            </td>
+          </tr>
+          <tr className="border-b border-gray-700">
+            <th className="py-3 pr-4 text-left align-top text-gray-300">
+              商品代金以外に必要な料金
+            </th>
+            <td className="py-3">
+              <strong>インターネット接続料金・通信料金:</strong>{' '}
+              お客様がご利用の通信契約に基づきます。
+              <br />
+              <strong>決済手数料:</strong>{' '}
+              原則無料ですが、一部の決済方法（コンビニ決済等）を選択された場合のみ、別途手数料が発生する場合があります（決済画面に表示されます）。
+            </td>
+          </tr>
+          <tr className="border-b border-gray-700">
+            <th className="py-3 pr-4 text-left align-top text-gray-300">
               支払方法
             </th>
             <td className="py-3">
@@ -77,25 +82,28 @@ export default function TokushohoPage() {
             <th className="py-3 pr-4 text-left align-top text-gray-300">支払時期</th>
             <td className="py-3">商品購入手続き完了時に即時決済されます。</td>
           </tr>
+          <tr className="border-b border-gray-700">
+            <th className="py-3 pr-4 text-left align-top text-gray-300">
+              商品の引渡時期（役務の提供時期）
+            </th>
+            <td className="py-3">
+              決済完了後、直ちにマイページ内の「コレクション（保有リスト）」に反映され、閲覧が可能となります。
+            </td>
+          </tr>
+          <tr className="border-b border-gray-700">
+            <th className="py-3 pr-4 text-left align-top text-gray-300">
+              返品・キャンセルに関する特約
+            </th>
+            <td className="py-3">
+              <strong>返品・交換について:</strong>{' '}
+              取り扱う商品が「デジタルデータ（電磁的記録）」であり、決済完了と同時にコンテンツへのアクセス権が付与される性質上、購入手続き完了後のお客様都合による返品、キャンセル、返金は一切お受けできません。
+              <br />
+              <strong>欠陥・不具合について:</strong>{' '}
+              システム上の不具合によりデジタルグッズが正常に閲覧できない場合に限り、正常なデータへの修正または利用権の再付与を行います。
+            </td>
+          </tr>
         </tbody>
       </table>
-
-      <h2>商品の引渡時期（役務の提供時期）</h2>
-      <p>
-        決済完了後、直ちにマイページ内の「コレクション（保有リスト）」に反映され、閲覧が可能となります。
-      </p>
-
-      <h2>返品・キャンセルに関する特約</h2>
-      <ul>
-        <li>
-          <strong>返品・交換について:</strong>{' '}
-          取り扱う商品が「デジタルデータ（電磁的記録）」であり、決済完了と同時にコンテンツへのアクセス権が付与される性質上、購入手続き完了後のお客様都合による返品、キャンセル、返金は一切お受けできません。
-        </li>
-        <li>
-          <strong>欠陥・不具合について:</strong>{' '}
-          システム上の不具合によりデジタルグッズが正常に閲覧できない場合に限り、正常なデータへの修正または利用権の再付与を行います。
-        </li>
-      </ul>
     </article>
   );
 }
