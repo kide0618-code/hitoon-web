@@ -76,7 +76,7 @@ export function MarketClient({ artists }: { artists: ArtistItem[] }) {
                     {artist.memberCount} Members
                   </div>
                   <p className="text-lg font-bold text-blue-400">
-                    {formatPrice(artist.lowestPrice)}〜
+                    {artist.lowestPrice > 0 ? `${formatPrice(artist.lowestPrice)}〜` : 'Coming Soon'}
                   </p>
                 </div>
                 <div className="text-xl text-gray-600 transition-colors group-hover:text-blue-400">

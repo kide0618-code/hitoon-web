@@ -61,8 +61,7 @@ async function getFeaturedArtists(): Promise<FeaturedArtist[]> {
     ),
   );
 
-  // Only return artists that have active cards
-  return artistsWithPrices.filter((a) => a.lowestPrice > 0);
+  return artistsWithPrices;
 }
 
 export default async function HomePage() {
@@ -119,7 +118,7 @@ export default async function HomePage() {
                     <p className="text-xs text-gray-500">{artist.memberCount} Members</p>
                   </div>
                   <div className="text-base font-bold text-blue-400">
-                    {formatPrice(artist.lowestPrice)}〜
+                    {artist.lowestPrice > 0 ? `${formatPrice(artist.lowestPrice)}〜` : 'Coming Soon'}
                   </div>
                 </div>
               </Link>

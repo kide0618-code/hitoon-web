@@ -66,11 +66,11 @@ async function getArtist(id: string): Promise<ArtistData | null> {
     .is('archived_at', null)
     .order('price', { ascending: true });
 
-  if (cardsError || !cardsData || cardsData.length === 0) {
-    return null;
+  if (cardsError) {
+    console.error('Error fetching cards:', cardsError);
   }
 
-  const cards = cardsData as Pick<
+  const cards = (cardsData || []) as Pick<
     Card,
     | 'id'
     | 'name'

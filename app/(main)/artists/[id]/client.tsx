@@ -127,47 +127,54 @@ export function ArtistDetailClient({ artist, isAuthenticated }: Props) {
       {/* Card Selection */}
       <div className="px-3 py-4 pb-24 sm:px-4">
         <h2 className="mb-3 text-base font-bold sm:mb-4 sm:text-lg">Select Card</h2>
-        <CardGrid columns={4}>
-          {artist.cards.map((card) => {
-            const isSoldOut = card.totalSupply !== null && card.currentSupply >= card.totalSupply;
-            const isExpired = isSaleEnded(card.saleEndsAt);
-            const isUnavailable = isSoldOut || isExpired;
-            return (
-              <div key={card.id} className={`relative ${isUnavailable ? 'opacity-50' : ''}`}>
-                <ArtistCard
-                  artistName={artist.name}
-                  artistImageUrl={card.cardImageUrl}
-                  cardName={card.name}
-                  songTitle={card.songTitle}
-                  rarity={card.rarity}
-                  frameTemplateId={card.frameTemplateId}
-                  serialNumber={card.currentSupply + 1}
-                  totalSupply={card.totalSupply}
-                  onClick={() => !isUnavailable && handleCardClick(card.id)}
-                />
-                <div className="mt-1.5 text-center sm:mt-2">
-                  <p className="text-sm font-bold sm:text-lg">{formatPrice(card.price)}</p>
-                  {card.totalSupply && (
-                    <p className="text-2xs text-gray-500 sm:text-xs">
-                      {card.currentSupply} / {card.totalSupply} sold
-                    </p>
-                  )}
-                  {card.saleEndsAt && !isExpired && (
-                    <p className="text-2xs text-yellow-400 sm:text-xs">
-                      〜{formatDeadline(card.saleEndsAt)}
-                    </p>
-                  )}
-                  {isExpired && (
-                    <p className="text-2xs font-bold text-red-400 sm:text-xs">販売終了</p>
-                  )}
-                  {isSoldOut && !isExpired && (
-                    <p className="text-2xs font-bold text-red-400 sm:text-xs">SOLD OUT</p>
-                  )}
+        {artist.cards.length > 0 ? (
+          <CardGrid columns={4}>
+            {artist.cards.map((card) => {
+              const isSoldOut = card.totalSupply !== null && card.currentSupply >= card.totalSupply;
+              const isExpired = isSaleEnded(card.saleEndsAt);
+              const isUnavailable = isSoldOut || isExpired;
+              return (
+                <div key={card.id} className={`relative ${isUnavailable ? 'opacity-50' : ''}`}>
+                  <ArtistCard
+                    artistName={artist.name}
+                    artistImageUrl={card.cardImageUrl}
+                    cardName={card.name}
+                    songTitle={card.songTitle}
+                    rarity={card.rarity}
+                    frameTemplateId={card.frameTemplateId}
+                    serialNumber={card.currentSupply + 1}
+                    totalSupply={card.totalSupply}
+                    onClick={() => !isUnavailable && handleCardClick(card.id)}
+                  />
+                  <div className="mt-1.5 text-center sm:mt-2">
+                    <p className="text-sm font-bold sm:text-lg">{formatPrice(card.price)}</p>
+                    {card.totalSupply && (
+                      <p className="text-2xs text-gray-500 sm:text-xs">
+                        {card.currentSupply} / {card.totalSupply} sold
+                      </p>
+                    )}
+                    {card.saleEndsAt && !isExpired && (
+                      <p className="text-2xs text-yellow-400 sm:text-xs">
+                        〜{formatDeadline(card.saleEndsAt)}
+                      </p>
+                    )}
+                    {isExpired && (
+                      <p className="text-2xs font-bold text-red-400 sm:text-xs">販売終了</p>
+                    )}
+                    {isSoldOut && !isExpired && (
+                      <p className="text-2xs font-bold text-red-400 sm:text-xs">SOLD OUT</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </CardGrid>
+              );
+            })}
+          </CardGrid>
+        ) : (
+          <div className="py-12 text-center">
+            <p className="text-gray-500">カードは準備中です</p>
+            <p className="mt-1 text-xs text-gray-600">Coming Soon</p>
+          </div>
+        )}
       </div>
 
       {/* Card Detail Dialog */}

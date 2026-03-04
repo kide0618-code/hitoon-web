@@ -65,8 +65,7 @@ async function getArtists(): Promise<ArtistItem[]> {
     }),
   );
 
-  // Only return artists that have active cards
-  return artistsWithPrices.filter((a) => a.lowestPrice > 0);
+  return artistsWithPrices;
 }
 
 export default async function MarketPage() {
