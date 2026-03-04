@@ -171,8 +171,8 @@ export function ArtistDetailClient({ artist, isAuthenticated }: Props) {
           </CardGrid>
         ) : (
           <div className="py-12 text-center">
-            <p className="text-gray-500">カードは準備中です</p>
-            <p className="mt-1 text-xs text-gray-600">Coming Soon</p>
+            <p className="text-gray-500">Coming Soon...</p>
+            {/* <p className="mt-1 text-xs text-gray-600">Coming Soon</p> */}
           </div>
         )}
       </div>
