@@ -23,7 +23,7 @@
 
 body {
   color: var(--text-main);
-  background: radial-gradient(circle at top center, #1e293b, #020617);
+  background: #000000;
   min-height: 100vh;
 }
 
@@ -96,235 +96,6 @@ body {
     opacity: 0.5;
   }
 
-  /* =====================================================
-     TRADING CARD STYLES - Pokemon-inspired design
-     ===================================================== */
-
-  /* Base card frame */
-  .trading-card {
-    position: relative;
-    aspect-ratio: 3 / 4;
-    border-radius: 12px;
-    overflow: hidden;
-    background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
-    transition:
-      transform 0.3s ease,
-      box-shadow 0.3s ease;
-  }
-
-  .trading-card:hover {
-    transform: scale(1.02) translateY(-2px);
-  }
-
-  /* Card inner frame */
-  .trading-card-inner {
-    position: absolute;
-    inset: 3px;
-    border-radius: 10px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* ===== NORMAL (N) Card ===== */
-  .card-normal {
-    border: 3px solid #4b5563;
-    background: linear-gradient(180deg, #374151 0%, #1f2937 100%);
-    box-shadow:
-      0 4px 6px -1px rgba(0, 0, 0, 0.3),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  }
-
-  .card-normal .trading-card-inner {
-    background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
-    border: 1px solid #374151;
-  }
-
-  /* ===== RARE (R) Card - Silver glow effect ===== */
-  .card-rare {
-    border: 3px solid transparent;
-    background: linear-gradient(135deg, #60a5fa, #3b82f6, #1d4ed8, #3b82f6, #60a5fa) border-box;
-    box-shadow:
-      0 0 20px rgba(59, 130, 246, 0.4),
-      0 0 40px rgba(59, 130, 246, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    animation: rare-glow 3s ease-in-out infinite;
-  }
-
-  .card-rare .trading-card-inner {
-    background: linear-gradient(180deg, #1e3a5f 0%, #1e1b4b 50%, #172554 100%);
-    border: 1px solid rgba(59, 130, 246, 0.3);
-  }
-
-  @keyframes rare-glow {
-    0%,
-    100% {
-      box-shadow:
-        0 0 20px rgba(59, 130, 246, 0.4),
-        0 0 40px rgba(59, 130, 246, 0.2);
-    }
-    50% {
-      box-shadow:
-        0 0 30px rgba(59, 130, 246, 0.6),
-        0 0 60px rgba(59, 130, 246, 0.3);
-    }
-  }
-
-  /* Silver shine effect for Rare */
-  .card-rare::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      105deg,
-      transparent 20%,
-      rgba(255, 255, 255, 0.1) 35%,
-      rgba(255, 255, 255, 0.2) 40%,
-      rgba(255, 255, 255, 0.1) 45%,
-      transparent 60%
-    );
-    background-size: 200% 100%;
-    animation: silver-shine 4s ease-in-out infinite;
-    pointer-events: none;
-    z-index: 10;
-    border-radius: 12px;
-  }
-
-  @keyframes silver-shine {
-    0% {
-      background-position: 200% 0;
-    }
-    100% {
-      background-position: -200% 0;
-    }
-  }
-
-  /* ===== SUPER RARE (SR) Card - Holographic rainbow effect ===== */
-  .card-super-rare {
-    border: 4px solid transparent;
-    background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706, #f59e0b, #fbbf24) border-box;
-    box-shadow:
-      0 0 30px rgba(251, 191, 36, 0.5),
-      0 0 60px rgba(251, 191, 36, 0.3),
-      0 0 90px rgba(251, 191, 36, 0.1),
-      inset 0 2px 0 rgba(255, 255, 255, 0.3);
-    animation: sr-glow 2s ease-in-out infinite;
-  }
-
-  .card-super-rare .trading-card-inner {
-    background: linear-gradient(180deg, #44337a 0%, #831843 30%, #701a75 60%, #1e3a5f 100%);
-    border: 1px solid rgba(251, 191, 36, 0.3);
-  }
-
-  @keyframes sr-glow {
-    0%,
-    100% {
-      box-shadow:
-        0 0 30px rgba(251, 191, 36, 0.5),
-        0 0 60px rgba(251, 191, 36, 0.3),
-        0 0 90px rgba(251, 191, 36, 0.1);
-    }
-    50% {
-      box-shadow:
-        0 0 40px rgba(251, 191, 36, 0.7),
-        0 0 80px rgba(251, 191, 36, 0.4),
-        0 0 120px rgba(251, 191, 36, 0.2);
-    }
-  }
-
-  /* Holographic rainbow effect for Super Rare */
-  .card-super-rare::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      125deg,
-      transparent 0%,
-      rgba(255, 0, 0, 0.1) 10%,
-      rgba(255, 127, 0, 0.1) 20%,
-      rgba(255, 255, 0, 0.1) 30%,
-      rgba(0, 255, 0, 0.1) 40%,
-      rgba(0, 127, 255, 0.15) 50%,
-      rgba(75, 0, 130, 0.1) 60%,
-      rgba(148, 0, 211, 0.1) 70%,
-      transparent 80%
-    );
-    background-size: 300% 300%;
-    animation: holographic 6s ease-in-out infinite;
-    pointer-events: none;
-    z-index: 10;
-    border-radius: 12px;
-    mix-blend-mode: overlay;
-  }
-
-  @keyframes holographic {
-    0%,
-    100% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-  }
-
-  /* Sparkle effect for Super Rare - optimized to 4 sparkles for performance */
-  .card-super-rare::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-      radial-gradient(circle at 20% 25%, rgba(255, 255, 255, 0.8) 0%, transparent 2%),
-      radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.7) 0%, transparent 2%),
-      radial-gradient(circle at 35% 75%, rgba(255, 255, 255, 0.75) 0%, transparent 2%),
-      radial-gradient(circle at 75% 70%, rgba(255, 255, 255, 0.65) 0%, transparent 2%);
-    animation: sparkle 2s ease-in-out infinite;
-    pointer-events: none;
-    z-index: 11;
-    border-radius: 12px;
-  }
-
-  @keyframes sparkle {
-    0%,
-    100% {
-      opacity: 0.4;
-    }
-    50% {
-      opacity: 1;
-    }
-  }
-
-  /* Card image area */
-  .trading-card-image {
-    position: relative;
-    flex: 1;
-    overflow: hidden;
-  }
-
-  .trading-card-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  /* Image overlay gradient */
-  .trading-card-image::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 40%;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
-    pointer-events: none;
-  }
-
-  /* Card info section */
-  .trading-card-info {
-    padding: 8px 10px;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
   /* Rarity badge styles */
   .rarity-badge-n {
     background: linear-gradient(135deg, #6b7280, #4b5563);
@@ -333,28 +104,1417 @@ body {
   }
 
   .rarity-badge-r {
-    background: linear-gradient(135deg, #60a5fa, #3b82f6);
+    background: linear-gradient(135deg, #818cf8, #60a5fa, #6366f1);
     color: white;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.6);
   }
 
   .rarity-badge-sr {
-    background: linear-gradient(135deg, #fcd34d, #f59e0b, #d97706);
+    background: linear-gradient(135deg, #fde68a, #fbbf24, #f59e0b, #fbbf24);
+    background-size: 200% 100%;
     color: #1a1a1a;
     font-weight: 800;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
-    box-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
-    animation: badge-pulse 2s ease-in-out infinite;
+    box-shadow:
+      0 0 16px rgba(251, 191, 36, 0.7),
+      0 0 6px rgba(251, 191, 36, 0.9) inset;
+    animation: badge-sr-shimmer 3s ease-in-out infinite;
   }
 
-  @keyframes badge-pulse {
+  @keyframes badge-sr-shimmer {
     0%,
     100% {
-      box-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
+      background-position: 0% 0%;
+      box-shadow:
+        0 0 16px rgba(251, 191, 36, 0.7),
+        0 0 6px rgba(251, 191, 36, 0.9) inset;
     }
     50% {
-      box-shadow: 0 0 20px rgba(251, 191, 36, 0.9);
+      background-position: 100% 0%;
+      box-shadow:
+        0 0 28px rgba(251, 191, 36, 1),
+        0 0 8px rgba(251, 191, 36, 1) inset;
     }
   }
+}
+
+/* =====================================================
+   POKEMON-CARDS-CSS HOLOGRAPHIC CARD SYSTEM
+   Full port of pokemon-cards-css effects for HITOON
+   ===================================================== */
+
+/* --- CSS Variables --- */
+
+.card {
+  --card-aspect: 3 / 4;
+  --card-radius: 4.55% / 3.5%;
+  --card-edge: hsl(47, 100%, 78%);
+  --card-glow: hsl(175, 100%, 90%);
+
+  /* Sunpillar colors for holographic rainbow */
+  --sunpillar-1: hsl(2, 100%, 73%);
+  --sunpillar-2: hsl(53, 100%, 69%);
+  --sunpillar-3: hsl(93, 100%, 69%);
+  --sunpillar-4: hsl(176, 100%, 76%);
+  --sunpillar-5: hsl(228, 100%, 74%);
+  --sunpillar-6: hsl(283, 100%, 73%);
+
+  /* Shifted rainbow colors for pseudo-elements */
+  --sunpillar-clr-1: var(--sunpillar-1);
+  --sunpillar-clr-2: var(--sunpillar-2);
+  --sunpillar-clr-3: var(--sunpillar-3);
+  --sunpillar-clr-4: var(--sunpillar-4);
+  --sunpillar-clr-5: var(--sunpillar-5);
+  --sunpillar-clr-6: var(--sunpillar-6);
+
+  /* Rainbow colors for holo gradient */
+  --red: #f80e35;
+  --yellow: #eedf10;
+  --green: #21e985;
+  --blue: #0dbde9;
+  --violet: #c929f1;
+
+  /* Textures */
+  --glitter: url('/img/glitter.png');
+  --grain: url('/img/grain.webp');
+  --foil: url('/img/illusion.png');
+  --geometric: url('/img/geometric.png');
+  --glittersize: 25%;
+
+  /* Default interaction state (overridden by JS) */
+  --pointer-x: 50%;
+  --pointer-y: 50%;
+  --card-scale: 1;
+  --card-opacity: 0;
+  --translate-x: 0px;
+  --translate-y: 0px;
+  --rotate-x: 0deg;
+  --rotate-y: 0deg;
+  --background-x: 50%;
+  --background-y: 50%;
+  --pointer-from-center: 0;
+  --pointer-from-top: 0.5;
+  --pointer-from-left: 0.5;
+}
+
+/* --- Card Container --- */
+
+.card {
+  transform: translate3d(0px, 0px, 0.01px);
+  pointer-events: none;
+  will-change: transform, visibility, z-index;
+  transform-style: preserve-3d;
+}
+
+.card,
+.card * {
+  outline: 1px solid transparent;
+}
+
+.card,
+.card__rotator {
+  aspect-ratio: var(--card-aspect);
+  border-radius: var(--card-radius);
+}
+
+/* --- Non-interactive hover fallback --- */
+.card:not(.interactive) .card__translater,
+.card:not(.interactive) .card__rotator,
+.card:not(.interactive) .card__shine,
+.card:not(.interactive) .card__glare {
+  transition: all 0.3s ease;
+}
+
+.card:not(.interactive):hover {
+  --pointer-x: 25% !important;
+  --pointer-y: 10% !important;
+  --card-opacity: 1 !important;
+  --rotate-x: 7deg !important;
+  --rotate-y: -19deg !important;
+  --background-x: 44% !important;
+  --background-y: 36% !important;
+  --pointer-from-center: 0.9 !important;
+  --pointer-from-top: 0.11 !important;
+  --pointer-from-left: 0.25 !important;
+}
+
+/* --- Transform Layers --- */
+
+.card__translater,
+.card__rotator {
+  display: grid;
+  perspective: 600px;
+  will-change: transform, box-shadow;
+  transform-origin: center;
+  transform-style: preserve-3d;
+}
+
+.card.interactive .card__rotator {
+  touch-action: none;
+}
+
+.card__translater {
+  width: auto;
+  position: relative;
+}
+
+.card__rotator {
+  transform: rotateY(var(--rotate-x)) rotateX(var(--rotate-y));
+  transform-style: preserve-3d;
+  pointer-events: auto;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  padding: 0;
+  appearance: none;
+}
+
+/* Default shadow */
+.card__rotator {
+  transition:
+    box-shadow 0.4s ease,
+    opacity 0.33s ease-out;
+  box-shadow:
+    0 0 3px -1px transparent,
+    0 0 2px 1px transparent,
+    0 0 5px 0px transparent,
+    0px 10px 20px -5px black,
+    0 2px 15px -5px black,
+    0 0 20px 0px transparent;
+}
+
+/* Active/hover glow */
+.card__rotator:hover,
+.card__rotator:focus-visible {
+  box-shadow:
+    0 0 3px -1px white,
+    0 0 3px 1px var(--card-edge),
+    0 0 12px 2px var(--card-glow),
+    0px 10px 20px -5px black,
+    0 0 40px -30px var(--card-glow),
+    0 0 50px -20px var(--card-glow);
+}
+
+/* Focus visible for keyboard accessibility */
+.card:focus-visible {
+  outline: none;
+}
+.card:focus-visible .card__rotator {
+  box-shadow:
+    0 0 3px -1px white,
+    0 0 3px 1px var(--card-edge),
+    0 0 12px 2px var(--card-glow),
+    0px 10px 20px -5px black,
+    0 0 40px -30px var(--card-glow),
+    0 0 50px -20px var(--card-glow);
+}
+
+/* All rotator children fill same grid area */
+.card__rotator > * {
+  width: 100%;
+  display: grid;
+  grid-area: 1 / 1;
+  aspect-ratio: var(--card-aspect);
+  border-radius: var(--card-radius);
+  image-rendering: optimizeQuality;
+  transform-style: preserve-3d;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* --- Card Front --- */
+
+.card__front {
+  opacity: 1;
+  transform: translate3d(0px, 0px, 0.01px);
+  backface-visibility: hidden;
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
+}
+
+.card__front > * {
+  grid-area: 1 / 1;
+}
+
+/* --- Card Image --- */
+
+.card__image {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--card-radius);
+  z-index: 1;
+}
+
+/* --- Card Info Overlay --- */
+
+.card__info {
+  position: relative;
+  z-index: 2;
+  align-self: end;
+  padding: 8px 10px;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.92) 0%,
+    rgba(0, 0, 0, 0.8) 50%,
+    rgba(0, 0, 0, 0.4) 80%,
+    transparent 100%
+  );
+  border-radius: 0 0 calc(var(--card-radius) - 0%) calc(var(--card-radius) - 0%);
+  pointer-events: none;
+}
+
+.card__name {
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card__song {
+  font-size: 9px;
+  color: #6b7280;
+  margin-top: 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.card__serial {
+  font-family: 'SF Mono', 'Roboto Mono', ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+}
+
+.card__owned {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 3px;
+  font-size: 9px;
+  color: #6b7280;
+}
+
+.card__owned-count {
+  font-weight: 700;
+  color: white;
+}
+
+.card__bonus {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 3px;
+  padding-top: 3px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #60a5fa;
+}
+
+.card__bonus-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #3b82f6;
+  animation: bonus-pulse 2s ease-in-out infinite;
+}
+
+@keyframes bonus-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* =====================================================
+   SHINE & GLARE EFFECT LAYERS (Base)
+   ===================================================== */
+
+.card__shine,
+.card__glare {
+  will-change:
+    transform, opacity, background-image, background-size, background-position,
+    background-blend-mode, filter;
+}
+
+.card__shine {
+  display: grid;
+  transform: translateZ(1px);
+  overflow: hidden;
+  z-index: 3;
+  background: transparent;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.85) contrast(2.75) saturate(0.65);
+  mix-blend-mode: color-dodge;
+  opacity: var(--card-opacity);
+}
+
+.card__shine:before,
+.card__shine:after {
+  --sunpillar-clr-1: var(--sunpillar-5);
+  --sunpillar-clr-2: var(--sunpillar-6);
+  --sunpillar-clr-3: var(--sunpillar-1);
+  --sunpillar-clr-4: var(--sunpillar-2);
+  --sunpillar-clr-5: var(--sunpillar-3);
+  --sunpillar-clr-6: var(--sunpillar-4);
+  grid-area: 1 / 1;
+  transform: translateZ(1px);
+  border-radius: var(--card-radius);
+}
+
+.card__shine:after {
+  --sunpillar-clr-1: var(--sunpillar-6);
+  --sunpillar-clr-2: var(--sunpillar-1);
+  --sunpillar-clr-3: var(--sunpillar-2);
+  --sunpillar-clr-4: var(--sunpillar-3);
+  --sunpillar-clr-5: var(--sunpillar-4);
+  --sunpillar-clr-6: var(--sunpillar-5);
+  transform: translateZ(1.2px);
+}
+
+.card__glare {
+  transform: translateZ(1.41px);
+  overflow: hidden;
+  z-index: 4;
+  background-image: radial-gradient(
+    farthest-corner circle at var(--pointer-x) var(--pointer-y),
+    hsla(0, 0%, 100%, 0.8) 10%,
+    hsla(0, 0%, 100%, 0.65) 20%,
+    hsla(0, 0%, 0%, 0.5) 90%
+  );
+  opacity: var(--card-opacity);
+  mix-blend-mode: overlay;
+}
+
+/* =====================================================
+   A. RARITY BASE — Color palette, glow, rotator shadow, glare
+   Each rarity defines its ambient color; independent of frame/holo
+   ===================================================== */
+
+/* --- NORMAL base --- */
+.card[data-rarity='normal'] {
+  --card-glow: hsl(200, 40%, 70%);
+  --card-edge: hsl(200, 30%, 60%);
+}
+
+.card[data-rarity='normal'] .card__rotator {
+  box-shadow:
+    0 0 2px -1px transparent,
+    0 0 1px 1px rgba(107, 114, 128, 0.3),
+    0px 8px 16px -5px black,
+    0 2px 10px -5px black;
+}
+
+.card[data-rarity='normal'] .card__rotator:hover {
+  box-shadow:
+    0 0 3px -1px white,
+    0 0 3px 1px rgba(140, 160, 190, 0.5),
+    0 0 15px 2px rgba(140, 160, 190, 0.3),
+    0px 10px 20px -5px black,
+    0 0 30px -10px var(--card-glow);
+}
+
+.card[data-rarity='normal'] .card__glare {
+  background-image: radial-gradient(
+    farthest-corner circle at var(--pointer-x) var(--pointer-y),
+    hsla(0, 0%, 100%, 0.33) 0%,
+    hsl(0, 0%, 25%) 110%
+  );
+  filter: brightness(1) contrast(1.5);
+  mix-blend-mode: hard-light;
+}
+
+/* --- RARE base --- */
+.card[data-rarity='rare'] {
+  --card-glow: hsl(220, 90%, 65%);
+  --card-edge: hsl(220, 80%, 70%);
+}
+
+.card[data-rarity='rare'] .card__rotator {
+  box-shadow:
+    0 0 3px -1px transparent,
+    0 0 2px 1px rgba(59, 130, 246, 0.3),
+    0 0 12px 0px rgba(59, 130, 246, 0.15),
+    0px 10px 20px -5px black,
+    0 2px 15px -5px black;
+}
+
+.card[data-rarity='rare'] .card__rotator:hover {
+  box-shadow:
+    0 0 3px -1px white,
+    0 0 5px 2px rgba(59, 130, 246, 0.6),
+    0 0 20px 4px rgba(99, 102, 241, 0.4),
+    0px 10px 20px -5px black,
+    0 0 50px -10px rgba(59, 130, 246, 0.3);
+}
+
+.card[data-rarity='rare'] .card__glare {
+  background-image: radial-gradient(
+    farthest-corner circle at var(--pointer-x) var(--pointer-y),
+    hsl(0, 0%, 75%) 5%,
+    hsl(200, 5%, 35%) 60%,
+    hsl(320, 40%, 10%) 150%
+  );
+  background-size: 120% 150%;
+  background-position: center center;
+  mix-blend-mode: hard-light;
+  filter: brightness(1) contrast(1.2) saturate(1);
+  opacity: calc(var(--card-opacity) * 0.75);
+}
+
+/* --- SUPER_RARE base --- */
+.card[data-rarity='super_rare'] {
+  --card-glow: hsl(45, 100%, 65%);
+  --card-edge: hsl(45, 100%, 75%);
+}
+
+.card[data-rarity='super_rare'] .card__rotator {
+  box-shadow:
+    0 0 5px 0px rgba(251, 191, 36, 0.4),
+    0 0 3px 1px rgba(251, 191, 36, 0.3),
+    0 0 15px 0px rgba(251, 191, 36, 0.2),
+    0px 10px 20px -5px black,
+    0 2px 15px -5px black;
+}
+
+.card[data-rarity='super_rare'] .card__rotator:hover {
+  box-shadow:
+    0 0 5px 0px rgba(255, 255, 255, 0.6),
+    0 0 8px 2px rgba(251, 191, 36, 0.8),
+    0 0 25px 5px rgba(251, 191, 36, 0.5),
+    0px 10px 20px -5px black,
+    0 0 60px -10px rgba(251, 191, 36, 0.4),
+    0 0 80px -15px rgba(244, 114, 182, 0.2);
+}
+
+.card[data-rarity='super_rare'] .card__glare {
+  background-image: radial-gradient(
+    farthest-corner circle at var(--pointer-x) var(--pointer-y),
+    hsla(45, 8%, 80%, 0.3) 0%,
+    hsl(22, 15%, 12%) 180%
+  );
+  filter: brightness(1.3) contrast(1.5);
+  mix-blend-mode: hard-light;
+}
+
+/* =====================================================
+   B. FRAME STYLE — Controls frame appearance
+   none / flat / machined — independent of holo effect
+   ===================================================== */
+
+/* --- frame-style: none — No frame, no channel --- */
+.card[data-frame-style='none'] .card__front {
+  padding: 0;
+}
+.card[data-frame-style='none'] .card__front::before,
+.card[data-frame-style='none'] .card__front::after {
+  display: none;
+}
+
+/* --- frame-style: flat — Simple border, no 3D channel --- */
+.card[data-frame-style='flat'] .card__front::before,
+.card[data-frame-style='flat'] .card__front::after {
+  display: none;
+}
+
+.card[data-rarity='normal'][data-frame-style='flat'] .card__front {
+  padding: 4px;
+  border: 2px solid #4b5563;
+  background: #0a0a0c;
+}
+
+.card[data-rarity='rare'][data-frame-style='flat'] .card__front {
+  padding: 4px;
+  border: 2px solid #3b82f6;
+  background: #060610;
+}
+
+.card[data-rarity='super_rare'][data-frame-style='flat'] .card__front {
+  padding: 5px;
+  border: 3px solid #fbbf24;
+  background: #0a0804;
+}
+
+/* --- frame-style: machined — 3D metallic channel (per-rarity) --- */
+
+/* Normal: Machined channel — image recessed into silver frame */
+.card[data-rarity='normal'][data-frame-style='machined'] .card__front {
+  padding: 8px;
+  background:
+    linear-gradient(
+      160deg,
+      rgba(180, 185, 195, 0.12) 0%,
+      rgba(120, 125, 135, 0.06) 50%,
+      rgba(180, 185, 195, 0.1) 100%
+    ),
+    repeating-linear-gradient(160deg, #0a0a0c 0px, #0a0a0c 1px, #08080a 1px, #08080a 2px);
+}
+
+.card[data-rarity='normal'][data-frame-style='machined'] .card__image {
+  border-radius: 2.5% / 1.8%;
+  border: 1px solid rgba(160, 170, 185, 0.18);
+  box-shadow:
+    0 0 4px 1px rgba(0, 0, 0, 0.8),
+    -2px -2px 5px 0 rgba(0, 0, 0, 0.5),
+    2px 2px 4px 0 rgba(160, 170, 190, 0.04),
+    inset 0 2px 6px rgba(0, 0, 0, 0.3),
+    inset 0 -1px 3px rgba(180, 190, 200, 0.06);
+}
+
+/* Normal: Silver Brushed Metal Frame */
+.card[data-rarity='normal'][data-frame-style='machined'] .card__front::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--card-radius);
+  border: 5px solid transparent;
+  background:
+    repeating-linear-gradient(
+        105deg,
+        transparent 0px,
+        transparent 1px,
+        rgba(255, 255, 255, 0.04) 1px,
+        rgba(255, 255, 255, 0.04) 2px
+      )
+      border-box,
+    linear-gradient(
+        160deg,
+        hsl(210, 8%, 78%) 0%,
+        hsl(210, 5%, 55%) 10%,
+        hsl(210, 10%, 82%) 20%,
+        hsl(210, 5%, 48%) 32%,
+        hsl(210, 8%, 75%) 44%,
+        hsl(210, 5%, 42%) 52%,
+        hsl(210, 10%, 80%) 63%,
+        hsl(210, 5%, 52%) 75%,
+        hsl(210, 8%, 72%) 87%,
+        hsl(210, 5%, 58%) 100%
+      )
+      border-box;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* Normal: 3D Bevel + Channel Depth Shadows */
+.card[data-rarity='normal'][data-frame-style='machined'] .card__front::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--card-radius);
+  box-shadow:
+    inset 1px 1px 0 0 rgba(255, 255, 255, 0.35),
+    inset -1px -1px 0 0 rgba(0, 0, 0, 0.5),
+    inset 6px 6px 4px -3px rgba(0, 0, 0, 0.35),
+    inset -6px -6px 4px -3px rgba(255, 255, 255, 0.12),
+    inset 0 0 8px 2px rgba(0, 0, 0, 0.2);
+  z-index: 6;
+  pointer-events: none;
+}
+
+/* Rare: Machined channel — image recessed into chrome frame */
+.card[data-rarity='rare'][data-frame-style='machined'] .card__front {
+  padding: 10px;
+  background:
+    linear-gradient(
+      160deg,
+      rgba(80, 120, 220, 0.08) 0%,
+      rgba(60, 80, 160, 0.04) 50%,
+      rgba(100, 140, 240, 0.07) 100%
+    ),
+    repeating-linear-gradient(160deg, #060610 0px, #060610 1px, #05050e 1px, #05050e 2px);
+}
+
+.card[data-rarity='rare'][data-frame-style='machined'] .card__image {
+  border-radius: 2.2% / 1.6%;
+  border: 1px solid rgba(80, 130, 240, 0.15);
+  box-shadow:
+    0 0 5px 2px rgba(0, 0, 10, 0.85),
+    -2px -2px 6px 0 rgba(0, 0, 20, 0.6),
+    2px 2px 4px 0 rgba(60, 100, 200, 0.04),
+    inset 0 2px 8px rgba(0, 0, 20, 0.35),
+    inset 0 -1px 3px rgba(80, 130, 240, 0.06);
+}
+
+/* Rare: Blue-Chrome Metallic Frame */
+.card[data-rarity='rare'][data-frame-style='machined'] .card__front::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--card-radius);
+  border: 6px solid transparent;
+  background:
+    repeating-linear-gradient(
+        115deg,
+        transparent 0px,
+        transparent 1px,
+        rgba(100, 160, 255, 0.03) 1px,
+        rgba(100, 160, 255, 0.03) 2px
+      )
+      border-box,
+    linear-gradient(
+        160deg,
+        hsl(220, 50%, 75%) 0%,
+        hsl(230, 60%, 50%) 8%,
+        hsl(215, 55%, 78%) 16%,
+        hsl(240, 50%, 42%) 25%,
+        hsl(210, 60%, 72%) 33%,
+        hsl(225, 55%, 55%) 42%,
+        hsl(235, 50%, 80%) 50%,
+        hsl(220, 60%, 48%) 58%,
+        hsl(210, 55%, 75%) 67%,
+        hsl(230, 50%, 45%) 75%,
+        hsl(215, 60%, 70%) 83%,
+        hsl(240, 55%, 52%) 92%,
+        hsl(220, 50%, 76%) 100%
+      )
+      border-box;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* Rare: 3D Bevel + Channel Depth + Blue Glow */
+.card[data-rarity='rare'][data-frame-style='machined'] .card__front::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--card-radius);
+  box-shadow:
+    inset 1px 1px 0 0 rgba(160, 200, 255, 0.5),
+    inset -1px -1px 0 0 rgba(0, 0, 30, 0.6),
+    inset 8px 8px 5px -4px rgba(0, 0, 40, 0.4),
+    inset -8px -8px 5px -4px rgba(140, 180, 255, 0.15),
+    inset 0 0 12px 3px rgba(0, 0, 20, 0.25),
+    inset 0 0 18px 0 rgba(59, 130, 246, 0.06),
+    0 0 10px 1px rgba(59, 130, 246, 0.08);
+  z-index: 6;
+  pointer-events: none;
+}
+
+/* Super Rare: Machined channel — image recessed into gold frame */
+.card[data-rarity='super_rare'][data-frame-style='machined'] .card__front {
+  padding: 13px;
+  background:
+    linear-gradient(
+      160deg,
+      rgba(200, 170, 80, 0.1) 0%,
+      rgba(140, 110, 40, 0.05) 30%,
+      rgba(200, 170, 80, 0.08) 60%,
+      rgba(160, 130, 50, 0.06) 100%
+    ),
+    repeating-linear-gradient(160deg, #0a0804 0px, #0a0804 1px, #080602 1px, #080602 2px);
+}
+
+.card[data-rarity='super_rare'][data-frame-style='machined'] .card__image {
+  border-radius: 2% / 1.5%;
+  border: 1px solid rgba(200, 170, 80, 0.2);
+  box-shadow:
+    0 0 6px 2px rgba(0, 0, 0, 0.85),
+    -3px -3px 7px 0 rgba(0, 0, 0, 0.6),
+    3px 3px 5px 0 rgba(180, 150, 60, 0.05),
+    inset 0 3px 10px rgba(0, 0, 0, 0.4),
+    inset 3px 0 8px rgba(0, 0, 0, 0.2),
+    inset 0 -1px 4px rgba(200, 170, 80, 0.08),
+    inset -1px 0 3px rgba(200, 170, 80, 0.05);
+}
+
+/* Super Rare: Gold Metallic Frame */
+.card[data-rarity='super_rare'][data-frame-style='machined'] .card__front::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--card-radius);
+  border: 7px solid transparent;
+  background:
+    repeating-linear-gradient(
+        115deg,
+        transparent 0px,
+        transparent 1px,
+        rgba(255, 230, 140, 0.06) 1px,
+        rgba(255, 230, 140, 0.06) 2px
+      )
+      border-box,
+    linear-gradient(
+        160deg,
+        hsl(43, 85%, 72%) 0%,
+        hsl(38, 90%, 52%) 7%,
+        hsl(46, 95%, 78%) 14%,
+        hsl(35, 85%, 45%) 22%,
+        hsl(42, 92%, 74%) 29%,
+        hsl(40, 88%, 56%) 36%,
+        hsl(48, 95%, 80%) 43%,
+        hsl(36, 85%, 48%) 50%,
+        hsl(44, 92%, 72%) 57%,
+        hsl(38, 90%, 54%) 64%,
+        hsl(46, 95%, 76%) 71%,
+        hsl(34, 85%, 46%) 79%,
+        hsl(42, 90%, 70%) 86%,
+        hsl(40, 88%, 55%) 93%,
+        hsl(45, 85%, 74%) 100%
+      )
+      border-box;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* Super Rare: 3D Gold Bevel + Deep Channel + Warm Glow */
+.card[data-rarity='super_rare'][data-frame-style='machined'] .card__front::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--card-radius);
+  box-shadow:
+    inset 2px 2px 0 0 rgba(255, 248, 200, 0.6),
+    inset -2px -2px 0 0 rgba(60, 35, 0, 0.65),
+    inset 10px 10px 6px -5px rgba(40, 25, 0, 0.45),
+    inset -10px -10px 6px -5px rgba(255, 240, 170, 0.18),
+    inset 0 0 16px 4px rgba(20, 10, 0, 0.3),
+    inset 0 0 24px 0 rgba(251, 191, 36, 0.06),
+    0 0 15px 2px rgba(251, 191, 36, 0.15),
+    0 0 30px 0px rgba(251, 191, 36, 0.06);
+  z-index: 6;
+  pointer-events: none;
+}
+
+/* =====================================================
+   C. HOLO EFFECT — Controls holographic shine pattern
+   none / radiant / sunpillar / secret-gold
+   Independent of rarity and frame style
+   ===================================================== */
+
+/* --- holo-effect: none — No holographic shine --- */
+.card[data-holo-effect='none'] .card__shine {
+  display: none;
+}
+
+/* --- holo-effect: radiant — Crosshatch metallic sheen with sparkle --- */
+.card[data-holo-effect='radiant'] .card__shine {
+  --barwidth: 1.2%;
+
+  background-image:
+    radial-gradient(
+      farthest-corner ellipse at calc(((var(--pointer-x)) * 0.5) + 25%)
+        calc(((var(--pointer-y)) * 0.5) + 25%),
+      hsl(0, 0%, 95%) 20%,
+      var(--card-glow) 130%
+    ),
+    repeating-linear-gradient(
+      45deg,
+      hsl(0, 0%, 10%) 0%,
+      hsl(0, 0%, 10%) var(--barwidth),
+      hsl(0, 0%, 20%) calc(var(--barwidth) + 0.01%),
+      hsl(0, 0%, 20%) calc(var(--barwidth) * 2),
+      hsl(0, 0%, 35%) calc(var(--barwidth) * 2 + 0.01%),
+      hsl(0, 0%, 35%) calc(var(--barwidth) * 3),
+      hsl(0, 0%, 42.5%) calc(var(--barwidth) * 3 + 0.01%),
+      hsl(0, 0%, 42.5%) calc(var(--barwidth) * 4),
+      hsl(0, 0%, 50%) calc(var(--barwidth) * 4 + 0.01%),
+      hsl(0, 0%, 50%) calc(var(--barwidth) * 5),
+      hsl(0, 0%, 42.5%) calc(var(--barwidth) * 5 + 0.01%),
+      hsl(0, 0%, 42.5%) calc(var(--barwidth) * 6),
+      hsl(0, 0%, 35%) calc(var(--barwidth) * 6 + 0.01%),
+      hsl(0, 0%, 35%) calc(var(--barwidth) * 7),
+      hsl(0, 0%, 20%) calc(var(--barwidth) * 7 + 0.01%),
+      hsl(0, 0%, 20%) calc(var(--barwidth) * 8),
+      hsl(0, 0%, 10%) calc(var(--barwidth) * 8 + 0.01%),
+      hsl(0, 0%, 10%) calc(var(--barwidth) * 9),
+      hsl(0, 0%, 0%) calc(var(--barwidth) * 9 + 0.01%),
+      hsl(0, 0%, 0%) calc(var(--barwidth) * 10)
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      hsl(0, 0%, 10%) 0%,
+      hsl(0, 0%, 10%) var(--barwidth),
+      hsl(0, 0%, 20%) calc(var(--barwidth) + 0.01%),
+      hsl(0, 0%, 20%) calc(var(--barwidth) * 2),
+      hsl(0, 0%, 35%) calc(var(--barwidth) * 2 + 0.01%),
+      hsl(0, 0%, 35%) calc(var(--barwidth) * 3),
+      hsl(0, 0%, 42.5%) calc(var(--barwidth) * 3 + 0.01%),
+      hsl(0, 0%, 42.5%) calc(var(--barwidth) * 4),
+      hsl(0, 0%, 50%) calc(var(--barwidth) * 4 + 0.01%),
+      hsl(0, 0%, 50%) calc(var(--barwidth) * 5),
+      hsl(0, 0%, 42.5%) calc(var(--barwidth) * 5 + 0.01%),
+      hsl(0, 0%, 42.5%) calc(var(--barwidth) * 6),
+      hsl(0, 0%, 35%) calc(var(--barwidth) * 6 + 0.01%),
+      hsl(0, 0%, 35%) calc(var(--barwidth) * 7),
+      hsl(0, 0%, 20%) calc(var(--barwidth) * 7 + 0.01%),
+      hsl(0, 0%, 20%) calc(var(--barwidth) * 8),
+      hsl(0, 0%, 10%) calc(var(--barwidth) * 8 + 0.01%),
+      hsl(0, 0%, 10%) calc(var(--barwidth) * 9),
+      hsl(0, 0%, 0%) calc(var(--barwidth) * 9 + 0.01%),
+      hsl(0, 0%, 0%) calc(var(--barwidth) * 10)
+    );
+
+  background-size:
+    cover,
+    210% 210%,
+    210% 210%;
+  background-position:
+    center,
+    calc(((var(--background-x) - 50%) * 1.5) + 50%) calc(((var(--background-y) - 50%) * 1.5) + 50%),
+    calc(((var(--background-x) - 50%) * 1.5) + 50%) calc(((var(--background-y) - 50%) * 1.5) + 50%);
+  background-blend-mode: exclusion, darken, color-dodge;
+  filter: brightness(0.5) contrast(2) saturate(1.75);
+  mix-blend-mode: color-dodge;
+}
+
+/* Radiant: Glitter sparkle overlay */
+.card[data-holo-effect='radiant'] .card__shine:before {
+  content: '';
+  z-index: 2;
+
+  background-image:
+    var(--glitter),
+    radial-gradient(
+      farthest-corner ellipse at calc(((var(--pointer-x)) * 0.5) + 25%)
+        calc(((var(--pointer-y)) * 0.5) + 25%),
+      hsla(0, 0%, 58%, 0.8) 10%,
+      hsla(0, 0%, 20%, 0.9) 20%,
+      hsla(0, 0%, 20%, 0.5) 50%
+    );
+  background-position: center;
+  background-size:
+    15% 15%,
+    350% 350%;
+  background-blend-mode: color-dodge;
+  mix-blend-mode: overlay;
+  filter: brightness(0.66) contrast(2) saturate(0.5);
+}
+
+/* Radiant: Subtle rainbow shimmer overlay */
+.card[data-holo-effect='radiant'] .card__shine:after {
+  content: '';
+
+  background-image:
+    var(--foil),
+    repeating-linear-gradient(
+      55deg,
+      hsl(3, 95%, 85%) 200px,
+      hsl(207, 100%, 84%) 400px,
+      hsl(29, 100%, 85%) 600px,
+      hsl(160, 100%, 86%) 800px,
+      hsl(309, 94%, 87%) 1000px,
+      hsl(188, 95%, 85%) 1200px,
+      hsl(3, 95%, 85%) 1400px
+    );
+  background-size:
+    33%,
+    400% 100%;
+  background-position:
+    center,
+    calc(((var(--background-x) - 50%) * -2.5) + 50%)
+      calc(((var(--background-y) - 50%) * -2.5) + 50%);
+  filter: brightness(0.6) contrast(3) saturate(2);
+  mix-blend-mode: color-dodge;
+  background-blend-mode: hard-light;
+}
+
+/* --- holo-effect: sunpillar — Rainbow beams with stripe overlays --- */
+.card[data-holo-effect='sunpillar'] {
+  --space: 5%;
+  --angle: 133deg;
+}
+
+.card[data-holo-effect='sunpillar'] .card__shine {
+  background-image:
+    var(--foil),
+    repeating-linear-gradient(
+      0deg,
+      var(--sunpillar-clr-1) calc(var(--space) * 1),
+      var(--sunpillar-clr-2) calc(var(--space) * 2),
+      var(--sunpillar-clr-3) calc(var(--space) * 3),
+      var(--sunpillar-clr-4) calc(var(--space) * 4),
+      var(--sunpillar-clr-5) calc(var(--space) * 5),
+      var(--sunpillar-clr-6) calc(var(--space) * 6),
+      var(--sunpillar-clr-1) calc(var(--space) * 7)
+    ),
+    repeating-linear-gradient(
+      var(--angle),
+      #0e152e 0%,
+      hsl(180, 10%, 60%) 3.8%,
+      hsl(180, 29%, 66%) 4.5%,
+      hsl(180, 10%, 60%) 5.2%,
+      #0e152e 10%,
+      #0e152e 12%
+    ),
+    radial-gradient(
+      farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      hsla(0, 0%, 0%, 0.1) 12%,
+      hsla(0, 0%, 0%, 0.15) 20%,
+      hsla(0, 0%, 0%, 0.25) 120%
+    );
+
+  background-position:
+    center center,
+    0% var(--background-y),
+    calc(var(--background-x) + (var(--background-y) * 0.2)) var(--background-y),
+    var(--background-x) var(--background-y);
+  background-blend-mode: soft-light, hue, hard-light;
+  background-size:
+    33%,
+    200% 700%,
+    300% 100%,
+    200% 100%;
+  filter: brightness(calc((var(--pointer-from-center) * 0.3) + 0.35)) contrast(2) saturate(1.5);
+}
+
+/* Sunpillar: Exclusion counter-stripe layer */
+.card[data-holo-effect='sunpillar'] .card__shine:after {
+  content: '';
+
+  background-image:
+    var(--foil),
+    repeating-linear-gradient(
+      0deg,
+      var(--sunpillar-clr-1) calc(var(--space) * 1),
+      var(--sunpillar-clr-2) calc(var(--space) * 2),
+      var(--sunpillar-clr-3) calc(var(--space) * 3),
+      var(--sunpillar-clr-4) calc(var(--space) * 4),
+      var(--sunpillar-clr-5) calc(var(--space) * 5),
+      var(--sunpillar-clr-6) calc(var(--space) * 6),
+      var(--sunpillar-clr-1) calc(var(--space) * 7)
+    ),
+    repeating-linear-gradient(
+      var(--angle),
+      #0e152e 0%,
+      hsl(180, 10%, 60%) 3.8%,
+      hsl(180, 29%, 66%) 4.5%,
+      hsl(180, 10%, 60%) 5.2%,
+      #0e152e 10%,
+      #0e152e 12%
+    ),
+    radial-gradient(
+      farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      hsla(0, 0%, 0%, 0.1) 12%,
+      hsla(0, 0%, 0%, 0.15) 20%,
+      hsla(0, 0%, 0%, 0.25) 120%
+    );
+
+  background-position:
+    center center,
+    0% var(--background-y),
+    calc((var(--background-x) + (var(--background-y) * 0.2)) * -1) calc(var(--background-y) * -1),
+    var(--background-x) var(--background-y);
+  background-size:
+    33%,
+    200% 400%,
+    195% 100%,
+    200% 100%;
+  background-blend-mode: exclusion, hue, hard-light;
+  filter: brightness(calc((var(--pointer-from-center) * 0.5) + 0.8)) contrast(1.6) saturate(1.4);
+  mix-blend-mode: exclusion;
+}
+
+/* Sunpillar: Radial light spot overlay */
+.card[data-holo-effect='sunpillar'] .card__shine:before {
+  content: '';
+  -webkit-mask-image: none;
+  mask-image: none;
+
+  background-image: radial-gradient(
+    farthest-corner circle at var(--pointer-x) var(--pointer-y),
+    hsl(0, 0%, 100%) 0%,
+    hsla(0, 0%, 0%, 0) 40%
+  );
+  background-position: center;
+  background-size: cover;
+  mix-blend-mode: overlay;
+  opacity: 0.75;
+  z-index: 1;
+}
+
+/* --- holo-effect: secret-gold — Gold conic gradient + double glitter --- */
+.card[data-holo-effect='secret-gold'] {
+  --shift: 1px;
+}
+
+/* Secret-gold: Conic rainbow + double glitter (main layer) */
+.card[data-holo-effect='secret-gold'] .card__shine {
+  background-image:
+    var(--glitter), var(--glitter),
+    conic-gradient(
+      var(--sunpillar-clr-4),
+      var(--sunpillar-clr-5),
+      var(--sunpillar-clr-6),
+      var(--sunpillar-clr-1),
+      var(--sunpillar-clr-4)
+    ),
+    radial-gradient(
+      farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      hsla(150, 0%, 0%, 0.98) 10%,
+      hsla(0, 0%, 95%, 0.15) 90%
+    );
+  background-size:
+    var(--glittersize) var(--glittersize),
+    var(--glittersize) var(--glittersize),
+    cover,
+    cover;
+  background-position:
+    45% 45%,
+    55% 55%,
+    center center,
+    center center;
+  background-blend-mode: soft-light, hard-light, overlay;
+  mix-blend-mode: color-dodge;
+  filter: brightness(calc((var(--pointer-from-center) * 0.3) + 0.2)) contrast(2) saturate(0.75);
+}
+
+/* Secret-gold: Gold foil underlay with geometric pattern (:before) */
+.card[data-holo-effect='secret-gold'] .card__shine:before {
+  content: '';
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+
+  background-image:
+    var(--geometric), linear-gradient(45deg, hsl(46, 95%, 50%), hsl(52, 100%, 69%)),
+    radial-gradient(
+      farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      hsla(10, 20%, 90%, 0.95) 10%,
+      hsl(0, 0%, 0%) 70%
+    );
+  background-size: 33%, cover, cover;
+  background-position:
+    center center,
+    center center,
+    center center;
+  background-blend-mode: hard-light, multiply;
+  mix-blend-mode: lighten;
+  filter: brightness(1.25) contrast(1.25) saturate(0.35);
+  opacity: 0.8;
+}
+
+/* Secret-gold: Glitter top layer with parallax shift (:after) */
+.card[data-holo-effect='secret-gold'] .card__shine:after {
+  content: '';
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+
+  background-image: var(--glitter);
+  background-size: var(--glittersize) var(--glittersize);
+  background-position: calc(50% - ((var(--shift) * 2) * var(--pointer-from-left)) + var(--shift))
+    calc(50% - ((var(--shift) * 2) * var(--pointer-from-top)) + var(--shift));
+  filter: brightness(calc((var(--pointer-from-center) * 0.6) + 0.6)) contrast(1.5);
+  mix-blend-mode: overlay;
+}
+
+/* =====================================================
+   LEGACY COMPATIBILITY — Keep old class names working
+   for pages that haven't been updated yet
+   ===================================================== */
+
+/* Trading card wrapper for backward compatibility */
+.trading-card {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  border-radius: 16px;
+  overflow: visible;
+  background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+  transition:
+    transform 0.4s var(--ease-premium),
+    box-shadow 0.4s var(--ease-premium);
+  transform-style: preserve-3d;
+  perspective: 800px;
+}
+
+.trading-card:hover {
+  transform: scale(1.03) translateY(-4px);
+}
+
+.trading-card-inner {
+  position: absolute;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+}
+
+.trading-card-image {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+}
+
+.trading-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.trading-card-image::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.trading-card-info {
+  padding: 8px 10px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Legacy rarity frame classes */
+.card-normal {
+  border: 4px solid #6b7280;
+  background: linear-gradient(
+    160deg,
+    #9ca3af 0%,
+    #6b7280 15%,
+    #7c8594 30%,
+    #6b7280 50%,
+    #7c8594 70%,
+    #6b7280 85%,
+    #9ca3af 100%
+  );
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.5),
+    0 0 8px rgba(156, 163, 175, 0.2);
+  overflow: hidden;
+}
+.card-normal .trading-card-inner {
+  inset: 6px;
+  background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+  border: 1px solid #4b5563;
+}
+
+.card-rare {
+  border: 5px solid transparent;
+  background:
+    linear-gradient(#0f172a, #0f172a) padding-box,
+    linear-gradient(135deg, #60a5fa, #818cf8, #3b82f6, #a78bfa, #6366f1, #60a5fa, #818cf8)
+      border-box;
+  background-size:
+    100% 100%,
+    300% 300%;
+  box-shadow:
+    0 0 20px rgba(59, 130, 246, 0.5),
+    0 0 40px rgba(99, 102, 241, 0.3);
+  animation: rare-border-flow 4s linear infinite;
+  overflow: hidden;
+}
+.card-rare .trading-card-inner {
+  inset: 8px;
+  background: linear-gradient(180deg, #1e293b 0%, #1e1b4b 50%, #172554 100%);
+  border: 1px solid rgba(96, 165, 250, 0.3);
+}
+
+@keyframes rare-border-flow {
+  0% {
+    background-position:
+      100% 100%,
+      0% 0%;
+  }
+  100% {
+    background-position:
+      100% 100%,
+      100% 100%;
+  }
+}
+
+.card-super-rare {
+  border: 6px solid transparent;
+  background:
+    linear-gradient(#0f0a1e, #0f0a1e) padding-box,
+    linear-gradient(135deg, #fbbf24, #f472b6, #a78bfa, #60a5fa, #34d399, #fbbf24, #f472b6)
+      border-box;
+  background-size:
+    100% 100%,
+    400% 400%;
+  box-shadow:
+    0 0 25px rgba(251, 191, 36, 0.6),
+    0 0 50px rgba(244, 114, 182, 0.35);
+  animation: sr-border-flow 6s linear infinite;
+  overflow: hidden;
+}
+.card-super-rare .trading-card-inner {
+  inset: 10px;
+  background: linear-gradient(
+    180deg,
+    #1a0a2e 0%,
+    #2d1045 25%,
+    #1a1040 50%,
+    #0f1a3a 75%,
+    #0a0f2e 100%
+  );
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+@keyframes sr-border-flow {
+  0% {
+    background-position:
+      100% 100%,
+      0% 0%;
+  }
+  100% {
+    background-position:
+      100% 100%,
+      100% 100%;
+  }
+}
+
+/* Keep other legacy frame classes as simple border styles */
+.card-carbon {
+  border: 4px solid #374151;
+  background: repeating-linear-gradient(45deg, #1f2937 0px, #1f2937 2px, #111827 2px, #111827 4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+}
+.card-carbon .trading-card-inner {
+  inset: 6px;
+  background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%);
+  border: 1px solid #374151;
+}
+
+.card-minimal {
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+.card-minimal .trading-card-inner {
+  inset: 4px;
+  background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.card-cosmic {
+  border: 5px solid transparent;
+  background:
+    linear-gradient(#0f0a1e, #0f0a1e) padding-box,
+    linear-gradient(135deg, #c084fc, #a855f7, #ec4899, #c084fc, #a855f7) border-box;
+  background-size:
+    100% 100%,
+    300% 300%;
+  box-shadow:
+    0 0 20px rgba(168, 85, 247, 0.5),
+    0 0 40px rgba(236, 72, 153, 0.3);
+  overflow: hidden;
+}
+.card-cosmic .trading-card-inner {
+  inset: 8px;
+  background: linear-gradient(180deg, #1a0a2e 0%, #2d0a3e 50%, #1a0a2e 100%);
+  border: 1px solid rgba(192, 132, 252, 0.3);
+}
+
+.card-emerald {
+  border: 5px solid transparent;
+  background:
+    linear-gradient(#0a1e0f, #0a1e0f) padding-box,
+    linear-gradient(135deg, #34d399, #10b981, #059669, #34d399, #10b981) border-box;
+  background-size:
+    100% 100%,
+    300% 300%;
+  box-shadow:
+    0 0 20px rgba(16, 185, 129, 0.5),
+    0 0 40px rgba(52, 211, 153, 0.3);
+  overflow: hidden;
+}
+.card-emerald .trading-card-inner {
+  inset: 8px;
+  background: linear-gradient(180deg, #0a1e15 0%, #0f2e1f 50%, #0a1e15 100%);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+.card-prismatic {
+  border: 6px solid transparent;
+  background:
+    linear-gradient(#0f0a1e, #0f0a1e) padding-box,
+    linear-gradient(135deg, #f472b6, #a78bfa, #60a5fa, #34d399, #fbbf24, #f472b6, #a78bfa)
+      border-box;
+  background-size:
+    100% 100%,
+    500% 500%;
+  box-shadow:
+    0 0 25px rgba(244, 114, 182, 0.6),
+    0 0 50px rgba(167, 139, 250, 0.35);
+  overflow: hidden;
+}
+.card-prismatic .trading-card-inner {
+  inset: 10px;
+  background: linear-gradient(
+    180deg,
+    #1a0a2e 0%,
+    #0f1a3a 25%,
+    #1a0a2e 50%,
+    #2d1045 75%,
+    #0f1a3a 100%
+  );
+  border: 1px solid rgba(244, 114, 182, 0.3);
+}
+
+.card-diamond {
+  border: 6px solid transparent;
+  background:
+    linear-gradient(#0a1520, #0a1520) padding-box,
+    linear-gradient(135deg, #67e8f9, #a5f3fc, #e0f2fe, #67e8f9, #a5f3fc, #e0f2fe) border-box;
+  background-size:
+    100% 100%,
+    400% 400%;
+  box-shadow:
+    0 0 25px rgba(103, 232, 249, 0.6),
+    0 0 50px rgba(165, 243, 252, 0.35);
+  overflow: hidden;
+}
+.card-diamond .trading-card-inner {
+  inset: 10px;
+  background: linear-gradient(
+    180deg,
+    #0c1929 0%,
+    #0a1520 25%,
+    #0f1d2e 50%,
+    #0a1520 75%,
+    #0c1929 100%
+  );
+  border: 1px solid rgba(103, 232, 249, 0.3);
 }

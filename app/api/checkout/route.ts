@@ -19,8 +19,9 @@ interface CardData {
   total_supply: number | null;
   current_supply: number;
   max_purchase_per_user: number | null;
+  sale_ends_at: string | null;
+  card_image_url: string;
   artist: { id: string; name: string } | null;
-  visual: { id: string; name: string; artist_image_url: string | null } | null;
 }
 
 /**
@@ -82,11 +83,6 @@ async function handleSingleCardCheckout(
       artist:artists (
         id,
         name
-      ),
-      visual:card_visuals (
-        id,
-        name,
-        artist_image_url
       )
     `,
     )
@@ -99,6 +95,11 @@ async function handleSingleCardCheckout(
   }
 
   const cardData = card as CardData;
+
+  // Check sale deadline
+  if (cardData.sale_ends_at && new Date(cardData.sale_ends_at) < new Date()) {
+    return NextResponse.json({ error: '販売期限が終了しました' }, { status: 400 });
+  }
 
   // Check stock availability
   if (cardData.total_supply !== null) {
@@ -152,7 +153,7 @@ async function handleSingleCardCheckout(
     cardId,
     cardName: cardData.name,
     artistName: cardData.artist?.name || 'Unknown Artist',
-    imageUrl: cardData.visual?.artist_image_url || undefined,
+    imageUrl: cardData.card_image_url || undefined,
     price: cardData.price,
     quantity: qty,
     userId: user.id,
@@ -193,14 +194,11 @@ async function handleCartCheckout(
       total_supply,
       current_supply,
       max_purchase_per_user,
+      sale_ends_at,
+      card_image_url,
       artist:artists (
         id,
         name
-      ),
-      visual:card_visuals (
-        id,
-        name,
-        artist_image_url
       )
     `,
     )
@@ -246,6 +244,12 @@ async function handleCartCheckout(
 
     const cardData = card as CardData;
 
+    // Check sale deadline
+    if (cardData.sale_ends_at && new Date(cardData.sale_ends_at) < new Date()) {
+      errors.push(`${cardData.name}: 販売期限が終了しました`);
+      continue;
+    }
+
     // Check stock availability
     if (cardData.total_supply !== null) {
       const remainingSupply = cardData.total_supply - cardData.current_supply;
@@ -282,7 +286,7 @@ async function handleCartCheckout(
       cardId: item.cardId,
       cardName: cardData.name,
       artistName: cardData.artist?.name || 'Unknown Artist',
-      imageUrl: cardData.visual?.artist_image_url || undefined,
+      imageUrl: cardData.card_image_url || undefined,
       price: cardData.price,
       quantity: item.quantity,
     });

@@ -63,12 +63,11 @@ interface CardQueryResult {
   name: string;
   price: number;
   rarity: string;
+  frame_template_id: string;
   total_supply: number | null;
   current_supply: number;
-  visual:
-    | { artist_image_url: string; song_title: string | null }
-    | { artist_image_url: string; song_title: string | null }[]
-    | null;
+  card_image_url: string;
+  song_title: string | null;
   artist: { id: string; name: string } | { id: string; name: string }[] | null;
 }
 
@@ -98,12 +97,11 @@ export function CartProvider({ children }: CartProviderProps) {
           name,
           price,
           rarity,
+          frame_template_id,
           total_supply,
           current_supply,
-          visual:card_visuals (
-            artist_image_url,
-            song_title
-          ),
+          card_image_url,
+          song_title,
           artist:artists (
             id,
             name
@@ -124,7 +122,6 @@ export function CartProvider({ children }: CartProviderProps) {
           if (!card) return null;
 
           // Handle Supabase's nested types
-          const visual = Array.isArray(card.visual) ? card.visual[0] : card.visual;
           const artist = Array.isArray(card.artist) ? card.artist[0] : card.artist;
 
           return {
@@ -138,12 +135,11 @@ export function CartProvider({ children }: CartProviderProps) {
               name: card.name,
               price: card.price,
               rarity: card.rarity as CartItemWithCard['card']['rarity'],
+              frameTemplateId: card.frame_template_id,
               totalSupply: card.total_supply,
               currentSupply: card.current_supply,
-              visual: {
-                artistImageUrl: visual?.artist_image_url || '',
-                songTitle: visual?.song_title || null,
-              },
+              cardImageUrl: card.card_image_url || '',
+              songTitle: card.song_title || null,
               artist: {
                 id: artist?.id || '',
                 name: artist?.name || 'Unknown Artist',

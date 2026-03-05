@@ -33,10 +33,8 @@ export async function GET() {
           rarity,
           total_supply,
           current_supply,
-          visual:card_visuals (
-            artist_image_url,
-            song_title
-          ),
+          card_image_url,
+          song_title,
           artist:artists (
             id,
             name
@@ -60,7 +58,6 @@ export async function GET() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .map((item: any) => {
         const card = Array.isArray(item.card) ? item.card[0] : item.card;
-        const visual = Array.isArray(card?.visual) ? card.visual[0] : card?.visual;
         const artist = Array.isArray(card?.artist) ? card.artist[0] : card?.artist;
 
         return {
@@ -76,10 +73,8 @@ export async function GET() {
             rarity: card?.rarity,
             totalSupply: card?.total_supply,
             currentSupply: card?.current_supply,
-            visual: {
-              artistImageUrl: visual?.artist_image_url || '',
-              songTitle: visual?.song_title || null,
-            },
+            cardImageUrl: card?.card_image_url || '',
+            songTitle: card?.song_title || null,
             artist: {
               id: artist?.id || '',
               name: artist?.name || 'Unknown Artist',

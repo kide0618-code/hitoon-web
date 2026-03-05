@@ -1,4 +1,4 @@
-import type { Card, CardWithTemplate } from './card';
+import type { Card } from './card';
 import type { Artist } from './artist';
 
 /**
@@ -26,7 +26,7 @@ export interface Purchase {
  * Purchase with card and artist for collection display
  */
 export interface PurchaseWithDetails extends Purchase {
-  card: CardWithTemplate & {
+  card: Card & {
     artist: Artist;
   };
 }
@@ -39,7 +39,6 @@ export interface CollectionItem {
   artistId: string;
   artistName: string;
   artistImageUrl: string;
-  templateName: string;
   songTitle: string | null;
   rarity: import('./card').Rarity;
   totalSupply: number | null;

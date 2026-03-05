@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Sparkles } from 'lucide-react';
@@ -23,6 +25,7 @@ async function getFeaturedArtists(): Promise<FeaturedArtist[]> {
   const { data: artists, error } = await supabase
     .from('artists')
     .select('id, name, image_url, member_count')
+    .is('archived_at', null)
     .eq('is_featured', true)
     .order('display_order', { ascending: true })
     .limit(3);
@@ -41,6 +44,7 @@ async function getFeaturedArtists(): Promise<FeaturedArtist[]> {
           .select('price')
           .eq('artist_id', artist.id)
           .eq('is_active', true)
+          .is('archived_at', null)
           .order('price', { ascending: true })
           .limit(1);
 
@@ -57,8 +61,7 @@ async function getFeaturedArtists(): Promise<FeaturedArtist[]> {
     ),
   );
 
-  // Only return artists that have active cards
-  return artistsWithPrices.filter((a) => a.lowestPrice > 0);
+  return artistsWithPrices;
 }
 
 export default async function HomePage() {
@@ -115,7 +118,7 @@ export default async function HomePage() {
                     <p className="text-xs text-gray-500">{artist.memberCount} Members</p>
                   </div>
                   <div className="text-base font-bold text-blue-400">
-                    {formatPrice(artist.lowestPrice)}〜
+                    {artist.lowestPrice > 0 ? `${formatPrice(artist.lowestPrice)}〜` : 'Coming Soon'}
                   </div>
                 </div>
               </Link>

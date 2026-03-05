@@ -20,12 +20,11 @@ export interface CartItemWithCard extends CartItem {
     name: string;
     price: number;
     rarity: Rarity;
+    frameTemplateId: string;
     totalSupply: number | null;
     currentSupply: number;
-    visual: {
-      artistImageUrl: string;
-      songTitle: string | null;
-    };
+    cardImageUrl: string;
+    songTitle: string | null;
     artist: {
       id: string;
       name: string;

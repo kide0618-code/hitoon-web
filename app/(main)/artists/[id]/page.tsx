@@ -3,7 +3,8 @@ import { notFound } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { ArtistDetailClient } from './client';
 import type { Rarity } from '@/types/card';
-import type { Artist, Card, CardVisual } from '@/types/database';
+import type { SocialLink } from '@/types/artist';
+import type { Artist, Card } from '@/types/database';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -11,14 +12,17 @@ interface PageProps {
 
 interface CardData {
   id: string;
+  name: string;
+  description: string | null;
   rarity: Rarity;
   price: number;
   totalSupply: number | null;
   currentSupply: number;
-  visual: {
-    artistImageUrl: string;
-    songTitle: string | null;
-  };
+  cardImageUrl: string;
+  songTitle: string | null;
+  subtitle: string | null;
+  frameTemplateId: string;
+  saleEndsAt: string | null;
 }
 
 interface ArtistData {
@@ -28,6 +32,7 @@ interface ArtistData {
   imageUrl: string | null;
   memberCount: number;
   cards: CardData[];
+  socialLinks: SocialLink[];
 }
 
 async function getArtist(id: string): Promise<ArtistData | null> {
@@ -38,6 +43,7 @@ async function getArtist(id: string): Promise<ArtistData | null> {
     .from('artists')
     .select('id, name, description, image_url, member_count')
     .eq('id', id)
+    .is('archived_at', null)
     .single();
 
   if (artistError || !artistData) {
@@ -49,31 +55,43 @@ async function getArtist(id: string): Promise<ArtistData | null> {
     'id' | 'name' | 'description' | 'image_url' | 'member_count'
   >;
 
-  // Fetch cards for this artist
+  // Fetch cards for this artist (card_image_url, song_title, frame_template_id are now on cards)
   const { data: cardsData, error: cardsError } = await supabase
     .from('cards')
-    .select('id, rarity, price, total_supply, current_supply, visual_id')
+    .select(
+      'id, name, description, rarity, price, total_supply, current_supply, card_image_url, song_title, subtitle, frame_template_id, sale_ends_at',
+    )
     .eq('artist_id', id)
     .eq('is_active', true)
+    .is('archived_at', null)
     .order('price', { ascending: true });
 
-  if (cardsError || !cardsData || cardsData.length === 0) {
-    return null;
+  if (cardsError) {
+    console.error('Error fetching cards:', cardsError);
   }
 
-  const cards = cardsData as Pick<
+  const cards = (cardsData || []) as Pick<
     Card,
-    'id' | 'rarity' | 'price' | 'total_supply' | 'current_supply' | 'visual_id'
+    | 'id'
+    | 'name'
+    | 'description'
+    | 'rarity'
+    | 'price'
+    | 'total_supply'
+    | 'current_supply'
+    | 'card_image_url'
+    | 'song_title'
+    | 'subtitle'
+    | 'frame_template_id'
+    | 'sale_ends_at'
   >[];
 
-  // Fetch visual for the first card (all cards share the same visual)
-  const { data: visualData } = await supabase
-    .from('card_visuals')
-    .select('artist_image_url, song_title')
-    .eq('id', cards[0].visual_id)
-    .single();
-
-  const visual = visualData as Pick<CardVisual, 'artist_image_url' | 'song_title'> | null;
+  // Fetch social links
+  const { data: socialLinksData } = await supabase
+    .from('artist_social_links')
+    .select('platform, url')
+    .eq('artist_id', id)
+    .order('display_order', { ascending: true });
 
   return {
     id: artist.id,
@@ -83,15 +101,19 @@ async function getArtist(id: string): Promise<ArtistData | null> {
     memberCount: artist.member_count,
     cards: cards.map((card) => ({
       id: card.id,
+      name: card.name,
+      description: card.description,
       rarity: card.rarity as Rarity,
       price: card.price,
       totalSupply: card.total_supply,
       currentSupply: card.current_supply,
-      visual: {
-        artistImageUrl: visual?.artist_image_url || artist.image_url || '',
-        songTitle: visual?.song_title || null,
-      },
+      cardImageUrl: card.card_image_url || artist.image_url || '',
+      songTitle: card.song_title || null,
+      subtitle: card.subtitle,
+      frameTemplateId: card.frame_template_id,
+      saleEndsAt: card.sale_ends_at,
     })),
+    socialLinks: (socialLinksData || []) as SocialLink[],
   };
 }
 
@@ -103,9 +125,30 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return { title: 'Artist Not Found' };
   }
 
+  const description = artist.description || `${artist.name}のデジタルカードを購入`;
+  const firstCard = artist.cards[0];
+  const ogImageUrl = firstCard
+    ? `${process.env.NEXT_PUBLIC_APP_URL}/api/og/card?id=${firstCard.id}`
+    : undefined;
+
   return {
     title: artist.name,
-    description: artist.description || `${artist.name}のデジタルカードを購入`,
+    description,
+    openGraph: {
+      title: artist.name,
+      description,
+      ...(ogImageUrl && {
+        images: [{ url: ogImageUrl, width: 1200, height: 630 }],
+      }),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: artist.name,
+      description,
+      ...(ogImageUrl && {
+        images: [ogImageUrl],
+      }),
+    },
   };
 }
 

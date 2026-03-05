@@ -3,13 +3,12 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 /**
  * GET /api/cards
- * Get all active cards with visual and artist info
+ * Get all active cards with artist info
  */
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const artistId = searchParams.get('artistId');
-    const visualId = searchParams.get('visualId');
     const rarity = searchParams.get('rarity');
 
     const supabase = await createServerSupabaseClient();
@@ -19,13 +18,6 @@ export async function GET(request: Request) {
       .select(
         `
         *,
-        visual:card_visuals (
-          id,
-          name,
-          artist_image_url,
-          song_title,
-          subtitle
-        ),
         artist:artists (
           id,
           name,
@@ -37,10 +29,6 @@ export async function GET(request: Request) {
 
     if (artistId) {
       query = query.eq('artist_id', artistId);
-    }
-
-    if (visualId) {
-      query = query.eq('visual_id', visualId);
     }
 
     if (rarity) {

@@ -217,7 +217,7 @@ export function ProfileButton() {
                     プライバシーポリシー
                   </Link>
                   <Link
-                    href={ROUTES.TOKUSHOHO}
+                    href={ROUTES.TERMS_OF_SALE}
                     onClick={() => {
                       setIsOpen(false);
                       setMenuView('main');

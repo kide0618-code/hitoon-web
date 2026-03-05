@@ -5,7 +5,7 @@ export const APP_CONFIG = {
   name: 'HITOON',
   tagline: '音楽を、一生モノにする。',
   description: 'Music Asset Platform',
-  url: process.env.NEXT_PUBLIC_APP_URL || 'https://hitoon-music.vercel.app',
+  url: process.env.NEXT_PUBLIC_APP_URL || 'https://hitoonstore.com',
 } as const;
 
 /**

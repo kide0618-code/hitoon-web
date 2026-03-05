@@ -3,15 +3,18 @@
 import Image from 'next/image';
 import { cn } from '@/lib/utils/cn';
 import { type Rarity } from '@/types/card';
-import { getDefaultFrameForRarity } from '@/config/frame-templates';
+import { getDefaultFrameForRarity, getFrameTemplate } from '@/config/frame-templates';
 import { RarityBadge } from './rarity-badge';
 import { formatSerialNumber } from '@/lib/utils/format';
+import { useCardInteraction } from '@/hooks/use-card-interaction';
 
 interface ArtistCardProps {
   artistName: string;
   artistImageUrl: string;
+  cardName?: string | null;
   songTitle?: string | null;
   rarity: Rarity;
+  frameTemplateId?: string;
   serialNumber?: number;
   totalSupply?: number | null;
   owned?: number;
@@ -20,11 +23,24 @@ interface ArtistCardProps {
   onClick?: () => void;
 }
 
+function getRarityDataAttr(rarity: Rarity): string {
+  switch (rarity) {
+    case 'SUPER_RARE':
+      return 'super_rare';
+    case 'RARE':
+      return 'rare';
+    default:
+      return 'normal';
+  }
+}
+
 export function ArtistCard({
   artistName,
   artistImageUrl,
+  cardName,
   songTitle,
   rarity,
+  frameTemplateId,
   serialNumber,
   totalSupply,
   owned,
@@ -32,7 +48,9 @@ export function ArtistCard({
   className,
   onClick,
 }: ArtistCardProps) {
-  const frame = getDefaultFrameForRarity(rarity);
+  const frame =
+    (frameTemplateId && getFrameTemplate(frameTemplateId)) || getDefaultFrameForRarity(rarity);
+  const { style, handlePointerMove, handlePointerLeave } = useCardInteraction();
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (onClick && (e.key === 'Enter' || e.key === ' ')) {
@@ -43,79 +61,67 @@ export function ArtistCard({
 
   return (
     <div
-      className={cn(
-        'trading-card',
-        frame.cssClass,
-        onClick &&
-          'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black',
-        className,
-      )}
+      className={cn('card interactive', className)}
+      data-rarity={getRarityDataAttr(rarity)}
+      data-frame={frame.cssClass}
+      data-frame-style={frame.frameStyle}
+      data-holo-effect={frame.holoEffect}
+      style={style}
       onClick={onClick}
       onKeyDown={handleKeyDown}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
     >
-      {/* Inner card frame */}
-      <div className="trading-card-inner">
-        {/* Main Visual */}
-        <div className="trading-card-image">
-          <Image src={artistImageUrl} alt={artistName} fill className="object-cover" unoptimized />
+      <div className="card__translater">
+        <div
+          className="card__rotator"
+          onPointerMove={handlePointerMove}
+          onPointerLeave={handlePointerLeave}
+        >
+          <div className="card__front">
+            {/* Main card image */}
+            <div className="card__image">
+              <Image
+                src={artistImageUrl}
+                alt={artistName}
+                fill
+                className="object-cover"
+                unoptimized
+              />
+            </div>
 
-          {/* Top corner decoration for SR */}
-          {rarity === 'SUPER_RARE' && (
-            <div className="absolute right-1 top-1 sm:right-2 sm:top-2">
-              <div className="relative h-4 w-4 sm:h-6 sm:w-6">
-                <div className="absolute inset-0 animate-pulse rounded-full bg-gradient-to-br from-yellow-300 to-amber-500" />
-                <div className="absolute inset-[2px] flex items-center justify-center rounded-full bg-gradient-to-br from-yellow-400 to-amber-600">
-                  <span className="text-[6px] font-black text-black sm:text-[8px]">★</span>
+            {/* Info overlay */}
+            <div className="card__info">
+              <div className="card__info-text">
+                {cardName && <p className="card__name">{cardName}</p>}
+                {songTitle && <p className="card__song">SONG: {songTitle}</p>}
+              </div>
+              <div className="card__meta">
+                <RarityBadge rarity={rarity} size="sm" />
+                {serialNumber !== undefined && (
+                  <span className="card__serial">
+                    {formatSerialNumber(serialNumber, totalSupply)}
+                  </span>
+                )}
+              </div>
+              {owned !== undefined && (
+                <div className="card__owned">
+                  <span>Owned</span>
+                  <span className="card__owned-count">{owned}</span>
                 </div>
-              </div>
+              )}
+              {bonusContentUrl && (
+                <div className="card__bonus">
+                  <div className="card__bonus-dot" />
+                  <span>Bonus Content</span>
+                </div>
+              )}
             </div>
-          )}
 
-          {/* Overlay text on image */}
-          <div className="absolute bottom-0 left-0 right-0 z-10 p-2 sm:p-3">
-            <p className="truncate text-2xs font-medium uppercase tracking-widest text-gray-300 sm:text-xs">
-              IDOL
-            </p>
-            <p className="truncate text-xs font-bold leading-tight text-white sm:text-sm">
-              {artistName}
-            </p>
-            {songTitle && (
-              <p className="mt-0.5 truncate text-2xs text-gray-400 sm:text-xs">SONG: {songTitle}</p>
-            )}
+            {/* Effect layers */}
+            <div className="card__shine"></div>
+            <div className="card__glare"></div>
           </div>
-        </div>
-
-        {/* Info Section */}
-        <div className="trading-card-info">
-          <div className="flex items-center justify-between gap-1">
-            <RarityBadge rarity={rarity} size="sm" />
-            {serialNumber !== undefined && (
-              <span className="font-mono text-2xs tracking-tight text-gray-400 sm:text-xs">
-                {formatSerialNumber(serialNumber, totalSupply)}
-              </span>
-            )}
-          </div>
-
-          {owned !== undefined && (
-            <div className="mt-1 flex items-center justify-between">
-              <span className="text-2xs text-gray-500 sm:text-xs">Owned</span>
-              <span className="text-2xs font-bold text-white sm:text-xs">{owned}</span>
-            </div>
-          )}
-
-          {/* Bonus indicator */}
-          {bonusContentUrl && (
-            <div className="mt-1 border-t border-white/10 pt-1">
-              <div className="flex items-center gap-1">
-                <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-blue-500 sm:h-2 sm:w-2" />
-                <span className="text-2xs font-bold uppercase tracking-wider text-blue-400">
-                  Bonus Content
-                </span>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

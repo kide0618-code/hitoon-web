@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 interface CollectionItem {
   purchaseId: string;
   cardId: string;
+  cardName: string;
   artistId: string;
   artistName: string;
   artistImageUrl: string;
@@ -52,15 +53,14 @@ async function getCollection(): Promise<CollectionItem[]> {
       card_id,
       cards (
         id,
+        name,
         rarity,
         total_supply,
+        song_title,
         artists (
           id,
           name,
           image_url
-        ),
-        card_visuals (
-          song_title
         )
       )
     `,
@@ -82,10 +82,11 @@ async function getCollection(): Promise<CollectionItem[]> {
     card_id: string | null;
     cards: {
       id: string;
+      name: string;
       rarity: string;
       total_supply: number | null;
+      song_title: string | null;
       artists: { id: string; name: string; image_url: string | null } | null;
-      card_visuals: { song_title: string | null } | null;
     } | null;
   };
   const purchases = purchasesData as PurchaseWithRelations[];
@@ -99,6 +100,7 @@ async function getCollection(): Promise<CollectionItem[]> {
   const { data: exclusiveData } = await supabase
     .from('exclusive_contents')
     .select('card_id')
+    .is('archived_at', null)
     .in('card_id', cardIds.length > 0 ? cardIds : ['']);
 
   const exclusiveContents = (exclusiveData || []) as { card_id: string }[];
@@ -110,16 +112,16 @@ async function getCollection(): Promise<CollectionItem[]> {
     .map((purchase) => {
       const card = purchase.cards!;
       const artist = card.artists;
-      const visual = card.card_visuals;
 
       return {
         purchaseId: purchase.id,
         cardId: card.id,
+        cardName: card.name,
         artistId: artist?.id || '',
         artistName: artist?.name || 'Unknown Artist',
         artistImageUrl:
           artist?.image_url || 'https://placehold.co/600x600/1e293b/60a5fa?text=Artist',
-        songTitle: visual?.song_title || null,
+        songTitle: card.song_title || null,
         rarity: card.rarity as Rarity,
         serialNumber: purchase.serial_number,
         totalSupply: card.total_supply,
@@ -182,6 +184,7 @@ export default async function CollectionPage() {
                     <h3 className="truncate font-bold">{item.artistName}</h3>
                     <RarityBadge rarity={item.rarity} />
                   </div>
+                  <p className="truncate text-xs text-gray-400">{item.cardName}</p>
                   <p className="font-mono text-2xs uppercase tracking-widest text-gray-500">
                     {formatSerialNumber(item.serialNumber)}
                     {item.totalSupply && ` / ${item.totalSupply}`}

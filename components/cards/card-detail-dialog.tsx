@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, ShoppingCart, Check, Wallet, Minus, Plus } from 'lucide-react';
 import { ArtistCard } from './artist-card';
-import { RotatableCard } from './rotatable-card';
 import { formatPrice } from '@/lib/utils/format';
 import type { Rarity } from '@/types/card';
 
@@ -13,10 +12,14 @@ interface CardDetailDialogProps {
   onClose: () => void;
   card: {
     id: string;
+    cardName: string | null;
     artistName: string;
     artistImageUrl: string;
     songTitle: string | null;
+    subtitle: string | null;
+    description: string | null;
     rarity: Rarity;
+    frameTemplateId?: string;
     price: number;
     totalSupply: number | null;
     currentSupply: number;
@@ -99,17 +102,23 @@ export function CardDetailDialog({
       {/* Scrollable Content Area */}
       <div className="relative z-10 flex-1 overflow-y-auto overflow-x-hidden">
         {/* 3D Card Container */}
-        <RotatableCard className="flex min-h-[340px] items-center justify-center px-6 py-6">
-          <ArtistCard
-            artistName={card.artistName}
-            artistImageUrl={card.artistImageUrl}
-            songTitle={card.songTitle}
-            rarity={card.rarity}
-          />
-        </RotatableCard>
+        <div className="flex min-h-[340px] items-center justify-center px-6 py-6">
+          <div className="w-full max-w-[260px] sm:max-w-sm">
+            <ArtistCard
+              artistName={card.artistName}
+              artistImageUrl={card.artistImageUrl}
+              cardName={card.cardName}
+              songTitle={card.songTitle}
+              rarity={card.rarity}
+              frameTemplateId={card.frameTemplateId}
+              serialNumber={card.currentSupply + 1}
+              totalSupply={card.totalSupply}
+            />
+          </div>
+        </div>
 
         {/* Drag hint */}
-        <div className="mb-4 text-center text-xs text-gray-500">スワイプでカードを回転</div>
+        <div className="mb-4 text-center text-xs text-gray-500">スワイプでカードを操作</div>
 
         {/* Bottom Section */}
         <div className="p-4 pt-0">
@@ -118,7 +127,9 @@ export function CardDetailDialog({
             <div className="flex items-start justify-between">
               <div>
                 <h2 className="text-xl font-bold text-white">{card.artistName}</h2>
+                {card.cardName && <p className="text-sm text-gray-300">{card.cardName}</p>}
                 {card.songTitle && <p className="text-sm text-gray-400">{card.songTitle}</p>}
+                {card.subtitle && <p className="text-sm text-gray-500">{card.subtitle}</p>}
               </div>
               {card.totalSupply && (
                 <p className="text-sm text-gray-500">
@@ -126,6 +137,9 @@ export function CardDetailDialog({
                 </p>
               )}
             </div>
+            {card.description && (
+              <p className="mt-2 text-sm leading-relaxed text-gray-400">{card.description}</p>
+            )}
             {isSoldOut && <p className="mt-1 font-bold text-red-400">SOLD OUT</p>}
           </div>
 

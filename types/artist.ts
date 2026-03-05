@@ -1,4 +1,25 @@
 /**
+ * Social media platforms supported for artist links
+ */
+export type SocialPlatform =
+  | 'spotify'
+  | 'youtube'
+  | 'twitter'
+  | 'instagram'
+  | 'tiktok'
+  | 'website'
+  | 'apple_music'
+  | 'line';
+
+/**
+ * Social link for an artist
+ */
+export interface SocialLink {
+  platform: SocialPlatform;
+  url: string;
+}
+
+/**
  * Artist entity
  */
 export interface Artist {
@@ -18,7 +39,6 @@ export interface Artist {
  */
 export interface ArtistWithCards extends Artist {
   cards: import('./card').Card[];
-  template: import('./card').CardTemplate | null;
 }
 
 /**

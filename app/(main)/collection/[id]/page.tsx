@@ -12,7 +12,6 @@ import {
 } from 'lucide-react';
 import { PageContainer } from '@/components/layout/page-container';
 import { ArtistCard } from '@/components/cards/artist-card';
-import { RotatableCard } from '@/components/cards/rotatable-card';
 import { RarityBadge } from '@/components/cards/rarity-badge';
 import { ROUTES } from '@/constants/routes';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
@@ -22,7 +21,6 @@ import type {
   Purchase,
   Card,
   Artist,
-  CardVisual,
   ExclusiveContent as DbExclusiveContent,
 } from '@/types/database';
 
@@ -45,12 +43,12 @@ interface PurchaseDetail {
   purchasedAt: string;
   card: {
     id: string;
+    name: string;
     rarity: Rarity;
     totalSupply: number | null;
-    template: {
-      artistImageUrl: string;
-      songTitle: string | null;
-    };
+    cardImageUrl: string;
+    songTitle: string | null;
+    frameTemplateId: string;
   };
   artist: {
     id: string;
@@ -92,10 +90,12 @@ async function getPurchaseDetail(id: string): Promise<PurchaseDetail | null> {
     return null;
   }
 
-  // Fetch card
+  // Fetch card (card_image_url, song_title, frame_template_id are now on cards directly)
   const { data: cardData } = await supabase
     .from('cards')
-    .select('id, rarity, total_supply, artist_id, visual_id')
+    .select(
+      'id, name, rarity, total_supply, artist_id, card_image_url, song_title, frame_template_id',
+    )
     .eq('id', purchase.card_id)
     .single();
 
@@ -103,7 +103,17 @@ async function getPurchaseDetail(id: string): Promise<PurchaseDetail | null> {
     return null;
   }
 
-  const card = cardData as Pick<Card, 'id' | 'rarity' | 'total_supply' | 'artist_id' | 'visual_id'>;
+  const card = cardData as Pick<
+    Card,
+    | 'id'
+    | 'name'
+    | 'rarity'
+    | 'total_supply'
+    | 'artist_id'
+    | 'card_image_url'
+    | 'song_title'
+    | 'frame_template_id'
+  >;
 
   // Fetch artist
   const { data: artistData } = await supabase
@@ -114,20 +124,12 @@ async function getPurchaseDetail(id: string): Promise<PurchaseDetail | null> {
 
   const artist = artistData as Pick<Artist, 'id' | 'name' | 'image_url'> | null;
 
-  // Fetch visual
-  const { data: visualData } = await supabase
-    .from('card_visuals')
-    .select('artist_image_url, song_title')
-    .eq('id', card.visual_id)
-    .single();
-
-  const visual = visualData as Pick<CardVisual, 'artist_image_url' | 'song_title'> | null;
-
   // Fetch exclusive contents
   const { data: contentsData } = await supabase
     .from('exclusive_contents')
     .select('id, type, url, title, description')
     .eq('card_id', card.id)
+    .is('archived_at', null)
     .order('display_order', { ascending: true });
 
   const contents = (contentsData || []) as Pick<
@@ -142,12 +144,12 @@ async function getPurchaseDetail(id: string): Promise<PurchaseDetail | null> {
     purchasedAt: purchase.purchased_at,
     card: {
       id: card.id,
+      name: card.name,
       rarity: card.rarity as Rarity,
       totalSupply: card.total_supply,
-      template: {
-        artistImageUrl: visual?.artist_image_url || artist?.image_url || '',
-        songTitle: visual?.song_title || null,
-      },
+      cardImageUrl: card.card_image_url || artist?.image_url || '',
+      songTitle: card.song_title || null,
+      frameTemplateId: card.frame_template_id,
     },
     artist: {
       id: artist?.id || '',
@@ -204,18 +206,17 @@ export default async function CollectionDetailPage({ params }: PageProps) {
       {/* Card Display */}
       <div className="p-6 pt-16">
         <div className="mx-auto max-w-xs">
-          <RotatableCard>
-            <ArtistCard
-              artistName={purchase.artist.name}
-              artistImageUrl={purchase.card.template.artistImageUrl}
-              songTitle={purchase.card.template.songTitle}
-              rarity={purchase.card.rarity}
-              serialNumber={purchase.serialNumber}
-              totalSupply={purchase.card.totalSupply}
-              owned={1}
-            />
-          </RotatableCard>
-          <p className="mt-2 text-center text-xs text-gray-500">スワイプでカードを回転</p>
+          <ArtistCard
+            artistName={purchase.artist.name}
+            artistImageUrl={purchase.card.cardImageUrl}
+            cardName={purchase.card.name}
+            songTitle={purchase.card.songTitle}
+            rarity={purchase.card.rarity}
+            frameTemplateId={purchase.card.frameTemplateId}
+          />
+          {/* <p className="mt-2 text-center text-xs text-gray-500">
+            スワイプで
+          </p> */}
         </div>
       </div>
 

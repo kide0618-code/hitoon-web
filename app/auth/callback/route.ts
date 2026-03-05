@@ -1,14 +1,16 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import type { EmailOtpType } from '@supabase/supabase-js';
 
 /**
- * Handle OAuth callback from Supabase Auth
- * Exchanges code for session and redirects
- * Also handles cart merge from localStorage (via client-side)
+ * Handle OAuth callback and email confirmation from Supabase Auth
+ * Supports both PKCE (code) and token_hash flows
  */
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get('code');
+  const token_hash = requestUrl.searchParams.get('token_hash');
+  const type = requestUrl.searchParams.get('type') as EmailOtpType | null;
   const next = requestUrl.searchParams.get('next') ?? '/';
   const error = requestUrl.searchParams.get('error');
   const errorDescription = requestUrl.searchParams.get('error_description');
@@ -24,8 +26,30 @@ export async function GET(request: Request) {
     return NextResponse.redirect(loginUrl);
   }
 
+  const supabase = await createServerSupabaseClient();
+
+  // Handle email confirmation via token_hash (works across browsers)
+  if (token_hash && type) {
+    const { error: verifyError } = await supabase.auth.verifyOtp({
+      token_hash,
+      type,
+    });
+
+    if (verifyError) {
+      console.error('Token verification error:', verifyError);
+      const loginUrl = new URL('/login', requestUrl.origin);
+      loginUrl.searchParams.set('error', verifyError.message);
+      if (next !== '/') {
+        loginUrl.searchParams.set('redirect', next);
+      }
+      return NextResponse.redirect(loginUrl);
+    }
+
+    return NextResponse.redirect(new URL(next, requestUrl.origin));
+  }
+
+  // Handle OAuth code exchange (PKCE flow)
   if (code) {
-    const supabase = await createServerSupabaseClient();
     const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
 
     if (exchangeError) {
@@ -38,20 +62,16 @@ export async function GET(request: Request) {
       return NextResponse.redirect(loginUrl);
     }
 
-    // Successful login - redirect to intended destination
-    // Cart merge is handled client-side by CartContext when auth state changes
     return NextResponse.redirect(new URL(next, requestUrl.origin));
   }
 
-  // No code provided - redirect to login
+  // No code or token provided - redirect to login
   return NextResponse.redirect(new URL('/login', requestUrl.origin));
 }
 
 /**
  * POST /auth/callback
  * Handle cart merge from client-side after login
- * This endpoint can be called by the client after successful login
- * to merge localStorage cart into the database
  */
 export async function POST(request: Request) {
   try {

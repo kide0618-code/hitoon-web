@@ -9,21 +9,26 @@ import { PageContainer } from '@/components/layout/page-container';
 import { ArtistCard } from '@/components/cards/artist-card';
 import { CardGrid } from '@/components/cards/card-grid';
 import { CardDetailDialog } from '@/components/cards/card-detail-dialog';
+import { SocialLinks } from '@/components/features/social-links';
 import { useCart } from '@/contexts/cart-context';
 import { ROUTES } from '@/constants/routes';
-import { formatPrice } from '@/lib/utils/format';
+import { formatPrice, formatDeadline, isSaleEnded } from '@/lib/utils/format';
 import type { Rarity } from '@/types/card';
+import type { SocialLink } from '@/types/artist';
 
 interface CardData {
   id: string;
+  name: string;
+  description: string | null;
   rarity: Rarity;
   price: number;
   totalSupply: number | null;
   currentSupply: number;
-  visual: {
-    artistImageUrl: string;
-    songTitle: string | null;
-  };
+  cardImageUrl: string;
+  songTitle: string | null;
+  subtitle: string | null;
+  frameTemplateId: string;
+  saleEndsAt: string | null;
 }
 
 interface ArtistData {
@@ -33,6 +38,7 @@ interface ArtistData {
   imageUrl: string | null;
   memberCount: number;
   cards: CardData[];
+  socialLinks: SocialLink[];
 }
 
 interface Props {
@@ -111,38 +117,64 @@ export function ArtistDetailClient({ artist, isAuthenticated }: Props) {
       {/* Description */}
       <div className="p-4">
         <p className="text-sm text-gray-400">{artist.description}</p>
+        {artist.socialLinks.length > 0 && (
+          <div className="mt-3">
+            <SocialLinks links={artist.socialLinks} />
+          </div>
+        )}
       </div>
 
       {/* Card Selection */}
       <div className="px-3 py-4 pb-24 sm:px-4">
         <h2 className="mb-3 text-base font-bold sm:mb-4 sm:text-lg">Select Card</h2>
-        <CardGrid columns={4}>
-          {artist.cards.map((card) => {
-            const isSoldOut = card.totalSupply !== null && card.currentSupply >= card.totalSupply;
-            return (
-              <div key={card.id} className={`relative ${isSoldOut ? 'opacity-50' : ''}`}>
-                <ArtistCard
-                  artistName={artist.name}
-                  artistImageUrl={card.visual.artistImageUrl}
-                  songTitle={card.visual.songTitle}
-                  rarity={card.rarity}
-                  onClick={() => !isSoldOut && handleCardClick(card.id)}
-                />
-                <div className="mt-1.5 text-center sm:mt-2">
-                  <p className="text-sm font-bold sm:text-lg">{formatPrice(card.price)}</p>
-                  {card.totalSupply && (
-                    <p className="text-2xs text-gray-500 sm:text-xs">
-                      {card.currentSupply} / {card.totalSupply} sold
-                    </p>
-                  )}
-                  {isSoldOut && (
-                    <p className="text-2xs font-bold text-red-400 sm:text-xs">SOLD OUT</p>
-                  )}
+        {artist.cards.length > 0 ? (
+          <CardGrid columns={4}>
+            {artist.cards.map((card) => {
+              const isSoldOut = card.totalSupply !== null && card.currentSupply >= card.totalSupply;
+              const isExpired = isSaleEnded(card.saleEndsAt);
+              const isUnavailable = isSoldOut || isExpired;
+              return (
+                <div key={card.id} className={`relative ${isUnavailable ? 'opacity-50' : ''}`}>
+                  <ArtistCard
+                    artistName={artist.name}
+                    artistImageUrl={card.cardImageUrl}
+                    cardName={card.name}
+                    songTitle={card.songTitle}
+                    rarity={card.rarity}
+                    frameTemplateId={card.frameTemplateId}
+                    serialNumber={card.currentSupply + 1}
+                    totalSupply={card.totalSupply}
+                    onClick={() => !isUnavailable && handleCardClick(card.id)}
+                  />
+                  <div className="mt-1.5 text-center sm:mt-2">
+                    <p className="text-sm font-bold sm:text-lg">{formatPrice(card.price)}</p>
+                    {card.totalSupply && (
+                      <p className="text-2xs text-gray-500 sm:text-xs">
+                        {card.currentSupply} / {card.totalSupply} sold
+                      </p>
+                    )}
+                    {card.saleEndsAt && !isExpired && (
+                      <p className="text-2xs text-yellow-400 sm:text-xs">
+                        〜{formatDeadline(card.saleEndsAt)}
+                      </p>
+                    )}
+                    {isExpired && (
+                      <p className="text-2xs font-bold text-red-400 sm:text-xs">販売終了</p>
+                    )}
+                    {isSoldOut && !isExpired && (
+                      <p className="text-2xs font-bold text-red-400 sm:text-xs">SOLD OUT</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </CardGrid>
+              );
+            })}
+          </CardGrid>
+        ) : (
+          <div className="py-12 text-center">
+            <p className="text-gray-500">Coming Soon...</p>
+            {/* <p className="mt-1 text-xs text-gray-600">Coming Soon</p> */}
+          </div>
+        )}
       </div>
 
       {/* Card Detail Dialog */}
@@ -152,10 +184,14 @@ export function ArtistDetailClient({ artist, isAuthenticated }: Props) {
           onClose={() => setIsDialogOpen(false)}
           card={{
             id: selectedCard.id,
+            cardName: selectedCard.name,
             artistName: artist.name,
-            artistImageUrl: selectedCard.visual.artistImageUrl,
-            songTitle: selectedCard.visual.songTitle,
+            artistImageUrl: selectedCard.cardImageUrl,
+            songTitle: selectedCard.songTitle,
+            subtitle: selectedCard.subtitle,
+            description: selectedCard.description,
             rarity: selectedCard.rarity,
+            frameTemplateId: selectedCard.frameTemplateId,
             price: selectedCard.price,
             totalSupply: selectedCard.totalSupply,
             currentSupply: selectedCard.currentSupply,
