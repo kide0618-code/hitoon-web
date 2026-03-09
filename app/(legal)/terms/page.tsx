@@ -14,9 +14,7 @@ export default function TermsPage() {
 
       <div className="space-y-6">
         <section className="border-b border-gray-800 pb-6">
-          <h2 className="mb-3 text-base font-bold text-white">
-            第1条（定義・法的性質）
-          </h2>
+          <h2 className="mb-3 text-base font-bold text-white">第1条（定義・法的性質）</h2>
           <ol className="list-inside list-decimal space-y-2">
             <li>
               「デジタルグッズ（コレクティブル）」とは、当社がアーティストと提携し発行する、電磁的記録としての画像、音声、または映像データ、およびこれらに付帯するサービスの利用権を指します。
@@ -28,9 +26,7 @@ export default function TermsPage() {
         </section>
 
         <section className="border-b border-gray-800 pb-6">
-          <h2 className="mb-3 text-base font-bold text-white">
-            第2条（本サービスの性質）
-          </h2>
+          <h2 className="mb-3 text-base font-bold text-white">第2条（本サービスの性質）</h2>
           <ol className="list-inside list-decimal space-y-2">
             <li>
               本サービスは、アーティスト公認のデジタルグッズをユーザーが購入・収集できるプラットフォームです。
@@ -39,9 +35,7 @@ export default function TermsPage() {
         </section>
 
         <section className="border-b border-gray-800 pb-6">
-          <h2 className="mb-3 text-base font-bold text-white">
-            第3条（権利の帰属と利用権）
-          </h2>
+          <h2 className="mb-3 text-base font-bold text-white">第3条（権利の帰属と利用権）</h2>
           <ol className="list-inside list-decimal space-y-2">
             <li>
               ユーザーがデジタルグッズを購入することで取得するのは、本サービス内で当該データを表示・再生し、第三者へ譲渡することができない「非独占的な利用許諾権（ライセンス）」のみです。所有権や著作権がユーザーに移転するものではありません。
@@ -64,9 +58,7 @@ export default function TermsPage() {
         </section>
 
         <section className="border-b border-gray-800 pb-6">
-          <h2 className="mb-3 text-base font-bold text-white">
-            第5条（価格変動と免責）
-          </h2>
+          <h2 className="mb-3 text-base font-bold text-white">第5条（価格変動と免責）</h2>
           <ol className="list-inside list-decimal space-y-2">
             <li>
               <span className="font-medium text-gray-200">価格決定の自由:</span>{' '}
@@ -105,18 +97,14 @@ export default function TermsPage() {
         </section>
 
         <section className="border-b border-gray-800 pb-6">
-          <h2 className="mb-3 text-base font-bold text-white">
-            第7条（返品・キャンセル）
-          </h2>
+          <h2 className="mb-3 text-base font-bold text-white">第7条（返品・キャンセル）</h2>
           <p>
             デジタルコンテンツの性質上、購入手続き完了後のユーザー都合による返品、キャンセル、返金は一切できないものとします。アカウントの停止（バン）になった際も同様のものとします。
           </p>
         </section>
 
         <section className="border-b border-gray-800 pb-6">
-          <h2 className="mb-3 text-base font-bold text-white">
-            第8条（免責事項・サービスの停止）
-          </h2>
+          <h2 className="mb-3 text-base font-bold text-white">第8条（免責事項・サービスの停止）</h2>
           <ol className="list-inside list-decimal space-y-2">
             <li>
               当社は、システムの保守点検、天災、通信回線の事故等により、事前の通知なく本サービスを一時的に停止することがあります。
@@ -131,18 +119,14 @@ export default function TermsPage() {
         </section>
 
         <section className="border-b border-gray-800 pb-6">
-          <h2 className="mb-3 text-base font-bold text-white">
-            第9条（違反行為への措置）
-          </h2>
+          <h2 className="mb-3 text-base font-bold text-white">第9条（違反行為への措置）</h2>
           <p>
             ユーザーが本規約に違反した場合、当社は事前の通知なく、当該ユーザーのアカウントを停止（バン）もしくは制限をし、以降の本サービスの利用を禁止、制限することができるものとします。この場合、ユーザーが保有するデジタルグッズの閲覧権は喪失し、当社は受領済みの代金を返還しないものとします。
           </p>
         </section>
 
         <section className="border-b border-gray-800 pb-6">
-          <h2 className="mb-3 text-base font-bold text-white">
-            第10条（契約の成立）
-          </h2>
+          <h2 className="mb-3 text-base font-bold text-white">第10条（契約の成立）</h2>
           <ol className="list-inside list-decimal space-y-2">
             <li>
               ユーザーは、本規約の内容に同意の上、当社所定の方法により利用登録を申請し、当社がこれを承認した時点で、本規約を内容とする利用契約が成立するものとします。
@@ -151,9 +135,7 @@ export default function TermsPage() {
         </section>
 
         <section className="border-b border-gray-800 pb-6">
-          <h2 className="mb-3 text-base font-bold text-white">
-            第11条（未成年者の利用）
-          </h2>
+          <h2 className="mb-3 text-base font-bold text-white">第11条（未成年者の利用）</h2>
           <ol className="list-inside list-decimal space-y-2">
             <li>
               ユーザーが未成年者である場合、親権者等の法定代理人の同意を得た上で本サービスを利用しなければなりません。
@@ -165,9 +147,7 @@ export default function TermsPage() {
         </section>
 
         <section className="border-b border-gray-800 pb-6">
-          <h2 className="mb-3 text-base font-bold text-white">
-            第12条（反社会的勢力の排除）
-          </h2>
+          <h2 className="mb-3 text-base font-bold text-white">第12条（反社会的勢力の排除）</h2>
           <ol className="list-inside list-decimal space-y-2">
             <li>
               ユーザーは、現在かつ将来にわたり、暴力団、暴力団員、暴力団準構成員、暴力団関係企業、総会屋等、社会運動等標榜ゴロまたは特殊知能暴力集団等、その他これらに準ずる者（以下「反社会的勢力」といいます）に該当しないこと、および反社会的勢力と不適切な関係を有しないことを表明し、保証するものとします。
@@ -179,9 +159,7 @@ export default function TermsPage() {
         </section>
 
         <section className="border-b border-gray-800 pb-6">
-          <h2 className="mb-3 text-base font-bold text-white">
-            第13条（アカウント情報の管理）
-          </h2>
+          <h2 className="mb-3 text-base font-bold text-white">第13条（アカウント情報の管理）</h2>
           <ol className="list-inside list-decimal space-y-2">
             <li>
               ユーザーは、自己の責任において、本サービスに関するログイン情報（IDおよびパスワード等）を適切に管理・保管するものとします。これを第三者に利用させ、または貸与、譲渡、名義変更、売買等をしてはなりません。
@@ -193,9 +171,7 @@ export default function TermsPage() {
         </section>
 
         <section className="border-b border-gray-800 pb-6">
-          <h2 className="mb-3 text-base font-bold text-white">
-            第14条（利用環境の整備）
-          </h2>
+          <h2 className="mb-3 text-base font-bold text-white">第14条（利用環境の整備）</h2>
           <ol className="list-inside list-decimal space-y-2">
             <li>
               本サービスを利用するために必要な通信機器、ソフトウェア、通信回線等の利用環境は、ユーザーの責任と費用において用意し、維持するものとします。
@@ -207,9 +183,7 @@ export default function TermsPage() {
         </section>
 
         <section className="border-b border-gray-800 pb-6">
-          <h2 className="mb-3 text-base font-bold text-white">
-            第15条（非保証および免責）
-          </h2>
+          <h2 className="mb-3 text-base font-bold text-white">第15条（非保証および免責）</h2>
           <ol className="list-inside list-decimal space-y-2">
             <li>
               当社は、本サービスがユーザーの特定の目的に適合すること、期待する機能・商品的価値・正確性・有用性を有すること、および不具合が生じないことについて、明示または黙示を問わず何ら保証するものではありません。
@@ -218,9 +192,7 @@ export default function TermsPage() {
         </section>
 
         <section className="border-b border-gray-800 pb-6">
-          <h2 className="mb-3 text-base font-bold text-white">
-            第16条（損害賠償の制限）
-          </h2>
+          <h2 className="mb-3 text-base font-bold text-white">第16条（損害賠償の制限）</h2>
           <ol className="list-inside list-decimal space-y-2">
             <li>
               当社は、本サービスの利用に関連してユーザーに生じた損害について、当社の故意または重過失による場合を除き、一切の責任を負いません。
@@ -232,9 +204,7 @@ export default function TermsPage() {
         </section>
 
         <section className="border-b border-gray-800 pb-6">
-          <h2 className="mb-3 text-base font-bold text-white">
-            第17条（契約の終了）
-          </h2>
+          <h2 className="mb-3 text-base font-bold text-white">第17条（契約の終了）</h2>
           <ol className="list-inside list-decimal space-y-2">
             <li>ユーザーは、いつでも利用契約を終了させることができます。</li>
             <li>
@@ -244,9 +214,7 @@ export default function TermsPage() {
         </section>
 
         <section className="border-b border-gray-800 pb-6">
-          <h2 className="mb-3 text-base font-bold text-white">
-            第18条（本規約の変更）
-          </h2>
+          <h2 className="mb-3 text-base font-bold text-white">第18条（本規約の変更）</h2>
           <ol className="list-inside list-decimal space-y-2">
             <li>当社は、本サービスの内容を自由に変更できるものとします。</li>
             <li>
@@ -256,9 +224,7 @@ export default function TermsPage() {
         </section>
 
         <section className="border-b border-gray-800 pb-6">
-          <h2 className="mb-3 text-base font-bold text-white">
-            第19条（分離可能性）
-          </h2>
+          <h2 className="mb-3 text-base font-bold text-white">第19条（分離可能性）</h2>
           <ol className="list-inside list-decimal space-y-2">
             <li>
               本規約のいずれかの条項又はその一部が、消費者契約法その他の法令等により無効又は執行不能と判断された場合であっても、本規約の残りの規定及び一部が無効又は執行不能と判断された規定の残りの部分は、継続して完全に効力を有し、当社及び登録ユーザーは、当該無効若しくは執行不能の条項又は部分を適法とし、執行力を持たせるために必要な範囲で修正し、当該無効若しくは執行不能な条項又は部分の趣旨並びに法律的及び経済的に同等の効果を確保できるように努めるものとします。
@@ -267,9 +233,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="mb-3 text-base font-bold text-white">
-            第20条（準拠法・管轄）
-          </h2>
+          <h2 className="mb-3 text-base font-bold text-white">第20条（準拠法・管轄）</h2>
           <ol className="list-inside list-decimal space-y-2">
             <li>
               本規約の解釈にあたっては、日本法を準拠法とします。本サービスに関して紛争が生じた場合には、東京地方裁判所を第一審の専属的合意管轄裁判所とします。

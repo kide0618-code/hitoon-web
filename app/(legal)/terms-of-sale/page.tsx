@@ -14,9 +14,7 @@ export default function TokushohoPage() {
       <table className="w-full border-collapse">
         <tbody>
           <tr className="border-b border-gray-700">
-            <th className="w-1/3 py-3 pr-4 text-left align-top text-gray-300">
-              販売業者
-            </th>
+            <th className="w-1/3 py-3 pr-4 text-left align-top text-gray-300">販売業者</th>
             <td className="py-3">HITOON運営事務局</td>
           </tr>
           <tr className="border-b border-gray-700">
@@ -28,21 +26,17 @@ export default function TokushohoPage() {
             <td className="py-3">
               電話番号については、ご請求をいただければ遅滞なく開示いたします。
               <br />
-              <span className="text-gray-400 text-xs">
+              <span className="text-xs text-gray-400">
                 ※サービスに関するお問い合わせは、お電話では受け付けておりません。下記のメールアドレスへご連絡ください。
               </span>
             </td>
           </tr>
           <tr className="border-b border-gray-700">
-            <th className="py-3 pr-4 text-left align-top text-gray-300">
-              メールアドレス
-            </th>
+            <th className="py-3 pr-4 text-left align-top text-gray-300">メールアドレス</th>
             <td className="py-3">info@hitoonstore.com</td>
           </tr>
           <tr className="border-b border-gray-700">
-            <th className="py-3 pr-4 text-left align-top text-gray-300">
-              運営統括責任者
-            </th>
+            <th className="py-3 pr-4 text-left align-top text-gray-300">運営統括責任者</th>
             <td className="py-3">井手 恭一郎</td>
           </tr>
         </tbody>
@@ -51,9 +45,7 @@ export default function TokushohoPage() {
       <table className="w-full border-collapse">
         <tbody>
           <tr className="border-b border-gray-700">
-            <th className="w-1/3 py-3 pr-4 text-left align-top text-gray-300">
-              販売価格
-            </th>
+            <th className="w-1/3 py-3 pr-4 text-left align-top text-gray-300">販売価格</th>
             <td className="py-3">
               各デジタルグッズ詳細ページに表示された価格（消費税込）に基づきます。
             </td>
@@ -71,12 +63,8 @@ export default function TokushohoPage() {
             </td>
           </tr>
           <tr className="border-b border-gray-700">
-            <th className="py-3 pr-4 text-left align-top text-gray-300">
-              支払方法
-            </th>
-            <td className="py-3">
-              クレジットカード決済（VISA / MasterCard / JCB / AMEX）
-            </td>
+            <th className="py-3 pr-4 text-left align-top text-gray-300">支払方法</th>
+            <td className="py-3">クレジットカード決済（VISA / MasterCard / JCB / AMEX）</td>
           </tr>
           <tr className="border-b border-gray-700">
             <th className="py-3 pr-4 text-left align-top text-gray-300">支払時期</th>

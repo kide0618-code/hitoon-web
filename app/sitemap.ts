@@ -7,10 +7,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createServerSupabaseClient();
 
   // Fetch all active artists
-  const { data: artists } = await supabase
+  const { data: artists } = (await supabase
     .from('artists')
     .select('id, updated_at')
-    .is('archived_at', null) as { data: Pick<Artist, 'id' | 'updated_at'>[] | null };
+    .is('archived_at', null)) as { data: Pick<Artist, 'id' | 'updated_at'>[] | null };
 
   const baseUrl = APP_CONFIG.url;
 

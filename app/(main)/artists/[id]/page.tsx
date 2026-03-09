@@ -2,11 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { APP_CONFIG } from '@/constants/config';
-import {
-  MusicGroupJsonLd,
-  ProductJsonLd,
-  BreadcrumbJsonLd,
-} from '@/components/seo/json-ld';
+import { MusicGroupJsonLd, ProductJsonLd, BreadcrumbJsonLd } from '@/components/seo/json-ld';
 import { ArtistDetailClient } from './client';
 import type { Rarity } from '@/types/card';
 import type { SocialLink } from '@/types/artist';
@@ -203,24 +199,18 @@ export default async function ArtistDetailPage({ params }: PageProps) {
         memberCount={artist.memberCount}
       />
       {artist.cards.map((card) => {
-        const isSoldOut =
-          card.totalSupply !== null && card.currentSupply >= card.totalSupply;
+        const isSoldOut = card.totalSupply !== null && card.currentSupply >= card.totalSupply;
         return (
           <ProductJsonLd
             key={card.id}
             name={`${artist.name} - ${card.name}`}
             description={
-              card.description ||
-              `${artist.name}の${card.rarity}デジタルトレーディングカード`
+              card.description || `${artist.name}の${card.rarity}デジタルトレーディングカード`
             }
             imageUrl={card.cardImageUrl}
             price={card.price}
             availability={
-              isSoldOut
-                ? 'SoldOut'
-                : card.totalSupply
-                  ? 'LimitedAvailability'
-                  : 'InStock'
+              isSoldOut ? 'SoldOut' : card.totalSupply ? 'LimitedAvailability' : 'InStock'
             }
             artistName={artist.name}
             rarity={card.rarity}

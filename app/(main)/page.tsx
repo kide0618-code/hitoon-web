@@ -165,7 +165,9 @@ export default async function HomePage() {
                     <p className="text-xs text-gray-500">{artist.memberCount} Members</p>
                   </div>
                   <div className="text-base font-bold text-blue-400">
-                    {artist.lowestPrice > 0 ? `${formatPrice(artist.lowestPrice)}〜` : 'Coming Soon'}
+                    {artist.lowestPrice > 0
+                      ? `${formatPrice(artist.lowestPrice)}〜`
+                      : 'Coming Soon'}
                   </div>
                 </div>
               </Link>
@@ -204,8 +206,7 @@ export default async function HomePage() {
           <div className="rounded-xl border border-gray-800 bg-gray-900/50 p-4">
             <h3 className="mb-2 text-sm font-bold">安全な決済</h3>
             <p className="text-xs text-gray-500">
-              Stripe決済でクレジットカード、Apple Pay、Google
-              Payに対応。安心してお買い物できます。
+              Stripe決済でクレジットカード、Apple Pay、Google Payに対応。安心してお買い物できます。
             </p>
           </div>
         </div>

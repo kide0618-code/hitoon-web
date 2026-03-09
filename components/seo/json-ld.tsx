@@ -10,10 +10,7 @@ interface JsonLdProps {
 
 function JsonLd({ data }: JsonLdProps) {
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
-    />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />
   );
 }
 
@@ -148,8 +145,7 @@ export function ArtistListJsonLd({ artists }: { artists: ArtistListItem[] }) {
         '@context': 'https://schema.org',
         '@type': 'ItemList',
         name: 'アーティスト一覧',
-        description:
-          'HITOONで購入できるアーティストのデジタルトレーディングカード一覧',
+        description: 'HITOONで購入できるアーティストのデジタルトレーディングカード一覧',
         numberOfItems: artists.length,
         itemListElement: artists.map((artist) => ({
           '@type': 'ListItem',
