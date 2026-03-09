@@ -1,14 +1,20 @@
 import type { Metadata } from 'next';
 import { PageContainer } from '@/components/layout/page-container';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { APP_CONFIG } from '@/constants/config';
+import { ArtistListJsonLd } from '@/components/seo/json-ld';
 import type { Artist, Card } from '@/types/database';
 import { MarketClient } from './client';
 
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Store',
-  description: 'アーティストのデジタルカードを探す',
+  title: 'ストア - アーティストのデジタルカードを探す',
+  description:
+    'HITOONストアでお気に入りのアーティストのデジタルトレーディングカードを探そう。NORMAL・RARE・SUPER RAREの限定カードを購入して、コレクションを始めよう。',
+  alternates: {
+    canonical: `${APP_CONFIG.url}/market`,
+  },
 };
 
 interface ArtistItem {
@@ -73,6 +79,14 @@ export default async function MarketPage() {
 
   return (
     <PageContainer>
+      <ArtistListJsonLd
+        artists={artists.map((a, i) => ({
+          id: a.id,
+          name: a.name,
+          imageUrl: a.imageUrl,
+          position: i + 1,
+        }))}
+      />
       <MarketClient artists={artists} />
     </PageContainer>
   );

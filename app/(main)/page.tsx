@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Sparkles } from 'lucide-react';
@@ -8,7 +9,17 @@ import { ROUTES } from '@/constants/routes';
 import { APP_CONFIG } from '@/constants/config';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { formatPrice } from '@/lib/utils/format';
+import { ArtistListJsonLd, FaqJsonLd } from '@/components/seo/json-ld';
 import type { Artist, Card } from '@/types/database';
+
+export const metadata: Metadata = {
+  title: `${APP_CONFIG.name} - ${APP_CONFIG.tagline}`,
+  description:
+    'HITOONは、アーティストのデジタルトレーディングカードを購入・コレクションできるプラットフォームです。NORMAL・RARE・SUPER RAREの3種類のレアリティで、限定コンテンツ付きの特別なカードを手に入れよう。',
+  alternates: {
+    canonical: APP_CONFIG.url,
+  },
+};
 
 interface FeaturedArtist {
   id: string;
@@ -69,6 +80,42 @@ export default async function HomePage() {
 
   return (
     <PageContainer>
+      {/* JSON-LD: Featured artist list */}
+      {featured.length > 0 && (
+        <ArtistListJsonLd
+          artists={featured.map((a, i) => ({
+            id: a.id,
+            name: a.name,
+            imageUrl: a.imageUrl,
+            position: i + 1,
+          }))}
+        />
+      )}
+      <FaqJsonLd
+        items={[
+          {
+            question: 'HITOONとは何ですか？',
+            answer:
+              'HITOONは、アーティストのデジタルトレーディングカードを購入・コレクションできるプラットフォームです。NORMAL・RARE・SUPER RAREの3種類のレアリティがあり、購入者限定の特別コンテンツにもアクセスできます。',
+          },
+          {
+            question: 'どのような支払い方法がありますか？',
+            answer:
+              'クレジットカード、Apple Pay、Google Payに対応しています。Stripeによる安全な決済システムを採用しています。',
+          },
+          {
+            question: 'デジタルカードのレアリティとは？',
+            answer:
+              'カードには3種類のレアリティがあります。NORMAL（¥800〜¥1,500）は無制限発行、RARE（¥1,500〜¥3,000）は100〜300枚限定、SUPER RARE（¥3,000〜¥10,000）は10〜50枚限定です。レアリティが高いほど特別なエフェクトや限定コンテンツが付きます。',
+          },
+          {
+            question: '限定コンテンツとは何ですか？',
+            answer:
+              'カードを購入すると、アーティストの限定動画、音楽、画像などの特別コンテンツにアクセスできます。購入者だけが閲覧できる独占コンテンツです。',
+          },
+        ]}
+      />
+
       {/* Hero Section with animated gradient */}
       <div className="relative h-96 w-full overflow-hidden bg-surface">
         {/* Animated gradient background */}
@@ -130,6 +177,37 @@ export default async function HomePage() {
               <p className="text-xs text-gray-600">新しいアーティストを準備中です</p>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* LLMO / SEO: Semantic content section - visible to crawlers and LLMs */}
+      <section className="border-t border-gray-800 p-6" aria-label="HITOONについて">
+        <h2 className="mb-4 text-lg font-bold">HITOONとは</h2>
+        <p className="mb-4 text-sm leading-relaxed text-gray-400">
+          HITOONは、アーティストのデジタルトレーディングカードを購入・コレクションできるプラットフォームです。
+          「音楽を、一生モノにする。」をコンセプトに、お気に入りのアーティストの限定デジタルカードを手に入れることができます。
+        </p>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="rounded-xl border border-gray-800 bg-gray-900/50 p-4">
+            <h3 className="mb-2 text-sm font-bold">3種類のレアリティ</h3>
+            <p className="text-xs text-gray-500">
+              NORMAL・RARE・SUPER
+              RAREの3段階。レアリティに応じた限定枚数とエフェクトで特別感を演出。
+            </p>
+          </div>
+          <div className="rounded-xl border border-gray-800 bg-gray-900/50 p-4">
+            <h3 className="mb-2 text-sm font-bold">限定コンテンツ</h3>
+            <p className="text-xs text-gray-500">
+              カード購入者だけがアクセスできる限定動画、音楽、画像などの特別コンテンツ。
+            </p>
+          </div>
+          <div className="rounded-xl border border-gray-800 bg-gray-900/50 p-4">
+            <h3 className="mb-2 text-sm font-bold">安全な決済</h3>
+            <p className="text-xs text-gray-500">
+              Stripe決済でクレジットカード、Apple Pay、Google
+              Payに対応。安心してお買い物できます。
+            </p>
+          </div>
         </div>
       </section>
     </PageContainer>

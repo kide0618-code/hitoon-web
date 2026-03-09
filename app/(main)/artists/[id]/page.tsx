@@ -1,6 +1,12 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { APP_CONFIG } from '@/constants/config';
+import {
+  MusicGroupJsonLd,
+  ProductJsonLd,
+  BreadcrumbJsonLd,
+} from '@/components/seo/json-ld';
 import { ArtistDetailClient } from './client';
 import type { Rarity } from '@/types/card';
 import type { SocialLink } from '@/types/artist';
@@ -131,20 +137,30 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     ? `${process.env.NEXT_PUBLIC_APP_URL}/api/og/card?id=${firstCard.id}`
     : undefined;
 
+  const cardCount = artist.cards.length;
+  const priceRange =
+    cardCount > 0
+      ? `¥${Math.min(...artist.cards.map((c) => c.price)).toLocaleString()}〜¥${Math.max(...artist.cards.map((c) => c.price)).toLocaleString()}`
+      : '';
+  const enhancedDescription = `${artist.name}のデジタルトレーディングカード${cardCount > 0 ? `（${cardCount}種類${priceRange ? `・${priceRange}` : ''}）` : ''}をHITOONで購入。${description}`;
+
   return {
-    title: artist.name,
-    description,
+    title: `${artist.name}のデジタルカード`,
+    description: enhancedDescription,
+    alternates: {
+      canonical: `${APP_CONFIG.url}/artists/${id}`,
+    },
     openGraph: {
-      title: artist.name,
-      description,
+      title: `${artist.name} | ${APP_CONFIG.name}`,
+      description: enhancedDescription,
       ...(ogImageUrl && {
         images: [{ url: ogImageUrl, width: 1200, height: 630 }],
       }),
     },
     twitter: {
       card: 'summary_large_image',
-      title: artist.name,
-      description,
+      title: `${artist.name} | ${APP_CONFIG.name}`,
+      description: enhancedDescription,
       ...(ogImageUrl && {
         images: [ogImageUrl],
       }),
@@ -167,5 +183,53 @@ export default async function ArtistDetailPage({ params }: PageProps) {
     return notFound();
   }
 
-  return <ArtistDetailClient artist={artist} isAuthenticated={!!user} />;
+  const artistUrl = `${APP_CONFIG.url}/artists/${id}`;
+
+  return (
+    <>
+      {/* Structured Data */}
+      <BreadcrumbJsonLd
+        items={[
+          { name: 'ホーム', url: APP_CONFIG.url },
+          { name: 'ストア', url: `${APP_CONFIG.url}/market` },
+          { name: artist.name, url: artistUrl },
+        ]}
+      />
+      <MusicGroupJsonLd
+        name={artist.name}
+        description={artist.description || `${artist.name}のデジタルカード`}
+        imageUrl={artist.imageUrl}
+        url={artistUrl}
+        memberCount={artist.memberCount}
+      />
+      {artist.cards.map((card) => {
+        const isSoldOut =
+          card.totalSupply !== null && card.currentSupply >= card.totalSupply;
+        return (
+          <ProductJsonLd
+            key={card.id}
+            name={`${artist.name} - ${card.name}`}
+            description={
+              card.description ||
+              `${artist.name}の${card.rarity}デジタルトレーディングカード`
+            }
+            imageUrl={card.cardImageUrl}
+            price={card.price}
+            availability={
+              isSoldOut
+                ? 'SoldOut'
+                : card.totalSupply
+                  ? 'LimitedAvailability'
+                  : 'InStock'
+            }
+            artistName={artist.name}
+            rarity={card.rarity}
+            url={artistUrl}
+          />
+        );
+      })}
+
+      <ArtistDetailClient artist={artist} isAuthenticated={!!user} />
+    </>
+  );
 }
