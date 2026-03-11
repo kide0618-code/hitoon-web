@@ -41,7 +41,7 @@ export function BottomNav() {
                   key={label}
                   type="button"
                   onClick={handleDisabledClick}
-                  className="flex flex-col items-center p-2 text-gray-600"
+                  className="flex flex-col items-center p-2 text-gray-400"
                 >
                   <Icon size={20} />
                   <span className="mt-1 text-[10px] font-bold">{label}</span>
